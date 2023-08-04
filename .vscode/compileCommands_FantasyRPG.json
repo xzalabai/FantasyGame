@@ -1,0 +1,42 @@
+[
+	{
+		"file": "C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\Source\\FantasyRPG\\FantasyRPG.Build.cs",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.34.31933\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\.vscode\\compileCommands_FantasyRPG\\FantasyRPG.255.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\Source\\FantasyRPG\\FantasyRPG.cpp",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.34.31933\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\.vscode\\compileCommands_FantasyRPG\\FantasyRPG.255.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\Source\\FantasyRPG\\FantasyRPG.h",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.34.31933\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\.vscode\\compileCommands_FantasyRPG\\FantasyRPG.255.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\Source\\FantasyRPG\\FantasyRPGGameModeBase.cpp",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.34.31933\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\.vscode\\compileCommands_FantasyRPG\\FantasyRPG.255.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.1\\Engine\\Source"
+	},
+	{
+		"file": "C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\Source\\FantasyRPG\\FantasyRPGGameModeBase.h",
+		"arguments": [
+			"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.34.31933\\bin\\HostX64\\x64\\cl.exe",
+			"@C:\\workspace\\Dev\\FantasyRPG\\FantasyRPG\\.vscode\\compileCommands_FantasyRPG\\FantasyRPG.255.rsp"
+		],
+		"directory": "C:\\Program Files\\Epic Games\\UE_5.1\\Engine\\Source"
+	}
+]
