@@ -2,9 +2,10 @@
 //
 // TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
 // TODO: refactor Fist -> create cpp base
-// TODO: change equippedWeapon to equippedItem (so we can swap grenade with weapon)
-// TODO: replace animation BP for rrunning with Item
-// TODO: create UActorComponent for weapon equiping
+// TODO: HIGH! (linked with Weapon to IWeapon) change equippedWeapon to equippedItem (so we can swap grenade with weapon)
+// TODO: LOW replace animation BP for rrunning with Item
+// TODO: HIGH! create UActorComponent for weapon equiping
+// TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface
 #pragma once
 
 #include "CoreMinimal.h"
@@ -68,7 +69,7 @@ protected:
 	void InitiateAttackWithoutWeapon();
 	void Equip(AItem* Item);	
 	void Unequip();
-	void SwapWeapon(AWeapon* WeaponToBeEquipped);
+	void SwapItem(AItem* WeaponToBeEquipped);
 
 
 	UPROPERTY()

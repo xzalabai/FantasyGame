@@ -8,6 +8,7 @@
 #include "Animation/AnimMontage.h"
 #include "Math/UnrealMathUtility.h"
 #include "Weapon.h"
+#include "FireWeapon.h"
 #include "PickupInterface.h"
 #include "ThrowableInterface.h"
 #include "Containers/UnrealString.h"
@@ -82,16 +83,13 @@ void AHeroCharacter::Jump()
 
 void AHeroCharacter::ToggleEquip()
 {
-
-	//AWeapon* Weapon = Cast<AWeapon>(OverlappedItem);
-
 	if (!OverlappedItem && EquippedWeapon)
 	{
 		Unequip();
 	}
 	else if (EquippedWeapon && OverlappedItem)
 	{
-		SwapWeapon(Cast<AWeapon>(OverlappedItem));
+		SwapItem(OverlappedItem);
 	}
 	else if (!EquippedWeapon && OverlappedItem)
 	{
@@ -260,11 +258,11 @@ void AHeroCharacter::AutoEquip(AItem *Item)
 	}
 }
 
-void AHeroCharacter::SwapWeapon(AWeapon* WeaponToBeEquipped)
+void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)
 {
-	UE_LOG(LogTemp, Display, TEXT("Swapping weapons"));
+	UE_LOG(LogTemp, Display, TEXT("Swapping items in hands"));
 	Unequip();
-	Equip(WeaponToBeEquipped);
+	Equip(ItemToBeEquipped);
 }
 
 void AHeroCharacter::Unequip()
@@ -277,22 +275,28 @@ void AHeroCharacter::Unequip()
 
 void AHeroCharacter::Equip(AItem* Item)
 {
-		if (AWeapon* Weapon = Cast<AWeapon>(Item))
-		{
-			UE_LOG(LogClass, Log, TEXT("Equipping a weapon: %s"), *Weapon->GetName());
-			EquippedWeapon = Weapon;
-			AttachItemToSocket(Item, "RightHandSocket");
-			Weapon->Equip();
-			CharacterState = ECharacterState::ECS_WithMeeleWeapon;
-		}
-		else if (IPickupInterface* PickableItem = Cast<IPickupInterface>(Item))
-		{
-			UE_LOG(LogTemp, Display, TEXT("Equipping an item"));
-			AttachItemToSocket(Item, "RightHandSocket");
-			PickableItem->OnItemEquipped(*this);
-			EquippedItem = Item;
-			CharacterState = ECharacterState::ECS_WithItem;
-		}
+	// Change to MeeleWeaapon
+	AttachItemToSocket(Item, "RightHandSocket");
+	if (AWeapon* Weapon = Cast<AWeapon>(Item))
+	{
+		UE_LOG(LogClass, Log, TEXT("Equipping a weapon: %s"), *Weapon->GetName());
+		EquippedWeapon = Weapon;
+		Weapon->Equip();
+		CharacterState = ECharacterState::ECS_WithMeeleWeapon;
+	}
+	else if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(Item))
+	{
+		UE_LOG(LogClass, Log, TEXT("Equipping a fire weapon: %s"), *FireWeapon->GetName());
+		FireWeapon->Equip();
+		CharacterState = ECharacterState::ECS_WithFireWeapon;
+	}
+	else if (IPickupInterface* PickableItem = Cast<IPickupInterface>(Item))
+	{
+		UE_LOG(LogTemp, Display, TEXT("Equipping an item"));
+		PickableItem->OnItemEquipped(*this);
+		EquippedItem = Item;
+		CharacterState = ECharacterState::ECS_WithItem;
+	}
 	OverlappedItem = nullptr;
 	
 }

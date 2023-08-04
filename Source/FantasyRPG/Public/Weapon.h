@@ -1,16 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "Item.h"
+#include "WeaponInterface.h"
 #include "Weapon.generated.h"
 
 class UBoxComponent;
 class USceneComponent;
 
 UCLASS()
-class FANTASYRPG_API AWeapon : public AItem
+class FANTASYRPG_API AWeapon : public AItem, public IWeaponInterface
 {
 	GENERATED_BODY()
 public:
@@ -19,7 +18,7 @@ public:
 	FORCEINLINE UBoxComponent* GetOverlapArea() const { return OverlapArea; }
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTrace();
-	
+
 protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere)
@@ -29,8 +28,6 @@ protected:
 	bool Picked = false;
 	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* OverlapArea;
-
-
 private:
 	UFUNCTION()
 	virtual void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
