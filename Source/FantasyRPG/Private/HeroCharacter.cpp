@@ -205,19 +205,17 @@ void AHeroCharacter::InitiateAttackWithoutWeapon()
 				break;
 		};
 		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-		AnimationState = EAnimationState::EAS_AnimationInProgress;
 	}
 
 }
 
 void AHeroCharacter::AttackEnd()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Attack End"));
 	// Called from ABP
-	AnimationState = EAnimationState::EAS_NoAnimation;
-	if (EquippedWeapon)
+	UE_LOG(LogTemp, Warning, TEXT("Attack End"));
+	if (IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedWeapon))
 	{
-		EquippedWeapon->EnableOverlappingEvents(false);
+		Weapon->EnableOverlappingEvents(false);
 	}
 	else if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
 	{
@@ -229,20 +227,23 @@ void AHeroCharacter::AttackEnd()
 	{
 		Fists->EnableOverlappingEvents(false);
 	}	
+
+	AnimationState = EAnimationState::EAS_NoAnimation;
 }
 
 void AHeroCharacter::AttackStart()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Warning, TEXT("Attack Start"));
-	if (EquippedWeapon)
+	if (IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedWeapon))
 	{
-		EquippedWeapon->EnableOverlappingEvents(true);
+		Weapon->EnableOverlappingEvents(true);
 	}
 	else
 	{
 		Fists->EnableOverlappingEvents(true);
 	}	
+	AnimationState = EAnimationState::EAS_AnimationInProgress;
 }
 
 void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
@@ -275,8 +276,10 @@ void AHeroCharacter::Unequip()
 
 void AHeroCharacter::Equip(AItem* Item)
 {
-	// Change to MeeleWeaapon
+	
 	AttachItemToSocket(Item, "RightHandSocket");
+	OverlappedItem = nullptr;
+	// Change to MeeleWeaapon
 	if (AWeapon* Weapon = Cast<AWeapon>(Item))
 	{
 		UE_LOG(LogClass, Log, TEXT("Equipping a weapon: %s"), *Weapon->GetName());
@@ -287,6 +290,7 @@ void AHeroCharacter::Equip(AItem* Item)
 	else if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(Item))
 	{
 		UE_LOG(LogClass, Log, TEXT("Equipping a fire weapon: %s"), *FireWeapon->GetName());
+		EquippedWeapon = Weapon;
 		FireWeapon->Equip();
 		CharacterState = ECharacterState::ECS_WithFireWeapon;
 	}
@@ -297,7 +301,7 @@ void AHeroCharacter::Equip(AItem* Item)
 		EquippedItem = Item;
 		CharacterState = ECharacterState::ECS_WithItem;
 	}
-	OverlappedItem = nullptr;
+	
 	
 }
 

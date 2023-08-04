@@ -5,7 +5,8 @@
 // TODO: HIGH! (linked with Weapon to IWeapon) change equippedWeapon to equippedItem (so we can swap grenade with weapon)
 // TODO: LOW replace animation BP for rrunning with Item
 // TODO: HIGH! create UActorComponent for weapon equiping
-// TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface
+// TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface 
+// TODO: MED add to enemy HP
 #pragma once
 
 #include "CoreMinimal.h"
@@ -19,7 +20,6 @@ class UInputMappingContext;
 class UInputAction;
 class AItem;
 class UAnimMontage;
-class AWeapon;
 class UAttributesComponent;
 class UFistsComponent;
 class UBoxComponent;
@@ -41,7 +41,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	UPROPERTY(BlueprintReadWrite, Category=Weapon)
-	AWeapon* EquippedWeapon = nullptr;
+	AItem* EquippedWeapon = nullptr;
 	AItem* EquippedItem = nullptr;
 
 protected:
