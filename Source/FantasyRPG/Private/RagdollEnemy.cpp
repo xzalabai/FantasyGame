@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Components/PrimitiveComponent.h"
 #include "DrawDebugHelpers.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void ARagdollEnemy::OnReceivedHit(const FVector& ImpactPoint)
 {

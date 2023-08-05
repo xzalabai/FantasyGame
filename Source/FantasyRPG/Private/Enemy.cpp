@@ -10,7 +10,7 @@
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+    
 }
 
 void AEnemy::BeginPlay()
@@ -28,7 +28,6 @@ void AEnemy::Tick(float DeltaTime)
 void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AEnemy::OnReceivedHit(const FVector& ImpactDirection)
