@@ -48,5 +48,5 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	{
 		Enemy->OnReceivedHit(Hit.ImpactPoint);
 	}
-	Destroy();
+	//Destroy();
 }

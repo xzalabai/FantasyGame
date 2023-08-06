@@ -7,6 +7,7 @@
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface 
 // TODO: MED add to enemy HP
+// TODO: MED refactor AttackStart/AttackEnd so it does not branch based on Casts (but based on enum perhaps(security))
 #pragma once
 
 #include "CoreMinimal.h"
@@ -67,6 +68,7 @@ protected:
 	void InitiateAttackWithWeapon();
 	void InitiateAttackWithItem();
 	void InitiateAttackWithoutWeapon();
+	void InitiateAttackWithFireWeapon();
 	void Equip(AItem* Item);	
 	void Unequip();
 	void SwapItem(AItem* WeaponToBeEquipped);
@@ -104,11 +106,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	FVector MuzzleOffset;
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
-	TSubclassOf<AProjectile> ProjectileClass;
+	TSubclassOf<AProjectile> ProjectileClass;	
 private:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
-	void FireFromGun();
 };
 
 

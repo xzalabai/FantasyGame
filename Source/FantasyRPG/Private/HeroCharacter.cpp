@@ -127,6 +127,7 @@ void AHeroCharacter::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponen
 
 void AHeroCharacter::InitiateAttack()
 {	
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttack, Animation state: %d"), AnimationState);
 	// Invoked from Binding
 	if (AnimationState != EAnimationState::EAS_NoAnimation)
 		return;
@@ -135,21 +136,23 @@ void AHeroCharacter::InitiateAttack()
 	{
 		InitiateAttackWithWeapon();
 	}
+	if (CharacterState == ECharacterState::ECS_WithFireWeapon)
+	{
+		InitiateAttackWithFireWeapon();
+	}
 	if (CharacterState == ECharacterState::ECS_WithItem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Your message"));
 		InitiateAttackWithItem();
 	}
 	if (CharacterState == ECharacterState::ECS_WithoutWeapon)
 	{
 		InitiateAttackWithoutWeapon();
 	}
-	FireFromGun();
 }
 
 void AHeroCharacter::InitiateAttackWithItem()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Your ---"));
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithItem"));
 	// Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
@@ -161,6 +164,7 @@ void AHeroCharacter::InitiateAttackWithItem()
 }
 void AHeroCharacter::InitiateAttackWithWeapon()
 {
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithWeapon"));
 	// Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
@@ -186,6 +190,8 @@ void AHeroCharacter::InitiateAttackWithWeapon()
 
 void AHeroCharacter::InitiateAttackWithoutWeapon()
 {
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithoutWeapon"));
+
 	// Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
@@ -212,9 +218,10 @@ void AHeroCharacter::InitiateAttackWithoutWeapon()
 void AHeroCharacter::AttackEnd()
 {
 	// Called from ABP
-	UE_LOG(LogTemp, Warning, TEXT("Attack End"));
-	if (IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedWeapon))
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
+	if (AWeapon* Weapon = Cast<AWeapon>(EquippedWeapon))
 	{
+		// TODO: why this does not throw err? 
 		Weapon->EnableOverlappingEvents(false);
 	}
 	else if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
@@ -223,7 +230,11 @@ void AHeroCharacter::AttackEnd()
 		Throwable->Throw(Direction);
 		EquippedItem = nullptr;
 	}
-	else
+	else if (AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon))
+	{
+
+	}
+	else if (!EquippedItem || !EquippedWeapon)
 	{
 		Fists->EnableOverlappingEvents(false);
 	}	
@@ -234,12 +245,16 @@ void AHeroCharacter::AttackEnd()
 void AHeroCharacter::AttackStart()
 {
 	// Called from ABP
-	UE_LOG(LogTemp, Warning, TEXT("Attack Start"));
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
 	if (IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedWeapon))
 	{
 		Weapon->EnableOverlappingEvents(true);
 	}
-	else
+	else if (AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon))
+	{
+
+	}
+	else if (!EquippedItem || !EquippedWeapon)
 	{
 		Fists->EnableOverlappingEvents(true);
 	}	
@@ -261,14 +276,14 @@ void AHeroCharacter::AutoEquip(AItem *Item)
 
 void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)
 {
-	UE_LOG(LogTemp, Display, TEXT("Swapping items in hands"));
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] SwapItem"));
 	Unequip();
 	Equip(ItemToBeEquipped);
 }
 
 void AHeroCharacter::Unequip()
 {
-		UE_LOG(LogClass, Log, TEXT("Unequipping: %s"), *EquippedWeapon->GetName());
+		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Unequip: %s"), *EquippedWeapon->GetName());
 		CharacterState = ECharacterState::ECS_WithoutWeapon;
 		EquippedWeapon->Unequip();
 		EquippedWeapon = nullptr;
@@ -276,39 +291,45 @@ void AHeroCharacter::Unequip()
 
 void AHeroCharacter::Equip(AItem* Item)
 {
-	
 	AttachItemToSocket(Item, "RightHandSocket");
 	OverlappedItem = nullptr;
 	// Change to MeeleWeaapon
 	if (AWeapon* Weapon = Cast<AWeapon>(Item))
 	{
-		UE_LOG(LogClass, Log, TEXT("Equipping a weapon: %s"), *Weapon->GetName());
+		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a weapon: %s"), *Weapon->GetName());
 		EquippedWeapon = Weapon;
 		Weapon->Equip();
 		CharacterState = ECharacterState::ECS_WithMeeleWeapon;
 	}
 	else if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(Item))
 	{
-		UE_LOG(LogClass, Log, TEXT("Equipping a fire weapon: %s"), *FireWeapon->GetName());
-		EquippedWeapon = Weapon;
+		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a fire weapon: %s"), *FireWeapon->GetName());
+		EquippedWeapon = FireWeapon;
 		FireWeapon->Equip();
 		CharacterState = ECharacterState::ECS_WithFireWeapon;
 	}
 	else if (IPickupInterface* PickableItem = Cast<IPickupInterface>(Item))
 	{
-		UE_LOG(LogTemp, Display, TEXT("Equipping an item"));
+		UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] Equip(): Equipping an item"));
 		PickableItem->OnItemEquipped(*this);
 		EquippedItem = Item;
 		CharacterState = ECharacterState::ECS_WithItem;
 	}
-	
-	
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Equip(): Picking unidentified object"));
+	}	
 }
 
-void AHeroCharacter::FireFromGun()
+void AHeroCharacter::InitiateAttackWithFireWeapon()
 {
-	// Attempt to fire a projectile.
-	// Get the camera transform.
+	AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon);
+	if (FireWeapon == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Trying to initiate attack with fire weapon, but FireWeapon is not set"));
+		return;
+	}
+	// Calculate position for projectile and direction of shot
 	FVector CameraLocation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
 	FRotator CameraRotation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraRotation();
 	GetActorEyesViewPoint(CameraLocation, CameraRotation);
@@ -322,23 +343,15 @@ void AHeroCharacter::FireFromGun()
 	// Skew the aim to be slightly upwards.
 	FRotator MuzzleRotation = CameraRotation;
 
-	UWorld* World = GetWorld();
-	if (World)
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = GetInstigator();
-
-		// Spawn the projectile at the muzzle.
-		AProjectile* Projectile = World->SpawnActor<AProjectile>(ProjectileClass, MuzzleLocation, MuzzleRotation, SpawnParams);
-		if (Projectile)
-		{
-			// Set the projectile's initial trajectory.
-			FVector LaunchDirection = MuzzleRotation.Vector();
-			UE_LOG(LogTemp,Warning,TEXT("xxxxxxxxxxxxs %s"), *LaunchDirection.ToString());
-			Projectile->FireInDirection(LaunchDirection);
-		}
+		AnimInstance->Montage_Play(MontageAttack);
+		FName SequenceName = "FireWeapon";
+		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
+		AnimationState = EAnimationState::EAS_AnimationInProgress;
 	}
+	FVector LaunchDirection = MuzzleRotation.Vector();	
+	FireWeapon->FireFromGun(MuzzleLocation, MuzzleRotation, LaunchDirection);
 }
 
 
