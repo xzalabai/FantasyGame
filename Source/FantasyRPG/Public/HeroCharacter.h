@@ -2,12 +2,18 @@
 //
 // TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
 // TODO: refactor Fist -> create cpp base
+
 // TODO: HIGH! (linked with Weapon to IWeapon) change equippedWeapon to equippedItem (so we can swap grenade with weapon)
-// TODO: LOW replace animation BP for rrunning with Item
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface 
+// TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
+
 // TODO: MED add to enemy HP
 // TODO: MED refactor AttackStart/AttackEnd so it does not branch based on Casts (but based on enum perhaps(security))
+// TODO: MED refactor whole animationStart/iniateAttack with less spaghetti cod
+
+// TODO: LOW replace animation BP for rrunning with Item
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -72,6 +78,7 @@ protected:
 	void Equip(AItem* Item);	
 	void Unequip();
 	void SwapItem(AItem* WeaponToBeEquipped);
+	bool CharacterIsMoving();
 
 
 	UPROPERTY()
@@ -110,6 +117,7 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
+
 };
 
 

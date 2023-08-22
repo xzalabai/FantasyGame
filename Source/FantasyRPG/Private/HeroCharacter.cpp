@@ -17,6 +17,7 @@
 #include "FistsComponent.h"
 #include "WeaponComponent.h"
 #include "Fist.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 AHeroCharacter::AHeroCharacter()
 {
@@ -246,13 +247,13 @@ void AHeroCharacter::AttackStart()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
-	if (IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedWeapon))
+	if (AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon))
+	{
+		FireWeapon->FireFromGun();
+	}
+	else if (IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedWeapon))
 	{
 		Weapon->EnableOverlappingEvents(true);
-	}
-	else if (AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon))
-	{
-
 	}
 	else if (!EquippedItem || !EquippedWeapon)
 	{
@@ -329,29 +330,24 @@ void AHeroCharacter::InitiateAttackWithFireWeapon()
 		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Trying to initiate attack with fire weapon, but FireWeapon is not set"));
 		return;
 	}
-	// Calculate position for projectile and direction of shot
-	FVector CameraLocation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraLocation();
-	FRotator CameraRotation = GetWorld()->GetFirstPlayerController()->PlayerCameraManager->GetCameraRotation();
-	GetActorEyesViewPoint(CameraLocation, CameraRotation);
-
-	// Set MuzzleOffset to spawn projectiles slightly in front of the camera.
-	MuzzleOffset.Set(100.0f, 0.0f, 0.0f);
-
-	// Transform MuzzleOffset from camera space to world space.
-	FVector MuzzleLocation = CameraLocation + FTransform(CameraRotation).TransformVector(MuzzleOffset);
-
-	// Skew the aim to be slightly upwards.
-	FRotator MuzzleRotation = CameraRotation;
-
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	if (CharacterIsMoving())
+	{
+		FireWeapon->FireFromGun();
+	}
+	else if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
 		AnimInstance->Montage_Play(MontageAttack);
 		FName SequenceName = "FireWeapon";
 		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
 		AnimationState = EAnimationState::EAS_AnimationInProgress;
 	}
-	FVector LaunchDirection = MuzzleRotation.Vector();	
-	FireWeapon->FireFromGun(MuzzleLocation, MuzzleRotation, LaunchDirection);
+}
+
+bool AHeroCharacter::CharacterIsMoving()
+{
+	if (GetMovementComponent()->Velocity == FVector::ZeroVector)
+		return false;
+	return true;
 }
 
 

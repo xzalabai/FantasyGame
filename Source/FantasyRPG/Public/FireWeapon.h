@@ -11,12 +11,17 @@ UCLASS()
 
 class FANTASYRPG_API AFireWeapon : public AItem, public IWeaponInterface
 {
-	GENERATED_BODY()
 
+	GENERATED_BODY()
+protected:
+	virtual void BeginPlay() override;
 public:
+	AFireWeapon();
 	virtual void EnableOverlappingEvents(bool Enable) override;
-	void FireFromGun(FVector &ProjectileSpawnLocation, FRotator &ProjectileSpawnRotation, FVector &ProjectileDirection);
+	void FireFromGun();
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AProjectile> ProjectileClass;
+	UPROPERTY(EditAnywhere)
+	USceneComponent* Muzzle;
 };
