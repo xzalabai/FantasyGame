@@ -5,6 +5,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Animation/AnimInstance.h"
+
 #include "NiagaraComponent.h"
 
 AItem::AItem()
@@ -18,6 +19,8 @@ AItem::AItem()
 	SetRootComponent(MeshComponent);
 	TriggerCollider->SetupAttachment(MeshComponent);
 	ParticleSystem->SetupAttachment(RootComponent);
+
+	
 }
 
 void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)

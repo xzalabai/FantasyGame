@@ -15,8 +15,8 @@
 #include "AttributesComponent.h"
 #include "Projectile.h"
 #include "FistsComponent.h"
-#include "WeaponComponent.h"
 #include "Fist.h"
+#include "GameplayTagsManager.h"
 #include "GameFramework/PawnMovementComponent.h"
 
 AHeroCharacter::AHeroCharacter()
@@ -24,7 +24,6 @@ AHeroCharacter::AHeroCharacter()
 	PrimaryActorTick.bCanEverTick = false;
 	Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attributes"));
 	Fists = CreateDefaultSubobject<UFistsComponent>(TEXT("Fists"));
-	WeaponController = CreateDefaultSubobject<UWeaponComponent>(TEXT("Weapon Controller"));
 }
 
 void AHeroCharacter::BeginPlay()
@@ -84,15 +83,15 @@ void AHeroCharacter::Jump()
 
 void AHeroCharacter::ToggleEquip()
 {
-	if (!OverlappedItem && EquippedWeapon)
+	if (!OverlappedItem)
 	{
 		Unequip();
 	}
-	else if (EquippedWeapon && OverlappedItem)
+	else if (EquippedItem && OverlappedItem)
 	{
 		SwapItem(OverlappedItem);
 	}
-	else if (!EquippedWeapon && OverlappedItem)
+	else if (OverlappedItem)
 	{
 		Equip(OverlappedItem);			
 	}
@@ -128,101 +127,36 @@ void AHeroCharacter::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponen
 
 void AHeroCharacter::InitiateAttack()
 {	
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttack, Animation state: %d"), AnimationState);
 	// Invoked from Binding
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttack, Animation state: %d"), AnimationState);
 	if (AnimationState != EAnimationState::EAS_NoAnimation)
 		return;
-
-	if (CharacterState == ECharacterState::ECS_WithMeeleWeapon)
+	switch (CharacterState )
 	{
-		InitiateAttackWithWeapon();
+		case ECharacterState::ECS_WithMeeleWeapon:
+			InitiateAttackWithWeapon();
+			break;
+		case ECharacterState::ECS_WithFireWeapon:
+			InitiateAttackWithFireWeapon();
+			break;
+		case ECharacterState::ECS_WithItem:
+			InitiateAttackWithItem();
+			break;
+		case ECharacterState::ECS_WithoutWeapon:
+			InitiateAttackWithoutWeapon();
+			break;
+		default:
+			UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] InitiateAttack with default"));
+			break;
 	}
-	if (CharacterState == ECharacterState::ECS_WithFireWeapon)
-	{
-		InitiateAttackWithFireWeapon();
-	}
-	if (CharacterState == ECharacterState::ECS_WithItem)
-	{
-		InitiateAttackWithItem();
-	}
-	if (CharacterState == ECharacterState::ECS_WithoutWeapon)
-	{
-		InitiateAttackWithoutWeapon();
-	}
-}
-
-void AHeroCharacter::InitiateAttackWithItem()
-{
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithItem"));
-	// Play animation
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		AnimInstance->Montage_Play(MontageAttack);
-		FName SequenceName = "Throw1";
-		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-		AnimationState = EAnimationState::EAS_AnimationInProgress;
-	}
-}
-void AHeroCharacter::InitiateAttackWithWeapon()
-{
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithWeapon"));
-	// Play animation
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		int8 RandomSequence = FMath::RandRange(1, 2);
-		AnimInstance->Montage_Play(MontageAttack);
-		FName SequenceName;
-		switch (RandomSequence)
-		{
-			case 1:
-				SequenceName = "Attack1";
-				break;
-			case 2:
-				SequenceName = "Attack2";
-				break;
-			default:
-				UE_LOG(LogTemp, Error, TEXT("Unidentified animation montage number"));
-				break;
-		};
-		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-		AnimationState = EAnimationState::EAS_AnimationInProgress;
-	}
-}
-
-void AHeroCharacter::InitiateAttackWithoutWeapon()
-{
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithoutWeapon"));
-
-	// Play animation
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		int8 RandomSequence = FMath::RandRange(1, 2);
-		AnimInstance->Montage_Play(MontageAttack);
-		FName SequenceName;
-		switch (RandomSequence)
-		{
-			case 1:
-				SequenceName = "Punch1";
-				break;
-			case 2:
-				SequenceName = "Punch2";
-				break;
-			default:
-				UE_LOG(LogTemp, Error, TEXT("Unidentified animation montage number"));
-				break;
-		};
-		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-	}
-
 }
 
 void AHeroCharacter::AttackEnd()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
-	if (AWeapon* Weapon = Cast<AWeapon>(EquippedWeapon))
+	if (AWeapon* Weapon = Cast<AWeapon>(EquippedItem))
 	{
-		// TODO: why this does not throw err? 
 		Weapon->EnableOverlappingEvents(false);
 	}
 	else if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
@@ -231,11 +165,7 @@ void AHeroCharacter::AttackEnd()
 		Throwable->Throw(Direction);
 		EquippedItem = nullptr;
 	}
-	else if (AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon))
-	{
-
-	}
-	else if (!EquippedItem || !EquippedWeapon)
+	else if (!EquippedItem)
 	{
 		Fists->EnableOverlappingEvents(false);
 	}	
@@ -247,15 +177,17 @@ void AHeroCharacter::AttackStart()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
-	if (AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon))
+	if (HasItemTag(EquippedItem, "Weapon.FireWeapon"))
 	{
+		AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedItem);
 		FireWeapon->FireFromGun();
 	}
-	else if (IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedWeapon))
+	else if (HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
 	{
+		IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedItem);
 		Weapon->EnableOverlappingEvents(true);
 	}
-	else if (!EquippedItem || !EquippedWeapon)
+	else if (!EquippedItem)
 	{
 		Fists->EnableOverlappingEvents(true);
 	}	
@@ -284,47 +216,57 @@ void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)
 
 void AHeroCharacter::Unequip()
 {
-		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Unequip: %s"), *EquippedWeapon->GetName());
+		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Unequip: %s"), *EquippedItem->GetName());
 		CharacterState = ECharacterState::ECS_WithoutWeapon;
-		EquippedWeapon->Unequip();
-		EquippedWeapon = nullptr;
+		EquippedItem->Unequip();
 }
 
 void AHeroCharacter::Equip(AItem* Item)
 {
 	AttachItemToSocket(Item, "RightHandSocket");
 	OverlappedItem = nullptr;
-	// Change to MeeleWeaapon
-	if (AWeapon* Weapon = Cast<AWeapon>(Item))
+	if (HasItemTag(Item, FName("Weapon.MeeleWeapon")))
 	{
-		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a weapon: %s"), *Weapon->GetName());
-		EquippedWeapon = Weapon;
-		Weapon->Equip();
+		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a meele weapon: %s"), *Item->GetName());
 		CharacterState = ECharacterState::ECS_WithMeeleWeapon;
 	}
-	else if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(Item))
+	else if (HasItemTag(Item, FName("Weapon.FireWeapon")))
 	{
-		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a fire weapon: %s"), *FireWeapon->GetName());
-		EquippedWeapon = FireWeapon;
-		FireWeapon->Equip();
+		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a fire weapon: %s"), *Item->GetName());
 		CharacterState = ECharacterState::ECS_WithFireWeapon;
 	}
-	else if (IPickupInterface* PickableItem = Cast<IPickupInterface>(Item))
+	else if (HasItemTag(Item, FName("Weapon.Throwable")))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] Equip(): Equipping an item"));
+		IPickupInterface* PickableItem = Cast<IPickupInterface>(Item);
 		PickableItem->OnItemEquipped(*this);
-		EquippedItem = Item;
 		CharacterState = ECharacterState::ECS_WithItem;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Equip(): Picking unidentified object"));
+		return;
 	}	
+	EquippedItem = Item;
+}
+// ---------------------------------------------------
+// Animation section
+// ---------------------------------------------------
+void AHeroCharacter::InitiateAttackWithItem()
+{
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithItem"));
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		AnimInstance->Montage_Play(MontageAttack);
+		FName SequenceName = "Throw1";
+		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
+		AnimationState = EAnimationState::EAS_AnimationInProgress;
+	}
 }
 
 void AHeroCharacter::InitiateAttackWithFireWeapon()
 {
-	AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedWeapon);
+	AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedItem);
 	if (FireWeapon == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Trying to initiate attack with fire weapon, but FireWeapon is not set"));
@@ -343,11 +285,71 @@ void AHeroCharacter::InitiateAttackWithFireWeapon()
 	}
 }
 
-bool AHeroCharacter::CharacterIsMoving()
+void AHeroCharacter::InitiateAttackWithWeapon()
+{
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithWeapon"));
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		int8 RandomSequence = FMath::RandRange(1, 2);
+		AnimInstance->Montage_Play(MontageAttack);
+		FName SequenceName;
+		switch (RandomSequence)
+		{
+			case 1:
+				SequenceName = "Attack1";
+				break;
+			case 2:
+				SequenceName = "Attack2";
+				break;
+			default:
+				UE_LOG(LogTemp, Error, TEXT("Unidentified animation montage number"));
+				break;
+		};
+		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
+		AnimationState = EAnimationState::EAS_AnimationInProgress;
+	}
+}
+
+void AHeroCharacter::InitiateAttackWithoutWeapon()
+{
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithoutWeapon"));
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		int8 RandomSequence = FMath::RandRange(1, 2);
+		AnimInstance->Montage_Play(MontageAttack);
+		FName SequenceName;
+		switch (RandomSequence)
+		{
+			case 1:
+				SequenceName = "Punch1";
+				break;
+			case 2:
+				SequenceName = "Punch2";
+				break;
+			default:
+				UE_LOG(LogTemp, Error, TEXT("Unidentified animation montage number"));
+				break;
+		};
+		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
+	}
+
+}
+
+bool AHeroCharacter::CharacterIsMoving() const
 {
 	if (GetMovementComponent()->Velocity == FVector::ZeroVector)
 		return false;
 	return true;
+}
+
+bool AHeroCharacter::HasItemTag(const AItem *Item, const FName TagName) const
+{
+	if (!Item)
+	{
+		return false;
+	}
+	UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
+	return Item->ItemTag.HasTag(FGameplayTag::RequestGameplayTag(TagName));
 }
 
 

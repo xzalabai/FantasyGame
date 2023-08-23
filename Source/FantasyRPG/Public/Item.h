@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PublicEnums.h"
+#include "GameplayTagContainer.h"
+#include "GameplayTagAssetInterface.h"
 #include "Item.generated.h"
 
 
@@ -14,13 +16,14 @@ class USphereComponent;
 class UNiagaraComponent;
 
 UCLASS()
-class FANTASYRPG_API AItem : public AActor
+class FANTASYRPG_API AItem : public AActor, public IGameplayTagAssetInterface
 {
 	GENERATED_BODY()
 	
 public:	
 	AItem();
-
+	UPROPERTY(EditAnywhere, Category = "Gameplay Tags")
+	FGameplayTagContainer ItemTag;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly);
 	UStaticMeshComponent* MeshComponent;
 	UPROPERTY(EditAnywhere);
@@ -32,7 +35,6 @@ public:
 	UPROPERTY(EditAnywhere);
 	bool bAutoEquip = false;
 protected:
-
 	UPROPERTY(EditInstanceOnly)	
 	EItemState ItemState = EItemState::EIS_LayingOnGround;
 public:	
@@ -40,4 +42,5 @@ public:
 	virtual void Unequip();
 	void AttachToSocket(USkeletalMeshComponent* MeshComp, FName SocketName);
 	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip;}
+	virtual void GetOwnedGameplayTags(FGameplayTagContainer &TagContainer) const override { TagContainer = ItemTag; return;}
 };

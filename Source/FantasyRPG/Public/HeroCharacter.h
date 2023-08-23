@@ -3,15 +3,14 @@
 // TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
 // TODO: refactor Fist -> create cpp base
 
-// TODO: HIGH! (linked with Weapon to IWeapon) change equippedWeapon to equippedItem (so we can swap grenade with weapon)
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface 
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
-
+// TODO: HIGH! Fix Swap() weapons
 // TODO: MED add to enemy HP
 // TODO: MED refactor AttackStart/AttackEnd so it does not branch based on Casts (but based on enum perhaps(security))
 // TODO: MED refactor whole animationStart/iniateAttack with less spaghetti cod
-
+// TODO: MED remove ECharacterState and replace it in animation with gameplay tag
 // TODO: LOW replace animation BP for rrunning with Item
 
 #pragma once
@@ -30,9 +29,9 @@ class UAnimMontage;
 class UAttributesComponent;
 class UFistsComponent;
 class UBoxComponent;
-class UWeaponComponent;
 class AFist;
 class AProjectile;
+class UGameplayTagsManager;
 
 UCLASS()
 class FANTASYRPG_API AHeroCharacter : public ACharacter
@@ -47,8 +46,7 @@ public:
 	void AttackStart();
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
-	UPROPERTY(BlueprintReadWrite, Category=Weapon)
-	AItem* EquippedWeapon = nullptr;
+	UPROPERTY(BlueprintReadWrite, Category=Item)
 	AItem* EquippedItem = nullptr;
 
 protected:
@@ -77,8 +75,8 @@ protected:
 	void InitiateAttackWithFireWeapon();
 	void Equip(AItem* Item);	
 	void Unequip();
-	void SwapItem(AItem* WeaponToBeEquipped);
-	bool CharacterIsMoving();
+	void SwapItem(AItem* ItemToBeEquipped);
+	bool CharacterIsMoving() const;
 
 
 	UPROPERTY()
@@ -90,9 +88,7 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Components")
 	UFistsComponent* Fists;
-	UPROPERTY(BlueprintReadOnly, Category = "Components")
-	UWeaponComponent* WeaponController;
-
+	
 	// Montages
 	UPROPERTY(EditAnywhere, Category=Montages)
 	UAnimMontage* MontageAttack;
@@ -117,6 +113,8 @@ protected:
 private:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
+	UFUNCTION()
+	bool HasItemTag(const AItem *Item, const FName TagName) const;
 
 };
 
