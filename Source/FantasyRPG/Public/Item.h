@@ -7,6 +7,9 @@
 #include "PublicEnums.h"
 #include "GameplayTagContainer.h"
 #include "GameplayTagAssetInterface.h"
+#include "HeroCharacter.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 #include "Item.generated.h"
 
 
@@ -14,6 +17,8 @@ class UStaticMeshComponent;
 class UCapsuleComponent;
 class USphereComponent;
 class UNiagaraComponent;
+class AHeroCharacter;
+class UAnimInstance;
 
 UCLASS()
 class FANTASYRPG_API AItem : public AActor, public IGameplayTagAssetInterface
@@ -37,6 +42,13 @@ public:
 protected:
 	UPROPERTY(EditInstanceOnly)	
 	EItemState ItemState = EItemState::EIS_LayingOnGround;
+	void InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimInstance);
+	// Animations properties -----------------------------
+	UPROPERTY(EditAnywhere, Category=AnimationProperties)
+	UAnimMontage* Montage;
+	UPROPERTY(EditAnywhere, Category=AnimationProperties)
+	TArray<FName> AnimationSequenceName;
+	// ----------------------------------------------------
 public:	
 	virtual void Equip();
 	virtual void Unequip();

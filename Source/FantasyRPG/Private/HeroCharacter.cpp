@@ -83,7 +83,7 @@ void AHeroCharacter::Jump()
 
 void AHeroCharacter::ToggleEquip()
 {
-	if (!OverlappedItem)
+	if (EquippedItem && !OverlappedItem)
 	{
 		Unequip();
 	}
@@ -91,7 +91,7 @@ void AHeroCharacter::ToggleEquip()
 	{
 		SwapItem(OverlappedItem);
 	}
-	else if (OverlappedItem)
+	else if (OverlappedItem && !EquippedItem)
 	{
 		Equip(OverlappedItem);			
 	}
@@ -130,68 +130,72 @@ void AHeroCharacter::InitiateAttack()
 	// Invoked from Binding
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttack, Animation state: %d"), AnimationState);
 	if (AnimationState != EAnimationState::EAS_NoAnimation)
-		return;
-	switch (CharacterState )
 	{
-		case ECharacterState::ECS_WithMeeleWeapon:
-			InitiateAttackWithWeapon();
-			break;
-		case ECharacterState::ECS_WithFireWeapon:
-			InitiateAttackWithFireWeapon();
-			break;
-		case ECharacterState::ECS_WithItem:
-			InitiateAttackWithItem();
-			break;
-		case ECharacterState::ECS_WithoutWeapon:
-			InitiateAttackWithoutWeapon();
-			break;
-		default:
-			UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] InitiateAttack with default"));
-			break;
+		// Other animation in progress
+		return;
 	}
+
+	if (!(CharacterState == ECharacterState::ECS_WithMeeleWeapon) &&
+		!(CharacterState == ECharacterState::ECS_WithFireWeapon) &&
+		!(CharacterState == ECharacterState::ECS_WithoutWeapon) && 
+		!(CharacterState == ECharacterState::ECS_WithItem)
+		)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] InitiateAttack with unknown state"));
+		return;
+	}
+	AnimationState = EAnimationState::EAS_AnimationInProgress;
+
+	IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if (!Weapon)
+	{
+		// We don't have a weapon, so use fists
+		Weapon = Cast<IWeaponInterface>(Fists);
+	}
+	Weapon->InitiateAttack(*this, *AnimInstance);
+	
 }
 
 void AHeroCharacter::AttackEnd()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
-	if (AWeapon* Weapon = Cast<AWeapon>(EquippedItem))
+	AnimationState = EAnimationState::EAS_NoAnimation;
+	if (HasItemTag(EquippedItem, "Weapon.FireWeapon") || HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
 	{
-		Weapon->EnableOverlappingEvents(false);
+		IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
+		if (!Weapon)
+		{
+			Weapon = Cast<IWeaponInterface>(Fists);
+		}
+		Weapon->AttackMontageEnded();
 	}
-	else if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
+	else if (HasItemTag(EquippedItem, "Weapon.Throwable"))
 	{
+		IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem);
 		FVector Direction = GetActorForwardVector();
 		Throwable->Throw(Direction);
 		EquippedItem = nullptr;
 	}
-	else if (!EquippedItem)
-	{
-		Fists->EnableOverlappingEvents(false);
-	}	
-
-	AnimationState = EAnimationState::EAS_NoAnimation;
+	
 }
 
 void AHeroCharacter::AttackStart()
 {
+	AnimationState = EAnimationState::EAS_AnimationInProgress;
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
-	if (HasItemTag(EquippedItem, "Weapon.FireWeapon"))
+	if (HasItemTag(EquippedItem, "Weapon.FireWeapon") || HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
 	{
-		AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedItem);
-		FireWeapon->FireFromGun();
+		IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
+		if (!Weapon)
+		{
+			Weapon = Cast<IWeaponInterface>(Fists);
+		}
+		Weapon->AttackMontageStarted();
 	}
-	else if (HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
-	{
-		IWeaponInterface* Weapon = Cast<IWeaponInterface>(EquippedItem);
-		Weapon->EnableOverlappingEvents(true);
-	}
-	else if (!EquippedItem)
-	{
-		Fists->EnableOverlappingEvents(true);
-	}	
-	AnimationState = EAnimationState::EAS_AnimationInProgress;
+	
 }
 
 void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
@@ -216,9 +220,10 @@ void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)
 
 void AHeroCharacter::Unequip()
 {
-		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Unequip: %s"), *EquippedItem->GetName());
-		CharacterState = ECharacterState::ECS_WithoutWeapon;
-		EquippedItem->Unequip();
+	UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Unequip: %s"), *EquippedItem->GetName());
+	CharacterState = ECharacterState::ECS_WithoutWeapon;
+	EquippedItem->Unequip();
+	EquippedItem = nullptr;
 }
 
 void AHeroCharacter::Equip(AItem* Item)
@@ -248,91 +253,6 @@ void AHeroCharacter::Equip(AItem* Item)
 		return;
 	}	
 	EquippedItem = Item;
-}
-// ---------------------------------------------------
-// Animation section
-// ---------------------------------------------------
-void AHeroCharacter::InitiateAttackWithItem()
-{
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithItem"));
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		AnimInstance->Montage_Play(MontageAttack);
-		FName SequenceName = "Throw1";
-		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-		AnimationState = EAnimationState::EAS_AnimationInProgress;
-	}
-}
-
-void AHeroCharacter::InitiateAttackWithFireWeapon()
-{
-	AFireWeapon *FireWeapon = Cast<AFireWeapon>(EquippedItem);
-	if (FireWeapon == nullptr)
-	{
-		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Trying to initiate attack with fire weapon, but FireWeapon is not set"));
-		return;
-	}
-	if (CharacterIsMoving())
-	{
-		FireWeapon->FireFromGun();
-	}
-	else if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		AnimInstance->Montage_Play(MontageAttack);
-		FName SequenceName = "FireWeapon";
-		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-		AnimationState = EAnimationState::EAS_AnimationInProgress;
-	}
-}
-
-void AHeroCharacter::InitiateAttackWithWeapon()
-{
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithWeapon"));
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		int8 RandomSequence = FMath::RandRange(1, 2);
-		AnimInstance->Montage_Play(MontageAttack);
-		FName SequenceName;
-		switch (RandomSequence)
-		{
-			case 1:
-				SequenceName = "Attack1";
-				break;
-			case 2:
-				SequenceName = "Attack2";
-				break;
-			default:
-				UE_LOG(LogTemp, Error, TEXT("Unidentified animation montage number"));
-				break;
-		};
-		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-		AnimationState = EAnimationState::EAS_AnimationInProgress;
-	}
-}
-
-void AHeroCharacter::InitiateAttackWithoutWeapon()
-{
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttackWithoutWeapon"));
-	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
-	{
-		int8 RandomSequence = FMath::RandRange(1, 2);
-		AnimInstance->Montage_Play(MontageAttack);
-		FName SequenceName;
-		switch (RandomSequence)
-		{
-			case 1:
-				SequenceName = "Punch1";
-				break;
-			case 2:
-				SequenceName = "Punch2";
-				break;
-			default:
-				UE_LOG(LogTemp, Error, TEXT("Unidentified animation montage number"));
-				break;
-		};
-		AnimInstance->Montage_JumpToSection(SequenceName, MontageAttack);
-	}
-
 }
 
 bool AHeroCharacter::CharacterIsMoving() const

@@ -6,6 +6,9 @@
 #include "Components/SceneComponent.h"
 #include "CharacterInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "HeroCharacter.h"
+#include "Animation/AnimInstance.h"
+#include "Animation/AnimMontage.h"
 
 
 AWeapon::AWeapon()
@@ -66,10 +69,25 @@ void AWeapon::PerformBoxTrace()
     }
 }
 
-void AWeapon::EnableOverlappingEvents(bool Enable)
+void AWeapon::EnableOverlappingEvents(bool bEnable)
 {
     // Overlapping events on the sword razor    
-    OverlapArea->SetGenerateOverlapEvents(Enable);
+    OverlapArea->SetGenerateOverlapEvents(bEnable);
+}
+
+void AWeapon::InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimInstance)
+{
+    AItem::InitiateAttack(Character, AnimInstance);
+}
+
+void AWeapon::AttackMontageStarted()
+{
+	EnableOverlappingEvents(true);
+}
+
+void AWeapon::AttackMontageEnded()
+{
+	
 }
 
 

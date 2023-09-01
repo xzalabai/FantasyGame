@@ -7,11 +7,15 @@
 // TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface 
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
+// TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
+// TODO: HIGH! Move animations to weapons and Get them from there
+// TODO: HIGH! Use const for functions and parameters
 // TODO: MED add to enemy HP
 // TODO: MED refactor AttackStart/AttackEnd so it does not branch based on Casts (but based on enum perhaps(security))
 // TODO: MED refactor whole animationStart/iniateAttack with less spaghetti cod
 // TODO: MED remove ECharacterState and replace it in animation with gameplay tag
 // TODO: LOW replace animation BP for rrunning with Item
+// TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
 
 #pragma once
 
@@ -48,6 +52,7 @@ public:
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	UPROPERTY(BlueprintReadWrite, Category=Item)
 	AItem* EquippedItem = nullptr;
+	bool CharacterIsMoving() const;
 
 protected:
 	// Input context
@@ -69,16 +74,11 @@ protected:
 	void InitiateAttack();
 	void ToggleEquip();
 	void AutoEquip(AItem *Item);
-	void InitiateAttackWithWeapon();
 	void InitiateAttackWithItem();
-	void InitiateAttackWithoutWeapon();
-	void InitiateAttackWithFireWeapon();
 	void Equip(AItem* Item);	
 	void Unequip();
 	void SwapItem(AItem* ItemToBeEquipped);
-	bool CharacterIsMoving() const;
-
-
+	
 	UPROPERTY()
 	AItem* OverlappedItem;
 	UPROPERTY(EditAnywhere)
@@ -86,7 +86,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* RightHandCollider;
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UFistsComponent* Fists;
 	
 	// Montages

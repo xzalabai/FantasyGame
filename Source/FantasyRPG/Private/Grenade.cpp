@@ -63,6 +63,16 @@ void AGrenade::OnThrowableOverlap(UPrimitiveComponent* HitComponent, AActor* Oth
 	Destroy();
 }
 
+void AGrenade::InitiateAttack(class AHeroCharacter &Character, class UAnimInstance &AnimInstance)
+{
+	AItem::InitiateAttack(Character, AnimInstance);
+}
+
+void AGrenade::EnableOverlappingEvents(bool Enable)
+{
+	return;
+}
+
 void AGrenade::PerformSphereTrace()
 {
 	FCollisionObjectQueryParams CollisionObjectTypes;
@@ -79,5 +89,15 @@ void AGrenade::PerformSphereTrace()
         	ITarget->OnReceivedHit(GetActorLocation());
     	}
 	}
+}
+
+void AGrenade::AttackMontageStarted()
+{
+	
+}
+
+void AGrenade::AttackMontageEnded()
+{
+	
 }
 

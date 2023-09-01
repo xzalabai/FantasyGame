@@ -7,6 +7,8 @@
 
 class UBoxComponent;
 class USceneComponent;
+class UAnimInstance;
+class AHeroCharacter;
 
 UCLASS()
 class FANTASYRPG_API AWeapon : public AItem, public IWeaponInterface
@@ -14,10 +16,13 @@ class FANTASYRPG_API AWeapon : public AItem, public IWeaponInterface
 	GENERATED_BODY()
 public:
 	AWeapon();
-	void EnableOverlappingEvents(bool Enable);
+	virtual void EnableOverlappingEvents(bool bEnable) override;
 	FORCEINLINE UBoxComponent* GetOverlapArea() const { return OverlapArea; }
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTrace();
+	virtual void InitiateAttack(class AHeroCharacter &Character, class UAnimInstance &AnimInstance) override;
+	virtual void AttackMontageStarted();
+	virtual void AttackMontageEnded();
 
 protected:
 	virtual void BeginPlay() override;
@@ -32,3 +37,7 @@ private:
 	UFUNCTION()
 	virtual void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 };
+
+
+
+

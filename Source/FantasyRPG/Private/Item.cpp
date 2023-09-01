@@ -5,7 +5,6 @@
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Animation/AnimInstance.h"
-
 #include "NiagaraComponent.h"
 
 AItem::AItem()
@@ -34,6 +33,14 @@ void AItem::Equip()
 {
 	ItemState = EItemState::EIS_Equipped;
 	TriggerCollider->SetGenerateOverlapEvents(false);
+}
+
+void AItem::InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimInstance)
+{
+    UE_LOG(LogTemp, Display, TEXT("[AItem] InitiateAttack"));
+    AnimInstance.Montage_Play(Montage);
+    int32 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
+	AnimInstance.Montage_JumpToSection(AnimationSequenceName[RandomIndex], Montage);
 }
 
 void AItem::Unequip()
