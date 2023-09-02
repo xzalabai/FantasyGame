@@ -1,14 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-//
 // TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
 // TODO: refactor Fist -> create cpp base
 
 // TODO: HIGH! create UActorComponent for weapon equiping
-// TODO: HIGH! change Weapon to MeeleWeapon: public IWeaponInterface ..... FireWeapon: public IWeaponInterface 
+// TODO: HIGH! Find out a way how to fire a weapon (now character is standing)
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
-// TODO: HIGH! Move animations to weapons and Get them from there
 // TODO: HIGH! Use const for functions and parameters
 // TODO: MED add to enemy HP
 // TODO: MED refactor AttackStart/AttackEnd so it does not branch based on Casts (but based on enum perhaps(security))
@@ -16,7 +13,9 @@
 // TODO: MED remove ECharacterState and replace it in animation with gameplay tag
 // TODO: LOW replace animation BP for rrunning with Item
 // TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
-
+// --------------------------------------------------------------
+// Features:
+// - Aiming based on the camera aim
 #pragma once
 
 #include "CoreMinimal.h"
@@ -24,7 +23,6 @@
 #include "InputActionValue.h"
 #include "PublicEnums.h"
 #include "HeroCharacter.generated.h"
-
 
 class UInputMappingContext;
 class UInputAction;

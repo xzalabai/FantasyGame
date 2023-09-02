@@ -46,7 +46,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	// }
 	if (AEnemy* Enemy = Cast<AEnemy>(OtherActor))
 	{
-		Enemy->OnReceivedHit(Hit.ImpactPoint);
+		Enemy->OnReceivedHit(Hit.ImpactPoint, 50);
 	}
 	//Destroy();
 }

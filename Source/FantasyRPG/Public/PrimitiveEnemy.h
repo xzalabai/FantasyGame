@@ -12,13 +12,14 @@ class FANTASYRPG_API APrimitiveEnemy : public AEnemy
 	GENERATED_BODY()
 
 private:
-	virtual void OnReceivedHit(const FVector& ImpactPoint) override;
-	float DotProduct(const FVector& Vector1, const FVector& Vector2);
+	virtual void OnReceivedHit(const FVector& ImpactPoint, int Damage) override;
 
 private:
 	// Montages
 	UPROPERTY(EditAnywhere, Category=Montages)
-	UAnimMontage* DeathMontage;
+	UAnimMontage* AnimMontage;
 	UFUNCTION(BlueprintCallable)
 	void LayingDead();
+	virtual void ProcessDeath(bool bForwardHit);
+	virtual void ProcessHit(bool bForwardHit);
 };

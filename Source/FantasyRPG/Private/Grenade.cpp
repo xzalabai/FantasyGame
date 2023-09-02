@@ -25,9 +25,15 @@ void AGrenade::Tick(float DeltaTime)
 void AGrenade::Throw(FVector& Direction)
 {
 		UE_LOG(LogTemp, Warning, TEXT("Throwing a grenade"));
-        float ThrowForce = 1500.0f;
+		
+		// detach from character
+		AHeroCharacter* Character = GetOwnerCharacter();
+		Character->EquippedItem = nullptr;
+
 		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 		ItemState = EItemState::EIS_LayingOnGround;
+		
+		float ThrowForce = 1500.0f;
 		TogglePhysics(true);
         MeshComponent->AddImpulse(Direction * ThrowForce, "", true);
 }
@@ -63,9 +69,9 @@ void AGrenade::OnThrowableOverlap(UPrimitiveComponent* HitComponent, AActor* Oth
 	Destroy();
 }
 
-void AGrenade::InitiateAttack(class AHeroCharacter &Character, class UAnimInstance &AnimInstance)
+void AGrenade::PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance)
 {
-	AItem::InitiateAttack(Character, AnimInstance);
+	AItem::PerformMontage(Character, AnimInstance);
 }
 
 void AGrenade::EnableOverlappingEvents(bool Enable)
@@ -86,7 +92,7 @@ void AGrenade::PerformSphereTrace()
 	{
 		if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     	{
-        	ITarget->OnReceivedHit(GetActorLocation());
+        	ITarget->OnReceivedHit(GetActorLocation(), 50);
     	}
 	}
 }
@@ -98,6 +104,6 @@ void AGrenade::AttackMontageStarted()
 
 void AGrenade::AttackMontageEnded()
 {
-	
+
 }
 

@@ -20,7 +20,7 @@ public:
 	FORCEINLINE UBoxComponent* GetOverlapArea() const { return OverlapArea; }
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTrace();
-	virtual void InitiateAttack(class AHeroCharacter &Character, class UAnimInstance &AnimInstance) override;
+	virtual void PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance) override;
 	virtual void AttackMontageStarted();
 	virtual void AttackMontageEnded();
 
@@ -33,7 +33,12 @@ protected:
 	bool Picked = false;
 	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* OverlapArea;
+	UPROPERTY(EditDefaultsOnly)
+	int Damage;
+
 private:
+	UPROPERTY()
+	TArray<AActor*> AffectedActors;
 	UFUNCTION()
 	virtual void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 };

@@ -21,6 +21,8 @@ public:
 	int MaxHealth;
 
 	FORCEINLINE int GetHealth() const { return Health; }
-	FORCEINLINE void AddHealth(int NewHealth) { UE_LOG(LogTemp, Warning, TEXT("HP added %d"), NewHealth); Health += NewHealth; }
+	FORCEINLINE bool IsAlive() const { return Health > 0; }
+	FORCEINLINE void AddHealth(int NewHealth) { UE_LOG(LogTemp, Display, TEXT("HP added %d"), NewHealth); Health += NewHealth; }
+	void DecreaseHealth(int DecreaseHealth);
 	
 };

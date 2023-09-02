@@ -39,20 +39,19 @@ public:
 	EItemType ItemType;
 	UPROPERTY(EditAnywhere);
 	bool bAutoEquip = false;
-protected:
-	UPROPERTY(EditInstanceOnly)	
-	EItemState ItemState = EItemState::EIS_LayingOnGround;
-	void InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimInstance);
-	// Animations properties -----------------------------
-	UPROPERTY(EditAnywhere, Category=AnimationProperties)
-	UAnimMontage* Montage;
-	UPROPERTY(EditAnywhere, Category=AnimationProperties)
-	TArray<FName> AnimationSequenceName;
-	// ----------------------------------------------------
-public:	
 	virtual void Equip();
 	virtual void Unequip();
 	void AttachToSocket(USkeletalMeshComponent* MeshComp, FName SocketName);
 	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip;}
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer &TagContainer) const override { TagContainer = ItemTag; return;}
+protected:
+	UPROPERTY(EditInstanceOnly)	
+	EItemState ItemState = EItemState::EIS_LayingOnGround;
+	void PerformMontage(AHeroCharacter &Character, UAnimInstance &AnimInstance);
+	// Animations properties -----------------------------
+	UPROPERTY(EditAnywhere, Category=AnimationProperties)
+	UAnimMontage* Montage;
+	UPROPERTY(EditAnywhere, Category=AnimationProperties)
+	TArray<FName> AnimationSequenceName;
+	AHeroCharacter* GetOwnerCharacter();
 };

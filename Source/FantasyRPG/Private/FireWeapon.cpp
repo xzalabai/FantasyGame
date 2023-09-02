@@ -39,7 +39,7 @@ void AFireWeapon::FireFromGun()
 	}
 }
 
-void AFireWeapon::InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimInstance)
+void AFireWeapon::PerformMontage(AHeroCharacter &Character, UAnimInstance &AnimInstance)
 {
 	if (Character.CharacterIsMoving())
 	{
@@ -48,14 +48,16 @@ void AFireWeapon::InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimI
 	}
 	else
 	{
-		AWeapon::InitiateAttack(Character, AnimInstance);
+		FireFromGun();
+		Character.AttackEnd();
+		//AWeapon::PerformMontage(Character, AnimInstance);
 	}
 	
 }
 
 void AFireWeapon::AttackMontageStarted()
 {
-	AHeroCharacter* Character = GetCharacter();
+	AHeroCharacter* Character = GetOwnerCharacter();
 	if (!Character)
 		return;
 
@@ -67,23 +69,11 @@ void AFireWeapon::AttackMontageStarted()
 
 void AFireWeapon::AttackMontageEnded()
 {
-	AHeroCharacter* Character = GetCharacter();
+	AHeroCharacter* Character = GetOwnerCharacter();
 	if (!Character)
 		return;
 	if (!(Character->CharacterIsMoving()))
 	{
-		FireFromGun();
-		//Character->AttackEnd();
+		//FireFromGun();
 	}
-}
-
-AHeroCharacter* AFireWeapon::GetCharacter()
-{
-	AHeroCharacter* Character = Cast<AHeroCharacter>(GetAttachParentActor());
-	if (!Character)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Character not found"));
-		return nullptr;
-	}
-	return Character;
 }

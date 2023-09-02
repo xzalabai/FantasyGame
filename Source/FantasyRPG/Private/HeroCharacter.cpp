@@ -135,17 +135,8 @@ void AHeroCharacter::InitiateAttack()
 		return;
 	}
 
-	if (!(CharacterState == ECharacterState::ECS_WithMeeleWeapon) &&
-		!(CharacterState == ECharacterState::ECS_WithFireWeapon) &&
-		!(CharacterState == ECharacterState::ECS_WithoutWeapon) && 
-		!(CharacterState == ECharacterState::ECS_WithItem)
-		)
-	{
-		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] InitiateAttack with unknown state"));
-		return;
-	}
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
-
+	
 	IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if (!Weapon)
@@ -153,8 +144,23 @@ void AHeroCharacter::InitiateAttack()
 		// We don't have a weapon, so use fists
 		Weapon = Cast<IWeaponInterface>(Fists);
 	}
-	Weapon->InitiateAttack(*this, *AnimInstance);
-	
+	Weapon->PerformMontage(*this, *AnimInstance);
+}
+
+void AHeroCharacter::AttackStart()
+{
+	// Called from ABP
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
+	AnimationState = EAnimationState::EAS_AnimationInProgress;
+	if (HasItemTag(EquippedItem, "Weapon.FireWeapon") || HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
+	{
+		IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
+		if (!Weapon)
+		{
+			Weapon = Cast<IWeaponInterface>(Fists);
+		}
+		Weapon->AttackMontageStarted();
+	}
 }
 
 void AHeroCharacter::AttackEnd()
@@ -173,29 +179,16 @@ void AHeroCharacter::AttackEnd()
 	}
 	else if (HasItemTag(EquippedItem, "Weapon.Throwable"))
 	{
-		IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem);
-		FVector Direction = GetActorForwardVector();
-		Throwable->Throw(Direction);
-		EquippedItem = nullptr;
-	}
-	
-}
-
-void AHeroCharacter::AttackStart()
-{
-	AnimationState = EAnimationState::EAS_AnimationInProgress;
-	// Called from ABP
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
-	if (HasItemTag(EquippedItem, "Weapon.FireWeapon") || HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
-	{
-		IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
-		if (!Weapon)
+		if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
 		{
-			Weapon = Cast<IWeaponInterface>(Fists);
+			FVector Direction = GetActorForwardVector();
+			Throwable->Throw(Direction);
 		}
-		Weapon->AttackMontageStarted();
+		if (IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem))
+		{
+			Weapon->AttackMontageEnded();
+		}
 	}
-	
 }
 
 void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)

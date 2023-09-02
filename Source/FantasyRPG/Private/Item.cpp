@@ -35,9 +35,9 @@ void AItem::Equip()
 	TriggerCollider->SetGenerateOverlapEvents(false);
 }
 
-void AItem::InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimInstance)
+void AItem::PerformMontage(AHeroCharacter &Character, UAnimInstance &AnimInstance)
 {
-    UE_LOG(LogTemp, Display, TEXT("[AItem] InitiateAttack"));
+    UE_LOG(LogTemp, Display, TEXT("[AItem] PerformMontage"));
     AnimInstance.Montage_Play(Montage);
     int32 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
 	AnimInstance.Montage_JumpToSection(AnimationSequenceName[RandomIndex], Montage);
@@ -67,4 +67,15 @@ void AItem::Unequip()
 		//SetActorRotation(FRotator(0,0,0));
 		SetActorLocation(FVector(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, HitResult.ImpactPoint.Z + 20.0f));
 	}
+}
+
+AHeroCharacter* AItem::GetOwnerCharacter()
+{
+	AHeroCharacter* Character = Cast<AHeroCharacter>(GetAttachParentActor());
+	if (!Character)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Character not found"));
+		return nullptr;
+	}
+	return Character;
 }

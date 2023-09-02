@@ -20,7 +20,7 @@ public:
 	AFireWeapon();
 	virtual void EnableOverlappingEvents(bool Enable) override;
 	void FireFromGun();
-	virtual void InitiateAttack(AHeroCharacter& Character, UAnimInstance& AnimInstance) override;
+	virtual void PerformMontage(AHeroCharacter& Character, UAnimInstance& AnimInstance) override;
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
 private:
@@ -28,8 +28,6 @@ private:
 	TSubclassOf<AProjectile> ProjectileClass;
 	UPROPERTY(EditAnywhere)
 	USceneComponent* Muzzle;
-	AHeroCharacter* GetCharacter();
-
 };
 
 

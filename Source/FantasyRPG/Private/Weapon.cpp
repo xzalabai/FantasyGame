@@ -65,7 +65,16 @@ void AWeapon::PerformBoxTrace()
 
     if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     {
-        ITarget->OnReceivedHit(OutHit.ImpactPoint);
+        UE_LOG(LogTemp, Warning, TEXT("affecte actors - %d"), AffectedActors.Num());
+        if (AffectedActors.Contains(OutHit.GetActor()))
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Same actor"));
+            // Actor is already in the list of affected
+            return;
+        }
+        UE_LOG(LogTemp, Warning, TEXT("New actor"));
+        ITarget->OnReceivedHit(OutHit.ImpactPoint, 50);
+        AffectedActors.Add(OutHit.GetActor());
     }
 }
 
@@ -75,9 +84,9 @@ void AWeapon::EnableOverlappingEvents(bool bEnable)
     OverlapArea->SetGenerateOverlapEvents(bEnable);
 }
 
-void AWeapon::InitiateAttack(AHeroCharacter &Character, UAnimInstance &AnimInstance)
+void AWeapon::PerformMontage(AHeroCharacter &Character, UAnimInstance &AnimInstance)
 {
-    AItem::InitiateAttack(Character, AnimInstance);
+    AItem::PerformMontage(Character, AnimInstance);
 }
 
 void AWeapon::AttackMontageStarted()
@@ -87,7 +96,8 @@ void AWeapon::AttackMontageStarted()
 
 void AWeapon::AttackMontageEnded()
 {
-	
+    UE_LOG(LogTemp, Warning, TEXT("MONTAGE"));
+	AffectedActors.Empty();
 }
 
 

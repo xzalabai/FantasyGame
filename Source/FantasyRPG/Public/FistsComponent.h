@@ -21,7 +21,7 @@ public:
 	void EnableOverlappingEvents(bool bEnable);
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTraceOnFists();
-	virtual void InitiateAttack(class AHeroCharacter &Character, class UAnimInstance &AnimInstance);
+	virtual void PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance);
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
 protected:

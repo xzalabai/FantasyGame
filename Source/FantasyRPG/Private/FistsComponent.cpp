@@ -45,7 +45,7 @@ void UFistsComponent::PerformBoxTraceOnFists()
 	RightHand->PerformBoxTrace();
 }
 
-void UFistsComponent::InitiateAttack(class AHeroCharacter &Character, class UAnimInstance &AnimInstance)
+void UFistsComponent::PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance)
 {
 	UE_LOG(LogTemp, Display, TEXT("[UFistsComponent] InitiateAttack"));
     AnimInstance.Montage_Play(Montage);
@@ -65,5 +65,5 @@ void UFistsComponent::AttackMontageStarted()
 
 void UFistsComponent::AttackMontageEnded()
 {
-	
+	EnableOverlappingEvents(false);
 }

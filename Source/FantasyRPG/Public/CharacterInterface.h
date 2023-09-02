@@ -16,5 +16,5 @@ class FANTASYRPG_API ICharacterInterface
 {
 	GENERATED_BODY()
 public:
-	virtual void OnReceivedHit(const FVector& ImpactDirection) = 0;
+	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) = 0;
 };

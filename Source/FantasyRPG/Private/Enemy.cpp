@@ -1,28 +1,23 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 
 #include "Enemy.h"
 #include "PhysicsEngine/ConstraintInstance.h"
+#include "AttributesComponent.h"
 #include "Components/CapsuleComponent.h"
 
-
-// Sets default values
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
-    
+    Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attributes"));
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -30,14 +25,20 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AEnemy::OnReceivedHit(const FVector& ImpactDirection)
+void AEnemy::OnReceivedHit(const FVector& ImpactDirection, int Damage)
 {
-	UE_LOG(LogTemp, Warning, TEXT("This method should be overriden"));
+	Attributes->DecreaseHealth(Damage);
 }
 
-void AEnemy::Death()
+void AEnemy::ProcessHit()
 {
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+}
+
+void AEnemy::ProcessDeath()
+{
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    GetMesh()->SetGenerateOverlapEvents(false);
 }
 
 FVector AEnemy::CalculateVectorDirection(FVector PointA, FVector PointB)
@@ -50,5 +51,13 @@ FVector AEnemy::CalculateVectorDirection(FVector PointA, FVector PointB)
     // Position of the aligned point by adding the direction multiplied by the distance to PointB
     FVector Multiplier(Direction.X * Distance, Direction.Y * Distance, Direction.Z);
     return PointB + Multiplier;
+}
+
+bool AEnemy::IsHitFromFront(const FVector &ImpactPoint)
+{
+	FVector OutHitDirection = CalculateVectorDirection(ImpactPoint, GetActorLocation());
+	float DotProduct = FVector::DotProduct(OutHitDirection, GetActorLocation());
+	//UKismetSystemLibrary::DrawDebugLine(GetWorld(),OutHitDirection, GetActorLocation(), FLinearColor::Red, 40, 10);
+	return (DotProduct >= 0) ?  true : false;
 }
 

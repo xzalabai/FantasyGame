@@ -12,6 +12,6 @@ class FANTASYRPG_API ARagdollEnemy : public AEnemy
 	GENERATED_BODY()
 
 public:
-	virtual void OnReceivedHit(const FVector& ImpactDirection) override;
+	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
 };
 
