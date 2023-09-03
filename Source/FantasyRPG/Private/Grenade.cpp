@@ -79,6 +79,7 @@ void AGrenade::EnableOverlappingEvents(bool Enable)
 	return;
 }
 
+
 void AGrenade::PerformSphereTrace()
 {
 	FCollisionObjectQueryParams CollisionObjectTypes;
@@ -107,3 +108,7 @@ void AGrenade::AttackMontageEnded()
 
 }
 
+void AGrenade::PerformActionOnNotify()
+{
+	
+}

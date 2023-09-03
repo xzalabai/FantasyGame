@@ -23,6 +23,7 @@ public:
 	virtual void PerformMontage(AHeroCharacter& Character, UAnimInstance& AnimInstance) override;
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
+	virtual void PerformActionOnNotify() override;
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AProjectile> ProjectileClass;

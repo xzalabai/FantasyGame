@@ -16,6 +16,7 @@
 #include "Projectile.h"
 #include "FistsComponent.h"
 #include "Fist.h"
+#include "Camera/CameraComponent.h"
 #include "GameplayTagsManager.h"
 #include "GameFramework/PawnMovementComponent.h"
 
@@ -42,7 +43,11 @@ void AHeroCharacter::BeginPlay()
 		Caps->OnComponentBeginOverlap.AddDynamic(this, &AHeroCharacter::OnTriggerBeginOverlap);
 		Caps->OnComponentEndOverlap.AddDynamic(this, &AHeroCharacter::OnTriggerEndOverlap);
 	}
-	Fists->RegisterHandColliders();
+	CameraComponent = FindComponentByClass<UCameraComponent>();
+	if (!CameraComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Camera not found!"));
+	}
 }
 
 void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -152,15 +157,16 @@ void AHeroCharacter::AttackStart()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
-	if (HasItemTag(EquippedItem, "Weapon.FireWeapon") || HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
+	if (HasItemTag(EquippedItem, "Weapon.Throwable"))
 	{
-		IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
-		if (!Weapon)
-		{
-			Weapon = Cast<IWeaponInterface>(Fists);
-		}
-		Weapon->AttackMontageStarted();
+		return;
 	}
+	IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
+	if (!Weapon)
+	{
+		Weapon = Cast<IWeaponInterface>(Fists);
+	}
+	Weapon->AttackMontageStarted();
 }
 
 void AHeroCharacter::AttackEnd()
@@ -168,16 +174,7 @@ void AHeroCharacter::AttackEnd()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
 	AnimationState = EAnimationState::EAS_NoAnimation;
-	if (HasItemTag(EquippedItem, "Weapon.FireWeapon") || HasItemTag(EquippedItem, "Weapon.MeeleWeapon"))
-	{
-		IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
-		if (!Weapon)
-		{
-			Weapon = Cast<IWeaponInterface>(Fists);
-		}
-		Weapon->AttackMontageEnded();
-	}
-	else if (HasItemTag(EquippedItem, "Weapon.Throwable"))
+	if (HasItemTag(EquippedItem, "Weapon.Throwable"))
 	{
 		if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
 		{
@@ -188,7 +185,15 @@ void AHeroCharacter::AttackEnd()
 		{
 			Weapon->AttackMontageEnded();
 		}
+		return;
 	}
+	IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
+	if (!Weapon)
+	{
+		Weapon = Cast<IWeaponInterface>(Fists);
+	}
+	Weapon->AttackMontageEnded();
+
 }
 
 void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
@@ -265,4 +270,7 @@ bool AHeroCharacter::HasItemTag(const AItem *Item, const FName TagName) const
 	return Item->ItemTag.HasTag(FGameplayTag::RequestGameplayTag(TagName));
 }
 
-
+UCameraComponent* AHeroCharacter::GetCharacterCamera()
+{
+	return CameraComponent;
+}

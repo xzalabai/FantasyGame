@@ -33,6 +33,7 @@ public:
 	virtual void EnableOverlappingEvents(bool Enable);
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
+	virtual void PerformActionOnNotify() override;
 };
 
 

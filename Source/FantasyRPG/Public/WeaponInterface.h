@@ -4,7 +4,7 @@
 #include "UObject/Interface.h"
 #include "WeaponInterface.generated.h"
 
-UINTERFACE(MinimalAPI)
+UINTERFACE(MinimalAPI, NotBlueprintable)
 class UWeaponInterface : public UInterface
 {
 	GENERATED_BODY()
@@ -18,4 +18,6 @@ public:
 	virtual void PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance) = 0;
 	virtual void AttackMontageStarted() = 0;
 	virtual void AttackMontageEnded() = 0;
+	UFUNCTION(BlueprintCallable, Category = "Loot")
+	virtual void PerformActionOnNotify() = 0;
 };

@@ -51,7 +51,7 @@ void AWeapon::PerformBoxTrace()
     FHitResult OutHit;
     TArray<AActor*> ActorsToIgnore;
     ActorsToIgnore.Add(this);
-    UKismetSystemLibrary::BoxTraceSingle(
+    bool bHit = UKismetSystemLibrary::BoxTraceSingle(
         this,
         StartTrace->GetComponentLocation(),
         EndTrace->GetComponentLocation(),
@@ -62,17 +62,14 @@ void AWeapon::PerformBoxTrace()
         ActorsToIgnore, EDrawDebugTrace::ForDuration,
         OutHit,
         true);
-
+    UE_LOG(LogTemp, Display, TEXT("[AWeapon] Performed trace, hit: %d"), bHit ? 1 :0);
     if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     {
-        UE_LOG(LogTemp, Warning, TEXT("affecte actors - %d"), AffectedActors.Num());
         if (AffectedActors.Contains(OutHit.GetActor()))
         {
-            UE_LOG(LogTemp, Warning, TEXT("Same actor"));
             // Actor is already in the list of affected
             return;
         }
-        UE_LOG(LogTemp, Warning, TEXT("New actor"));
         ITarget->OnReceivedHit(OutHit.ImpactPoint, 50);
         AffectedActors.Add(OutHit.GetActor());
     }
@@ -96,8 +93,11 @@ void AWeapon::AttackMontageStarted()
 
 void AWeapon::AttackMontageEnded()
 {
-    UE_LOG(LogTemp, Warning, TEXT("MONTAGE"));
 	AffectedActors.Empty();
 }
 
+void AWeapon::PerformActionOnNotify()
+{
+	PerformBoxTrace();
+}
 

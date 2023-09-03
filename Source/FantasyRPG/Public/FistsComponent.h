@@ -20,10 +20,11 @@ public:
 	void RegisterHandColliders();
 	void EnableOverlappingEvents(bool bEnable);
 	UFUNCTION(BlueprintCallable)
-	void PerformBoxTraceOnFists();
+	void PerformBoxTrace();
 	virtual void PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance);
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
+	virtual void PerformActionOnNotify() override;
 protected:
 	virtual void BeginPlay() override;
 	// Animations properties -----------------------------

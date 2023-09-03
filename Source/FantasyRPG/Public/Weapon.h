@@ -35,6 +35,7 @@ protected:
 	UBoxComponent* OverlapArea;
 	UPROPERTY(EditDefaultsOnly)
 	int Damage;
+	virtual void PerformActionOnNotify() override;
 
 private:
 	UPROPERTY()
@@ -42,6 +43,7 @@ private:
 	UFUNCTION()
 	virtual void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 };
+
 
 
 

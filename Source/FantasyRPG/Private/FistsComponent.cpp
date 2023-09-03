@@ -35,11 +35,12 @@ void UFistsComponent::RegisterHandColliders()
 
 void UFistsComponent::EnableOverlappingEvents(bool bEnable)
 {
+	UE_LOG(LogTemp, Display, TEXT("[UFistsComponent] Enable Overlapping events %d"), bEnable ? 1 : 0);
 	LeftHand->EnableOverlappingEvents(bEnable);
 	RightHand->EnableOverlappingEvents(bEnable);
 }
 
-void UFistsComponent::PerformBoxTraceOnFists()
+void UFistsComponent::PerformBoxTrace()
 {
 	LeftHand->PerformBoxTrace();
 	RightHand->PerformBoxTrace();
@@ -66,4 +67,10 @@ void UFistsComponent::AttackMontageStarted()
 void UFistsComponent::AttackMontageEnded()
 {
 	EnableOverlappingEvents(false);
+}
+
+void UFistsComponent::PerformActionOnNotify()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Your message"));
+	PerformBoxTrace();
 }

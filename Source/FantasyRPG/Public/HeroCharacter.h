@@ -7,6 +7,8 @@
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
 // TODO: HIGH! Use const for functions and parameters
+// TODO: HIGH! Change Throwing Items to Weapons
+// TODO: MED fists as a weapon, then change attackStart etc.
 // TODO: MED add to enemy HP
 // TODO: MED refactor AttackStart/AttackEnd so it does not branch based on Casts (but based on enum perhaps(security))
 // TODO: MED refactor whole animationStart/iniateAttack with less spaghetti cod
@@ -34,6 +36,7 @@ class UBoxComponent;
 class AFist;
 class AProjectile;
 class UGameplayTagsManager;
+class UCameraComponent;
 
 UCLASS()
 class FANTASYRPG_API AHeroCharacter : public ACharacter
@@ -51,6 +54,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category=Item)
 	AItem* EquippedItem = nullptr;
 	bool CharacterIsMoving() const;
+	UCameraComponent* GetCharacterCamera();
 
 protected:
 	// Input context
@@ -66,6 +70,7 @@ protected:
 	UInputAction* AttackAction;
 	UPROPERTY(EditAnywhere, Category=Input)
 	UInputAction* EquipAction;
+	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	virtual void Jump() override;
@@ -83,6 +88,8 @@ protected:
 	UBoxComponent* LeftHandCollider;
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* RightHandCollider;
+	UPROPERTY(BlueprintReadOnly)
+	UCameraComponent* CameraComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UFistsComponent* Fists;
