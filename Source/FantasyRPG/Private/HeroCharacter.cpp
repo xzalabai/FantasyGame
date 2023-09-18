@@ -48,6 +48,7 @@ void AHeroCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Camera not found!"));
 	}
+	Fists->RegisterHandColliders();
 }
 
 void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -157,7 +158,7 @@ void AHeroCharacter::AttackStart()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
-	if (HasItemTag(EquippedItem, "Weapon.Throwable"))
+	if (HasItemTag(EquippedItem, "Item.Throwable"))
 	{
 		return;
 	}
@@ -174,7 +175,7 @@ void AHeroCharacter::AttackEnd()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
 	AnimationState = EAnimationState::EAS_NoAnimation;
-	if (HasItemTag(EquippedItem, "Weapon.Throwable"))
+	if (HasItemTag(EquippedItem, "Item.Throwable"))
 	{
 		if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
 		{
@@ -238,7 +239,7 @@ void AHeroCharacter::Equip(AItem* Item)
 		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a fire weapon: %s"), *Item->GetName());
 		CharacterState = ECharacterState::ECS_WithFireWeapon;
 	}
-	else if (HasItemTag(Item, FName("Weapon.Throwable")))
+	else if (HasItemTag(Item, FName("Item.Throwable")))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] Equip(): Equipping an item"));
 		IPickupInterface* PickableItem = Cast<IPickupInterface>(Item);

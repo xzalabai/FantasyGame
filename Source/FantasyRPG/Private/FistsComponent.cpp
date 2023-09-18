@@ -42,6 +42,7 @@ void UFistsComponent::EnableOverlappingEvents(bool bEnable)
 
 void UFistsComponent::PerformBoxTrace()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Box trace"));
 	LeftHand->PerformBoxTrace();
 	RightHand->PerformBoxTrace();
 }
@@ -61,6 +62,7 @@ AHeroCharacter* UFistsComponent::GetHero()
 
 void UFistsComponent::AttackMontageStarted()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Montage start"));
 	EnableOverlappingEvents(true);
 }
 

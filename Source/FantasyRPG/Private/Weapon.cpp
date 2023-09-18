@@ -59,7 +59,7 @@ void AWeapon::PerformBoxTrace()
         StartTrace->GetComponentRotation(),
         ETraceTypeQuery::TraceTypeQuery1,
         false,
-        ActorsToIgnore, EDrawDebugTrace::ForDuration,
+        ActorsToIgnore, EDrawDebugTrace::Persistent,
         OutHit,
         true);
     UE_LOG(LogTemp, Display, TEXT("[AWeapon] Performed trace, hit: %d"), bHit ? 1 :0);

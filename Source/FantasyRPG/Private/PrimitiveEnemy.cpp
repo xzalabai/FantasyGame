@@ -28,14 +28,14 @@ void APrimitiveEnemy::LayingDead()
 
 void APrimitiveEnemy::ProcessHit(bool bForwardHit)
 {   
-	UE_LOG(LogTemp, Warning, TEXT("Your Process hit"));
+	UE_LOG(LogTemp, Warning, TEXT("[APrimitiveEnemy] ProcessHit"));
 	USkeletalMeshComponent *EnemyMesh = GetMesh();
     //Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
 		int8 RandomSequence = FMath::RandRange(1, 2);
 		AnimInstance->Montage_Play(AnimMontage);
-		FName SequenceName = bForwardHit ? "HitForward" : "HitForward";
+		FName SequenceName = "HitForward";
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
 	}
 }
