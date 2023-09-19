@@ -4,11 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Item.h"
-#include "PickupInterface.h"
 #include "Health.generated.h"
 
 UCLASS()
-class FANTASYRPG_API AHealth : public AItem, public IPickupInterface
+class FANTASYRPG_API AHealth : public AItem
 {
 private:
 	AHealth();

@@ -1,5 +1,4 @@
 // TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
-// TODO: refactor Fist -> create cpp base
 
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! Find out a way how to fire a weapon (now character is standing)
@@ -7,12 +6,8 @@
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
 // TODO: HIGH! Use const for functions and parameters
-// TODO: HIGH! Change Throwing Items to Weapons
-// TODO: MED fists as a weapon, then change attackStart etc.
 // TODO: MED add to enemy HP
-// TODO: MED refactor AttackStart/AttackEnd so it does not branch based on Casts (but based on enum perhaps(security))
-// TODO: MED refactor whole animationStart/iniateAttack with less spaghetti cod
-// TODO: MED remove ECharacterState and replace it in animation with gameplay tag
+// TODO: MED remove ECharacterState and replace it in animation with gameplay tag (now it's used only for ABP)
 // TODO: LOW replace animation BP for rrunning with Item
 // TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
 // --------------------------------------------------------------
@@ -49,6 +44,11 @@ public:
 	void AttackEnd();
 	UFUNCTION(BlueprintCallable)
 	void AttackStart();
+	UFUNCTION(BlueprintCallable)
+	void ReloadEnd();
+	UFUNCTION(BlueprintCallable)
+	void PerformActionOnNotify();
+
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	UPROPERTY(BlueprintReadWrite, Category=Item)
@@ -67,6 +67,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category=Input)
 	UInputAction* JumpAction;
 	UPROPERTY(EditAnywhere, Category=Input)
+	UInputAction* ReloadAction;
+	UPROPERTY(EditAnywhere, Category=Input)
 	UInputAction* AttackAction;
 	UPROPERTY(EditAnywhere, Category=Input)
 	UInputAction* EquipAction;
@@ -76,6 +78,7 @@ protected:
 	virtual void Jump() override;
 	void InitiateAttack();
 	void ToggleEquip();
+	void Reload();
 	void AutoEquip(AItem *Item);
 	void InitiateAttackWithItem();
 	void Equip(AItem* Item);	
@@ -120,6 +123,7 @@ private:
 	UAttributesComponent* Attributes;
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
+	FORCEINLINE UObject* GetEquippeddItem();
 
 };
 

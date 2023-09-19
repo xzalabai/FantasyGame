@@ -9,13 +9,13 @@
 #include "Math/UnrealMathUtility.h"
 #include "Weapon.h"
 #include "FireWeapon.h"
-#include "PickupInterface.h"
 #include "ThrowableInterface.h"
 #include "Containers/UnrealString.h"
 #include "AttributesComponent.h"
 #include "Projectile.h"
 #include "FistsComponent.h"
 #include "Fist.h"
+#include "FireWeapon.h"
 #include "Camera/CameraComponent.h"
 #include "GameplayTagsManager.h"
 #include "GameFramework/PawnMovementComponent.h"
@@ -59,6 +59,7 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(MovementAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Move);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Jump);
+		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Reload);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateAttack);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AHeroCharacter::ToggleEquip);
 	}
@@ -85,6 +86,15 @@ void AHeroCharacter::Look(const FInputActionValue& Value)
 void AHeroCharacter::Jump()
 {
 	Super::Jump();
+}
+
+void AHeroCharacter::Reload()
+{
+	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
+	{
+		FireWeapon->ReloadWeapon();
+		AnimationState = EAnimationState::EAS_AnimationInProgress;
+	}
 }
 
 void AHeroCharacter::ToggleEquip()
@@ -142,15 +152,9 @@ void AHeroCharacter::InitiateAttack()
 	}
 
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
-	
-	IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	if (!Weapon)
-	{
-		// We don't have a weapon, so use fists
-		Weapon = Cast<IWeaponInterface>(Fists);
-	}
-	Weapon->PerformMontage(*this, *AnimInstance);
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	Item->PerformMontage(this, AnimInstance);
 }
 
 void AHeroCharacter::AttackStart()
@@ -158,16 +162,8 @@ void AHeroCharacter::AttackStart()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
-	if (HasItemTag(EquippedItem, "Item.Throwable"))
-	{
-		return;
-	}
-	IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
-	if (!Weapon)
-	{
-		Weapon = Cast<IWeaponInterface>(Fists);
-	}
-	Weapon->AttackMontageStarted();
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	Item->AttackMontageStarted();
 }
 
 void AHeroCharacter::AttackEnd()
@@ -175,26 +171,23 @@ void AHeroCharacter::AttackEnd()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
 	AnimationState = EAnimationState::EAS_NoAnimation;
-	if (HasItemTag(EquippedItem, "Item.Throwable"))
-	{
-		if (IThrowableInterface* Throwable = Cast<IThrowableInterface>(EquippedItem))
-		{
-			FVector Direction = GetActorForwardVector();
-			Throwable->Throw(Direction);
-		}
-		if (IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem))
-		{
-			Weapon->AttackMontageEnded();
-		}
-		return;
-	}
-	IWeaponInterface *Weapon = Cast<IWeaponInterface>(EquippedItem);
-	if (!Weapon)
-	{
-		Weapon = Cast<IWeaponInterface>(Fists);
-	}
-	Weapon->AttackMontageEnded();
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	Item->AttackMontageEnded();
+}
 
+void AHeroCharacter::ReloadEnd()
+{
+	// Called from ABP
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] ReloadEnd"));
+	AnimationState = EAnimationState::EAS_NoAnimation;
+}
+
+void AHeroCharacter::PerformActionOnNotify()
+{
+	// Called from ABP
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] PerformActionOnNotify"));
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	Item->PerformActionOnNotify();
 }
 
 void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
@@ -204,10 +197,7 @@ void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
 
 void AHeroCharacter::AutoEquip(AItem *Item)
 {
-	if (IPickupInterface* PickabbleItem = Cast<IPickupInterface>(Item))
-	{
-		PickabbleItem->OnItemEquipped(*this);
-	}
+	Item->OnItemEquipped(*this);
 }
 
 void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)
@@ -242,15 +232,14 @@ void AHeroCharacter::Equip(AItem* Item)
 	else if (HasItemTag(Item, FName("Item.Throwable")))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] Equip(): Equipping an item"));
-		IPickupInterface* PickableItem = Cast<IPickupInterface>(Item);
-		PickableItem->OnItemEquipped(*this);
 		CharacterState = ECharacterState::ECS_WithItem;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Equip(): Picking unidentified object"));
 		return;
-	}	
+	}
+	Item->OnItemEquipped(*this);	
 	EquippedItem = Item;
 }
 
@@ -274,4 +263,14 @@ bool AHeroCharacter::HasItemTag(const AItem *Item, const FName TagName) const
 UCameraComponent* AHeroCharacter::GetCharacterCamera()
 {
 	return CameraComponent;
+}
+
+UObject* AHeroCharacter::GetEquippeddItem()
+{
+	// returns Fists or Currently equipped weapon
+	if (!EquippedItem)
+	{
+		return Fists;
+	}
+	return EquippedItem;
 }

@@ -69,7 +69,7 @@ void AGrenade::OnThrowableOverlap(UPrimitiveComponent* HitComponent, AActor* Oth
 	Destroy();
 }
 
-void AGrenade::PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance)
+void AGrenade::PerformMontage(class AHeroCharacter *Character, class UAnimInstance *AnimInstance)
 {
 	AItem::PerformMontage(Character, AnimInstance);
 }
@@ -100,15 +100,17 @@ void AGrenade::PerformSphereTrace()
 
 void AGrenade::AttackMontageStarted()
 {
-	
+	return;
 }
 
 void AGrenade::AttackMontageEnded()
 {
-
+	AHeroCharacter* Character = GetOwnerCharacter();
+	FVector Direction = Character->GetActorForwardVector();
+	Throw(Direction);
 }
 
 void AGrenade::PerformActionOnNotify()
 {
-	
+	return;
 }

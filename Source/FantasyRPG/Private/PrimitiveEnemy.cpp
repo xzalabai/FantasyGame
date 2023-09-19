@@ -42,7 +42,7 @@ void APrimitiveEnemy::ProcessHit(bool bForwardHit)
 
 void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 {   
-	UE_LOG(LogTemp, Warning, TEXT("Processss d"));
+	UE_LOG(LogTemp, Warning, TEXT("[APrimitiveEnemy] ProcessDeath"));
     USkeletalMeshComponent *EnemyMesh = GetMesh();
     //Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
@@ -50,7 +50,7 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 		int8 RandomSequence = FMath::RandRange(1, 2);
 		AnimInstance->Montage_Play(AnimMontage);
 		FName SequenceName = bForwardHit ? "DeathBack" : "DeathForward";
-		AnimInstance->Montage_JumpToSection("DeathBack", AnimMontage);
+		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
 	}
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

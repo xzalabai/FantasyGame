@@ -4,14 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "WeaponInterface.h"
+#include "EquipableInterface.h"
 #include "FistsComponent.generated.h"
 
 class AHeroCharacter;
 class AFist;
 
 UCLASS( Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class FANTASYRPG_API UFistsComponent : public UActorComponent, public IWeaponInterface
+class FANTASYRPG_API UFistsComponent : public UActorComponent, public IEquipableInterface
 {
 	GENERATED_BODY()
 
@@ -21,7 +21,7 @@ public:
 	void EnableOverlappingEvents(bool bEnable);
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTrace();
-	virtual void PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance);
+	virtual void PerformMontage(class AHeroCharacter *Character, class UAnimInstance *AnimInstance);
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;

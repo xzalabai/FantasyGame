@@ -29,19 +29,30 @@ void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)
 	SetActorTransform(SocketTransform);
 }
 
+void AItem::OnItemEquipped(AHeroCharacter &MainCharacter)
+{
+	
+}
+
 void AItem::Equip()
 {
 	ItemState = EItemState::EIS_Equipped;
 	TriggerCollider->SetGenerateOverlapEvents(false);
 }
 
-void AItem::PerformMontage(AHeroCharacter &Character, UAnimInstance &AnimInstance)
+void AItem::PerformMontage( AHeroCharacter *Character,  UAnimInstance *AnimInstance)
 {
-    UE_LOG(LogTemp, Display, TEXT("[AItem] PerformMontage"));
-    AnimInstance.Montage_Play(Montage);
-    int32 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
-	AnimInstance.Montage_JumpToSection(AnimationSequenceName[RandomIndex], Montage);
+    int8 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
+	PerformMontage(Character, AnimInstance, AnimationSequenceName[RandomIndex], Montage);
 }
+
+void AItem::PerformMontage( AHeroCharacter *Character, UAnimInstance *AnimInstance, FName& MontageName, UAnimMontage* AnimMontage)
+{
+	UE_LOG(LogTemp, Display, TEXT("[AItem] PerformMontage"));
+	AnimInstance->Montage_Play(AnimMontage);
+	AnimInstance->Montage_JumpToSection(MontageName, AnimMontage);
+}
+
 
 void AItem::Unequip()
 {

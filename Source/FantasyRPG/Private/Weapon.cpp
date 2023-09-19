@@ -81,7 +81,7 @@ void AWeapon::EnableOverlappingEvents(bool bEnable)
     OverlapArea->SetGenerateOverlapEvents(bEnable);
 }
 
-void AWeapon::PerformMontage(AHeroCharacter &Character, UAnimInstance &AnimInstance)
+void AWeapon::PerformMontage(AHeroCharacter *Character, UAnimInstance *AnimInstance)
 {
     AItem::PerformMontage(Character, AnimInstance);
 }

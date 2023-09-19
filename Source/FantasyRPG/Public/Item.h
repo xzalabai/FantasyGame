@@ -44,10 +44,12 @@ public:
 	void AttachToSocket(USkeletalMeshComponent* MeshComp, FName SocketName);
 	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip;}
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer &TagContainer) const override { TagContainer = ItemTag; return;}
+	virtual void OnItemEquipped(AHeroCharacter &MainCharacter);
 protected:
 	UPROPERTY(EditInstanceOnly)	
 	EItemState ItemState = EItemState::EIS_LayingOnGround;
-	void PerformMontage(AHeroCharacter &Character, UAnimInstance &AnimInstance);
+	void PerformMontage( AHeroCharacter *Character,  UAnimInstance *AnimInstance);
+	void PerformMontage( AHeroCharacter *Character,  UAnimInstance *AnimInstance,  FName& MontageName,  UAnimMontage* AnimMontage);
 	// Animations properties -----------------------------
 	UPROPERTY(EditAnywhere, Category=AnimationProperties)
 	UAnimMontage* Montage;
@@ -55,3 +57,4 @@ protected:
 	TArray<FName> AnimationSequenceName;
 	AHeroCharacter* GetOwnerCharacter();
 };
+

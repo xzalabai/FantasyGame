@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "ThrowableInterface.h"
-#include "WeaponInterface.h"
-#include "PickupInterface.h"
+#include "EquipableInterface.h"
 #include "Item.h"
 #include "GameFramework/Actor.h"
 #include "Grenade.generated.h"
 
 UCLASS()
-class FANTASYRPG_API AGrenade : public AItem, public IThrowableInterface, public IWeaponInterface, public IPickupInterface
+class FANTASYRPG_API AGrenade : public AItem, public IThrowableInterface, public IEquipableInterface
 {
 	GENERATED_BODY()
 	
@@ -29,7 +28,7 @@ public:
 	virtual void OnItemEquipped(AHeroCharacter &MainCharacter) override;
 	void TogglePhysics(bool enable);
 	void PerformSphereTrace();
-	virtual void PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance) override;
+	virtual void PerformMontage(class AHeroCharacter *Character, class UAnimInstance *AnimInstance) override;
 	virtual void EnableOverlappingEvents(bool Enable);
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;

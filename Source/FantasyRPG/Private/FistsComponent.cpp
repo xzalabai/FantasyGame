@@ -47,12 +47,12 @@ void UFistsComponent::PerformBoxTrace()
 	RightHand->PerformBoxTrace();
 }
 
-void UFistsComponent::PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance)
+void UFistsComponent::PerformMontage(class AHeroCharacter *Character, class UAnimInstance *AnimInstance)
 {
 	UE_LOG(LogTemp, Display, TEXT("[UFistsComponent] InitiateAttack"));
-    AnimInstance.Montage_Play(Montage);
+    AnimInstance->Montage_Play(Montage);
 	int32 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
-	AnimInstance.Montage_JumpToSection(AnimationSequenceName[RandomIndex], Montage);
+	AnimInstance->Montage_JumpToSection(AnimationSequenceName[RandomIndex], Montage);
 }
 
 AHeroCharacter* UFistsComponent::GetHero()

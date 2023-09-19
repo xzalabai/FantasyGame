@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Item.h"
-#include "WeaponInterface.h"
+#include "EquipableInterface.h"
 #include "Weapon.generated.h"
 
 class UBoxComponent;
@@ -11,7 +11,7 @@ class UAnimInstance;
 class AHeroCharacter;
 
 UCLASS()
-class FANTASYRPG_API AWeapon : public AItem, public IWeaponInterface
+class FANTASYRPG_API AWeapon : public AItem, public IEquipableInterface
 {
 	GENERATED_BODY()
 public:
@@ -20,7 +20,7 @@ public:
 	FORCEINLINE UBoxComponent* GetOverlapArea() const { return OverlapArea; }
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTrace();
-	virtual void PerformMontage(class AHeroCharacter &Character, class UAnimInstance &AnimInstance) override;
+	virtual void PerformMontage(class AHeroCharacter *Character, class UAnimInstance *AnimInstance) override;
 	virtual void AttackMontageStarted();
 	virtual void AttackMontageEnded();
 
