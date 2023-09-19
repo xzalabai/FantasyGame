@@ -33,3 +33,10 @@ enum class EItemType : uint8
 	EIT_Health UMETA(DisplayName = "Health Item"),
 	EIT_Weapon UMETA(DisplayName = "Weapon Item"),
 };
+
+UENUM(BlueprintType)
+enum class EPrimitiveEnemyDeathAnimation : uint8
+{
+	EPEDA_DeathBack UMETA(DisplayName = "Death Back"),
+	EPEDA_DeathForward UMETA(DisplayName = "Death Forward"),
+};

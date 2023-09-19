@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Enemy.h"
+#include "PublicEnums.h"
 #include "PrimitiveEnemy.generated.h"
+
 
 UCLASS()
 class FANTASYRPG_API APrimitiveEnemy : public AEnemy
@@ -22,4 +24,13 @@ private:
 	void LayingDead();
 	virtual void ProcessDeath(bool bForwardHit);
 	virtual void ProcessHit(bool bForwardHit);
+	UFUNCTION(BlueprintCallable)
+	FName GetDeathAnimationName();
+	UPROPERTY(VisibleAnywhere)
+	EPrimitiveEnemyDeathAnimation DeathAnimationPose;
+	void SetDeathAnimationPose(const FName AnimMontage);
+	UFUNCTION(BlueprintPure)
+	const EPrimitiveEnemyDeathAnimation GetDeathAnimationPose();
 };
+
+

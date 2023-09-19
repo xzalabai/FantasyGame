@@ -43,7 +43,6 @@ void APrimitiveEnemy::ProcessHit(bool bForwardHit)
 void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 {   
 	UE_LOG(LogTemp, Warning, TEXT("[APrimitiveEnemy] ProcessDeath"));
-    USkeletalMeshComponent *EnemyMesh = GetMesh();
     //Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
@@ -51,8 +50,41 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 		AnimInstance->Montage_Play(AnimMontage);
 		FName SequenceName = bForwardHit ? "DeathBack" : "DeathForward";
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
+		SetDeathAnimationPose(SequenceName);
 	}
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AEnemy::ProcessDeath();
+}
+
+FName APrimitiveEnemy::GetDeathAnimationName()
+{
+	return "DeathBack";
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		FName MontageName = AnimInstance->Montage_GetCurrentSection(AnimMontage);
+		return MontageName;
+	}
+	return "";
+}
+
+void APrimitiveEnemy::SetDeathAnimationPose(const FName AnimMontageName)
+{
+	if (AnimMontageName == "DeathBack")
+	{
+		DeathAnimationPose = EPrimitiveEnemyDeathAnimation::EPEDA_DeathBack;
+	}
+	else if (AnimMontageName == "DeathForward")
+	{
+		DeathAnimationPose = EPrimitiveEnemyDeathAnimation::EPEDA_DeathForward;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[APrimitiveEnemy]Unknown Death animation pose "));
+	}
+}
+
+const EPrimitiveEnemyDeathAnimation APrimitiveEnemy::GetDeathAnimationPose()
+{
+	return DeathAnimationPose;
 }

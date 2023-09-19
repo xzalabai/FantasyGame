@@ -12,7 +12,7 @@ void ARagdollEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
 {
     AEnemy::OnReceivedHit(ImpactPoint, Damage);
     
-	UE_LOG(LogTemp, Log, TEXT("Impact Point: %s"), *ImpactPoint.ToString());
+	UE_LOG(LogTemp, Log, TEXT("[ARagdollEnemy] OnReceivedHit"));
     FVector OutHitDirection = CalculateVectorDirection(ImpactPoint, GetActorLocation());
     DrawDebugSphere(GetWorld(), OutHitDirection, 10, 12,FColor::Green, true, -1.0f,0, 2.0f);
 
@@ -20,7 +20,7 @@ void ARagdollEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
     EnemyMesh->SetCollisionProfileName("Ragdoll");
     
     EnemyMesh->SetSimulatePhysics(true);
-    EnemyMesh->AddImpulse(OutHitDirection.GetSafeNormal());
+    //EnemyMesh->AddImpulse(OutHitDirection.GetSafeNormal());
     ProcessDeath();
 }
 
