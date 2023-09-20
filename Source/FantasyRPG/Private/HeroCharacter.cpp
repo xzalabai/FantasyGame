@@ -60,6 +60,7 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Look);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Jump);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Reload);
+		EnhancedInputComponent->BindAction(ReleaseAction, ETriggerEvent::Triggered, this, &AHeroCharacter::MouseRelease);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateAttack);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AHeroCharacter::ToggleEquip);
 	}
@@ -94,6 +95,15 @@ void AHeroCharacter::Reload()
 	{
 		FireWeapon->ReloadWeapon();
 		AnimationState = EAnimationState::EAS_AnimationInProgress;
+	}
+}
+
+void AHeroCharacter::MouseRelease()
+{
+	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
+	{
+		FireWeapon->OnMouseRelease();
+		AnimationState = EAnimationState::EAS_NoAnimation;
 	}
 }
 

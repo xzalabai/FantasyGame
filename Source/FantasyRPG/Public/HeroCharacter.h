@@ -7,12 +7,18 @@
 // TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
 // TODO: HIGH! Use const for functions and parameters
 // TODO: MED add to enemy HP
+// TODO: MED unify naming for input handlers (Reload, Release...)
+// TODO: MED add PerformOnRelease to IEquipable
+// TODO: MED unify naming (PerformOn, InitiateAttack,...)
 // TODO: MED remove ECharacterState and replace it in animation with gameplay tag (now it's used only for ABP)
 // TODO: LOW replace animation BP for rrunning with Item
 // TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
 // --------------------------------------------------------------
 // Features:
 // - Aiming based on the camera aim
+// - Inventory
+// - AI
+// - correct animations
 #pragma once
 
 #include "CoreMinimal.h"
@@ -72,6 +78,8 @@ protected:
 	UInputAction* AttackAction;
 	UPROPERTY(EditAnywhere, Category=Input)
 	UInputAction* EquipAction;
+	UPROPERTY(EditAnywhere, Category=Input)
+	UInputAction* ReleaseAction;
 	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -79,6 +87,7 @@ protected:
 	void InitiateAttack();
 	void ToggleEquip();
 	void Reload();
+	void MouseRelease();
 	void AutoEquip(AItem *Item);
 	void InitiateAttackWithItem();
 	void Equip(AItem* Item);	

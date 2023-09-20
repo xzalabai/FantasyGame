@@ -6,6 +6,7 @@
 #include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "PublicEnums.h"
+#include "TimerManager.h"
 #include "DrawDebugHelpers.h" // Include the debug drawing helpe
 
 #include "Projectile.h"
@@ -27,6 +28,10 @@ void AFireWeapon::EnableOverlappingEvents(bool bEnable)
 
 void AFireWeapon::FireFromWeapon()
 {
+	// TODO: inefficient, change
+	//AHeroCharacter* Character = GetOwnerCharacter();
+	//Character->AttackEnd();
+	//AWeapon::PerformMontage(Character, Character->GetMesh()->GetAnimInstance());
 	UCameraComponent* PlayerCamera = GetOwnerCharacter()->GetCharacterCamera();
 	FVector WorldLocation = PlayerCamera->GetComponentLocation();
 	FVector ForwardVector = PlayerCamera->GetForwardVector();
@@ -98,20 +103,15 @@ void AFireWeapon::PerformMontage(AHeroCharacter *Character, UAnimInstance *AnimI
 		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] No ammo in magazine"));
 		return;
 	}
-
-	if (Character->CharacterIsMoving())
-	{
-		FireFromWeapon();
-		Character->AttackEnd();
-	}
-	else
-	{
-		FireFromWeapon();
-		Character->AttackEnd();
-		//AWeapon::PerformMontage(Character, AnimInstance);
-	}
-	
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AFireWeapon::FireFromWeapon, FireRate, true, 0);	
 }
+
+
+void AFireWeapon::OnMouseRelease()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle);
+}
+
 
 void AFireWeapon::AttackMontageStarted()
 {
