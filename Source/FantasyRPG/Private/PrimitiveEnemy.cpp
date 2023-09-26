@@ -23,7 +23,7 @@ void APrimitiveEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
 void APrimitiveEnemy::LayingDead()
 {   
 	UE_LOG(LogTemp, Warning, TEXT("Laying Dead"));
-	GetMesh()->SetCollisionProfileName("Ragdoll");
+	//GetMesh()->SetCollisionProfileName("Ragdoll");
 }
 
 void APrimitiveEnemy::ProcessHit(bool bForwardHit)
@@ -52,7 +52,7 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
 		SetDeathAnimationPose(SequenceName);
 	}
-
+	UE_LOG(LogTemp, Warning, TEXT("Death"));
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AEnemy::ProcessDeath();
 }
