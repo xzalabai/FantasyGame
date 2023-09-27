@@ -13,5 +13,7 @@ class FANTASYRPG_API ARagdollEnemy : public AEnemy
 
 public:
 	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
+	virtual void ProcessDeath(bool bForwardHit);
+	virtual void ProcessHit(bool bForwardHit);
 };
 

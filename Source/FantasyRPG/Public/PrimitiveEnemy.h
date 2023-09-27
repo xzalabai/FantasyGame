@@ -17,9 +17,6 @@ private:
 	virtual void OnReceivedHit(const FVector& ImpactPoint, int Damage) override;
 
 private:
-	// Montages
-	UPROPERTY(EditAnywhere, Category=Montages)
-	UAnimMontage* AnimMontage;
 	UFUNCTION(BlueprintCallable)
 	void LayingDead();
 	virtual void ProcessDeath(bool bForwardHit);

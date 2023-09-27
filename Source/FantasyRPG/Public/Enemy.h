@@ -19,6 +19,8 @@ public:
 	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
 
 protected:
+	UPROPERTY(EditAnywhere, Category=Montages)
+	UAnimMontage* AnimMontage;
 	virtual void BeginPlay() override;
 	FVector CalculateVectorDirection(FVector PointA, FVector PointB);
 	bool IsHitFromFront(const FVector &ImpactPoint);
