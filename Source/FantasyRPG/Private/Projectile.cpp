@@ -39,14 +39,9 @@ void AProjectile::FireInDirection(const FVector& ShootDirection)
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	//Destroy();
-	// if (OtherActor != this && OtherComponent->IsSimulatingPhysics())
-	// {
-	// 	OtherComponent->AddImpulseAtLocation(ProjectileMovementComponent->Velocity * 100.0f, Hit.ImpactPoint);
-	// }
 	if (AEnemy* Enemy = Cast<AEnemy>(OtherActor))
 	{
 		Enemy->OnReceivedHit(Hit.ImpactPoint, 50);
 	}
-	//Destroy();
+	Destroy();
 }

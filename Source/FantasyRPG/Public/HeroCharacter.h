@@ -13,6 +13,7 @@
 // TODO: MED remove ECharacterState and replace it in animation with gameplay tag (now it's used only for ABP)
 // TODO: LOW replace animation BP for rrunning with Item
 // TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
+// TODO: fix issue while shooting -> click (timer is active), then hold (we don't get any input to try to shoot again)
 // --------------------------------------------------------------
 // Features:
 // - Aiming based on the camera aim

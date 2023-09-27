@@ -100,16 +100,31 @@ void AFireWeapon::PerformMontage(AHeroCharacter *Character, UAnimInstance *AnimI
 {
 	if (AmmoInMagazine <= 0)
 	{
-		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] No ammo in magazine"));
+		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] No ammo in magazine."));
 		return;
 	}
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AFireWeapon::FireFromWeapon, FireRate, true, 0);	
+	if (GetWorldTimerManager().IsTimerActive(ClearTimerHandle))
+	{
+		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] Timer is active."));
+		return;
+	}
+	
+	GetWorldTimerManager().SetTimer(WeaponTimerHandle, this, &AFireWeapon::FireFromWeapon, FireRate, true, 0);
 }
 
 
 void AFireWeapon::OnMouseRelease()
 {
-	GetWorldTimerManager().ClearTimer(TimerHandle);
+	if (GetWorldTimerManager().IsTimerActive(ClearTimerHandle))
+	{
+		return;
+	}
+	const float TimeRemaining = GetWorldTimerManager().GetTimerRemaining(WeaponTimerHandle);
+	if (TimeRemaining < FireRate)
+	{
+		GetWorldTimerManager().SetTimer(ClearTimerHandle, TimeRemaining, false, TimeRemaining);	
+	}
+	ClearWeaponTimer();
 }
 
 
@@ -139,4 +154,10 @@ void AFireWeapon::AttackMontageEnded()
 void AFireWeapon::PerformActionOnNotify()
 {
 	PerformBoxTrace();
+}
+
+void AFireWeapon::ClearWeaponTimer()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Clear Timer"));
+	GetWorldTimerManager().ClearTimer(WeaponTimerHandle);
 }

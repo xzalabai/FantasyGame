@@ -31,7 +31,9 @@ public:
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;
 private:
-	FTimerHandle TimerHandle;
+	void ClearWeaponTimer();
+	FTimerHandle WeaponTimerHandle;
+	FTimerHandle ClearTimerHandle;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AProjectile> ProjectileClass;
 	UPROPERTY(EditAnywhere)
@@ -46,6 +48,7 @@ private:
 	int32 AmmoCapacity = 0;
 	UPROPERTY(EditDefaultsOnly)
 	float FireRate = 0;
+	bool bMouseReleased = false;	
 };
 
 
