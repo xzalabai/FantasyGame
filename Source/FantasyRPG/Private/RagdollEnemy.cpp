@@ -36,7 +36,7 @@ void ARagdollEnemy::ProcessHit(bool bForwardHit)
         UE_LOG(LogTemp, Display, TEXT("Play "));
 		int8 RandomSequence = FMath::RandRange(1, 2);
 		AnimInstance->Montage_Play(AnimMontage);
-		FName SequenceName = "HitForward3";
+		FName SequenceName = "HitForwardSmall";
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
 	}
 }
