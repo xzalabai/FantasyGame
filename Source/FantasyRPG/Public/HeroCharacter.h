@@ -128,12 +128,15 @@ protected:
 	FVector MuzzleOffset;
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<AProjectile> ProjectileClass;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsAiming = false;
 private:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
 	FORCEINLINE UObject* GetEquippeddItem();
+
 
 };
 

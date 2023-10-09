@@ -14,8 +14,8 @@ void ARagdollEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
 	UE_LOG(LogTemp, Display, TEXT("[ARagdollEnemy] Received a hit with %d damage. He is left with %d HP"), Damage, Attributes->GetHealth());
 
 	bool bForwardHit = IsHitFromFront(ImpactPoint);
-    ProcessHit(bForwardHit);
-    return;
+    //ProcessHit(bForwardHit);
+    //return;
 	if (Attributes->IsAlive())
 	{
 		ProcessHit(bForwardHit);
