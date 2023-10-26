@@ -14,6 +14,7 @@
 #include "AttributesComponent.h"
 #include "Projectile.h"
 #include "FistsComponent.h"
+#include "InventoryComponent.h"
 #include "Fist.h"
 #include "FireWeapon.h"
 #include "Camera/CameraComponent.h"
@@ -24,13 +25,13 @@ AHeroCharacter::AHeroCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attributes"));
+	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 	Fists = CreateDefaultSubobject<UFistsComponent>(TEXT("Fists"));
 }
 
 void AHeroCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -87,6 +88,8 @@ void AHeroCharacter::Look(const FInputActionValue& Value)
 void AHeroCharacter::Jump()
 {
 	Super::Jump();
+
+	Inventory->ThrowFromItinerary();
 }
 
 void AHeroCharacter::Reload()
@@ -109,7 +112,11 @@ void AHeroCharacter::MouseRelease()
 
 void AHeroCharacter::ToggleEquip()
 {
-	if (EquippedItem && !OverlappedItem)
+	if (OverlappedItem && OverlappedItem->IsAvailableToInventory())
+	{
+		InsertToInventory(OverlappedItem);
+	}
+	else if (EquippedItem && !OverlappedItem)
 	{
 		Unequip();
 	}
@@ -223,6 +230,15 @@ void AHeroCharacter::Unequip()
 	CharacterState = ECharacterState::ECS_WithoutWeapon;
 	EquippedItem->Unequip();
 	EquippedItem = nullptr;
+}
+
+void AHeroCharacter::InsertToInventory(AItem* Item)
+{
+	//Attributes->DecreaseHealth(3);
+	if (Inventory->InsertToInventory(Item))
+	{
+		Item->Destroy();
+	}
 }
 
 void AHeroCharacter::Equip(AItem* Item)

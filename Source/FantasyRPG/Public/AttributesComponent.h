@@ -13,12 +13,14 @@ class FANTASYRPG_API UAttributesComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:	
-	// Sets default values for this component's properties
 	UAttributesComponent();
 	UPROPERTY(EditAnywhere)
 	int Health;
 	UPROPERTY(EditAnywhere)
 	int MaxHealth;
+
+	UPROPERTY()
+	TArray<int> X;
 
 	FORCEINLINE int GetHealth() const { return Health; }
 	FORCEINLINE bool IsAlive() const { return Health > 0; }

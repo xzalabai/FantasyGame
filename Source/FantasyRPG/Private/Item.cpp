@@ -4,6 +4,7 @@
 #include "Item.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SphereComponent.h"
+#include "DAItem.h"
 #include "Animation/AnimInstance.h"
 #include "NiagaraComponent.h"
 
@@ -14,6 +15,7 @@ AItem::AItem()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Item Mesh"));
 	TriggerCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Item Collider"));
 	ParticleSystem = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particles"));
+	DAItem = CreateDefaultSubobject<UDAItem>(TEXT("DA Item"));
 	
 	SetRootComponent(MeshComponent);
 	TriggerCollider->SetupAttachment(MeshComponent);
@@ -42,6 +44,11 @@ void AItem::Equip()
 
 void AItem::PerformMontage( AHeroCharacter *Character,  UAnimInstance *AnimInstance)
 {
+	if (AnimationSequenceName.Num() == 0 || !Montage)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AItem] Item does not have a AnimMontage or MontageName set"));
+		return;
+	}
     int8 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
 	PerformMontage(Character, AnimInstance, AnimationSequenceName[RandomIndex], Montage);
 }

@@ -4,12 +4,16 @@
 // TODO: HIGH! Find out a way how to fire a weapon (now character is standing)
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
+// TODO: HIGH! Change PrimitiveEnemy to RootBone enemy
 // TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
 // TODO: HIGH! Use const for functions and parameters
 // TODO: MED add to enemy HP
+// TODO: MED create 2D blend space for Aim Offset 
+// TODO: MED change animation while carying a melee weapon
 // TODO: MED unify naming for input handlers (Reload, Release...)
 // TODO: MED add PerformOnRelease to IEquipable
 // TODO: MED unify naming (PerformOn, InitiateAttack,...)
+// TODO: MED fix error when you Equip and Enemy is near
 // TODO: MED remove ECharacterState and replace it in animation with gameplay tag (now it's used only for ABP)
 // TODO: LOW replace animation BP for rrunning with Item
 // TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
@@ -39,6 +43,7 @@ class AFist;
 class AProjectile;
 class UGameplayTagsManager;
 class UCameraComponent;
+class UInventoryComponent;
 
 UCLASS()
 class FANTASYRPG_API AHeroCharacter : public ACharacter
@@ -130,12 +135,15 @@ protected:
 	TSubclassOf<AProjectile> ProjectileClass;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsAiming = false;
-private:
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
+	UPROPERTY(BlueprintReadOnly, Category = "Components")
+	TObjectPtr<UInventoryComponent>  Inventory;
+private:		
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
 	FORCEINLINE UObject* GetEquippeddItem();
+	void InsertToInventory(AItem* Item);
 
 
 };

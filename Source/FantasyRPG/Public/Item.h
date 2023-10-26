@@ -19,6 +19,7 @@ class USphereComponent;
 class UNiagaraComponent;
 class AHeroCharacter;
 class UAnimInstance;
+class UDAItem;
 
 UCLASS()
 class FANTASYRPG_API AItem : public AActor, public IGameplayTagAssetInterface
@@ -27,9 +28,11 @@ class FANTASYRPG_API AItem : public AActor, public IGameplayTagAssetInterface
 	
 public:	
 	AItem();
-	UPROPERTY(EditAnywhere, Category = "Gameplay Tags")
+	UPROPERTY(EditAnywhere, Category = "Item Details")
 	FGameplayTagContainer ItemTag;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly);
+	UPROPERTY(EditAnywhere, Category = "Item Details")
+	UDAItem* DAItem;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* MeshComponent;
 	UPROPERTY(EditAnywhere);
 	UNiagaraComponent* ParticleSystem;
@@ -37,12 +40,11 @@ public:
 	USphereComponent* TriggerCollider;
 	UPROPERTY(EditDefaultsOnly);
 	EItemType ItemType;
-	UPROPERTY(EditAnywhere);
-	bool bAutoEquip = false;
 	virtual void Equip();
 	virtual void Unequip();
 	void AttachToSocket(USkeletalMeshComponent* MeshComp, FName SocketName);
 	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip;}
+	FORCEINLINE bool IsAvailableToInventory() const { return bAvailableToInventory;}
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer &TagContainer) const override { TagContainer = ItemTag; return;}
 	virtual void OnItemEquipped(AHeroCharacter &MainCharacter);
 protected:
@@ -56,5 +58,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category=AnimationProperties)
 	TArray<FName> AnimationSequenceName;
 	AHeroCharacter* GetOwnerCharacter();
+	UPROPERTY(EditAnywhere, Category = "Item Details");
+	bool bAutoEquip = false;
+	UPROPERTY(EditAnywhere, Category = "Item Details");
+	bool bAvailableToInventory = false;
 };
+
+
 

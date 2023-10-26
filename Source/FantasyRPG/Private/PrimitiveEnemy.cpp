@@ -48,7 +48,7 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 	{
 		int8 RandomSequence = FMath::RandRange(1, 2);
 		AnimInstance->Montage_Play(AnimMontage);
-		FName SequenceName = bForwardHit ? "DeathBack" : "DeathForward";
+		FName SequenceName = bForwardHit ? "DeathBackwards" : "DeathForward";
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
 		SetDeathAnimationPose(SequenceName);
 	}
@@ -59,7 +59,6 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 
 FName APrimitiveEnemy::GetDeathAnimationName()
 {
-	return "DeathBack";
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
 		FName MontageName = AnimInstance->Montage_GetCurrentSection(AnimMontage);
@@ -70,7 +69,7 @@ FName APrimitiveEnemy::GetDeathAnimationName()
 
 void APrimitiveEnemy::SetDeathAnimationPose(const FName AnimMontageName)
 {
-	if (AnimMontageName == "DeathBack")
+	if (AnimMontageName == "DeathBackwards")
 	{
 		DeathAnimationPose = EPrimitiveEnemyDeathAnimation::EPEDA_DeathBack;
 	}
