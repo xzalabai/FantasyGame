@@ -37,7 +37,7 @@ void AFireWeapon::FireFromWeapon()
 	FVector ForwardVector = PlayerCamera->GetForwardVector();
 
 	FVector Start = WorldLocation;
-    FVector End = Start + (ForwardVector * 2000); // Calculate the end point of the line trace
+    FVector End = WorldLocation + (ForwardVector * 2000); // Calculate the end point of the line trace
     FHitResult HitResult; // Store the result of the line trace
     // Define the collision parameters
     FCollisionQueryParams CollisionParams;
@@ -70,11 +70,12 @@ void AFireWeapon::FireFromWeapon()
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 
-	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Muzzle->GetComponentLocation(), FRotator(0,0,0), SpawnParams);
+	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), HitResult.ImpactPoint);
+	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Muzzle->GetComponentLocation(), RotationTowardsTarget, SpawnParams);
 	if (Projectile)
 	{
 		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] FireFromGun"));
-		Projectile->FireInDirection(ForwardVector);
+		Projectile->FireInDirection(Projectile->GetActorForwardVector());
 	}
 	--AmmoInMagazine;
 }
