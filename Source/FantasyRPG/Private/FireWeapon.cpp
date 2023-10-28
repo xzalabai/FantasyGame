@@ -28,22 +28,20 @@ void AFireWeapon::EnableOverlappingEvents(bool bEnable)
 
 void AFireWeapon::FireFromWeapon()
 {
-	// TODO: inefficient, change
-	//AHeroCharacter* Character = GetOwnerCharacter();
-	//Character->AttackEnd();
-	//AWeapon::PerformMontage(Character, Character->GetMesh()->GetAnimInstance());
 	UCameraComponent* PlayerCamera = GetOwnerCharacter()->GetCharacterCamera();
 	FVector WorldLocation = PlayerCamera->GetComponentLocation();
-	FVector ForwardVector = PlayerCamera->GetForwardVector();
 
 	FVector Start = WorldLocation;
-    FVector End = WorldLocation + (ForwardVector * 2000); // Calculate the end point of the line trace
+    FVector End = WorldLocation + (PlayerCamera->GetForwardVector() * 2000); // Calculate the end point of the line trace
     FHitResult HitResult; // Store the result of the line trace
-    // Define the collision parameters
     FCollisionQueryParams CollisionParams;
-    CollisionParams.AddIgnoredActor(this); // Ignore the actor performing the trace
-    // Define the trace channel you want to check against
-    ECollisionChannel TraceChannel = ECC_WorldDynamic; // Replace with your desired channel
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+
+    CollisionParams.AddIgnoredActor(this);
+    ECollisionChannel TraceChannel = ECC_WorldDynamic;
     // Perform the line trace
     bool bHit = GetWorld()->LineTraceSingleByChannel(
         HitResult,
@@ -53,6 +51,7 @@ void AFireWeapon::FireFromWeapon()
         CollisionParams
     );
 
+	// DEBUG sphere at impact point
 	FVector SphereLocation = HitResult.ImpactPoint;
 	float SphereRadius = 20.0f; 
 	FColor SphereColor = FColor::Red; 
@@ -65,16 +64,13 @@ void AFireWeapon::FireFromWeapon()
 		true,
 		-1.0f 
 	);
-	
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
 
-	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), HitResult.ImpactPoint);
+	// TODO: verify if End is good point if we didn't find target
+	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), bHit ? HitResult.ImpactPoint : End);
 	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Muzzle->GetComponentLocation(), RotationTowardsTarget, SpawnParams);
 	if (Projectile)
 	{
-		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] FireFromGun"));
+		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] Fire from weapon."));
 		Projectile->FireInDirection(Projectile->GetActorForwardVector());
 	}
 	--AmmoInMagazine;
