@@ -73,6 +73,5 @@ void UFistsComponent::AttackMontageEnded()
 
 void UFistsComponent::PerformActionOnNotify()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Your message"));
 	PerformBoxTrace();
 }

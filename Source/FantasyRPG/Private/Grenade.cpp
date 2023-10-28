@@ -64,7 +64,7 @@ void AGrenade::TogglePhysics(bool bEnable)
 
 void AGrenade::OnThrowableOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Your message"));
+	UE_LOG(LogTemp, Log, TEXT("[AGrenade] Perform sphere trace and Destroy grenade "));
 	PerformSphereTrace();
 	Destroy();
 }

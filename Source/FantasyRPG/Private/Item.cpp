@@ -24,16 +24,12 @@ AItem::AItem()
 
 void AItem::BeginPlay()
 {
+	Super::BeginPlay();
 	// Replace item's mesh and characteristics
 	if (!(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetStaticMesh && DAItem->DAItemInfo.AssetThumbnail)
 	{
 		MeshComponent->SetStaticMesh(DAItem->DAItemInfo.AssetStaticMesh);
 	}	
-}
-
-void AItem::OnConstruction(const FTransform& Transform)
-{
-
 }
 
 void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)

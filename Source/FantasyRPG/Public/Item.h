@@ -28,7 +28,6 @@ class FANTASYRPG_API AItem : public AActor, public IGameplayTagAssetInterface
 	
 public:	
 	AItem();
-	virtual void OnConstruction(const FTransform& Transform) override;
 	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, Category = "Item Details")
 	FGameplayTagContainer ItemTag;
