@@ -14,8 +14,9 @@ class FANTASYRPG_API UInventoryComponent : public UActorComponent
 
 public:	
 	UInventoryComponent();
+	virtual void BeginPlay() override;
 	bool InsertToInventory(AItem* Item);
-	void ThrowFromItinerary();
+	void RemoveFromInventory(const UDAItem* DAItem);
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int SSS = 23;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)

@@ -9,6 +9,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "Weapon.h"
 #include "FireWeapon.h"
+#include "DAItem.h"
 #include "ThrowableInterface.h"
 #include "Containers/UnrealString.h"
 #include "AttributesComponent.h"
@@ -25,7 +26,7 @@ AHeroCharacter::AHeroCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attributes"));
-	Inventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
+	ItemInventory = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 	Fists = CreateDefaultSubobject<UFistsComponent>(TEXT("Fists"));
 }
 
@@ -87,9 +88,8 @@ void AHeroCharacter::Look(const FInputActionValue& Value)
 
 void AHeroCharacter::Jump()
 {
+	//ItemInventory->ThrowFromItinerary();
 	Super::Jump();
-
-	Inventory->ThrowFromItinerary();
 }
 
 void AHeroCharacter::Reload()
@@ -99,6 +99,11 @@ void AHeroCharacter::Reload()
 		FireWeapon->ReloadWeapon();
 		AnimationState = EAnimationState::EAS_AnimationInProgress;
 	}
+}
+
+void AHeroCharacter::RemoveFromInventory(UDAItem* DAItem)
+{
+	ItemInventory->RemoveFromInventory(DAItem);
 }
 
 void AHeroCharacter::MouseRelease()
@@ -235,7 +240,7 @@ void AHeroCharacter::Unequip()
 void AHeroCharacter::InsertToInventory(AItem* Item)
 {
 	//Attributes->DecreaseHealth(3);
-	if (Inventory->InsertToInventory(Item))
+	if (ItemInventory->InsertToInventory(Item))
 	{
 		Item->Destroy();
 	}

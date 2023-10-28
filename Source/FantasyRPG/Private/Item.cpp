@@ -20,8 +20,20 @@ AItem::AItem()
 	SetRootComponent(MeshComponent);
 	TriggerCollider->SetupAttachment(MeshComponent);
 	ParticleSystem->SetupAttachment(RootComponent);
+}
 
-	
+void AItem::BeginPlay()
+{
+	// Replace item's mesh and characteristics
+	if (!(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetStaticMesh && DAItem->DAItemInfo.AssetThumbnail)
+	{
+		MeshComponent->SetStaticMesh(DAItem->DAItemInfo.AssetStaticMesh);
+	}	
+}
+
+void AItem::OnConstruction(const FTransform& Transform)
+{
+
 }
 
 void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)
