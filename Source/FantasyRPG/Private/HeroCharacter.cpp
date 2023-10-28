@@ -103,7 +103,10 @@ void AHeroCharacter::Reload()
 
 void AHeroCharacter::RemoveFromInventory(UDAItem* DAItem)
 {
-	ItemInventory->RemoveFromInventory(DAItem);
+	if (ItemInventory->RemoveFromInventory(DAItem))
+	{
+		InventoryItemsUpdated();
+	}
 }
 
 void AHeroCharacter::MouseRelease()
@@ -289,6 +292,12 @@ bool AHeroCharacter::HasItemTag(const AItem *Item, const FName TagName) const
 	}
 	UGameplayTagsManager& TagsManager = UGameplayTagsManager::Get();
 	return Item->ItemTag.HasTag(FGameplayTag::RequestGameplayTag(TagName));
+}
+
+void AHeroCharacter::InventoryItemsUpdated_Implementation()
+{
+	UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] InventoryItemsUpdated should be overriden in class blueprint!"));
+	return;
 }
 
 UCameraComponent* AHeroCharacter::GetCharacterCamera()

@@ -140,6 +140,8 @@ protected:
 	UAttributesComponent* Attributes;
 	UPROPERTY(BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UInventoryComponent>  ItemInventory;
+	UFUNCTION(BlueprintNativeEvent)
+	void InventoryItemsUpdated();
 private:		
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
@@ -147,6 +149,7 @@ private:
 	void InsertToInventory(AItem* Item);
 	UFUNCTION(BlueprintCallable)
 	void RemoveFromInventory(UDAItem* DAItem);
+
 };
 
 

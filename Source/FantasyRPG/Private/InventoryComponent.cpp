@@ -34,22 +34,30 @@ void UInventoryComponent::OnComponentDestroyed(bool B)
 	Super::OnComponentDestroyed(B);
 }
 
-void UInventoryComponent::RemoveFromInventory(const UDAItem* DAItem)
+bool UInventoryComponent::RemoveFromInventory(const UDAItem* DAItem)
 {
 	UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] RemoveFromInventory %s"), *(DAItem->DAItemInfo.AssetName));
 	if (InventoryItems.Num() == 0)
 	{
 		UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] Unable to pop from inventory."));
-		return;
+		return false;
 	}
 
 	int32 Index;
 	if (InventoryItems.Find(DAItem, Index))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] RemoveFromInventory Item was found on: %d"), Index);
+		
 		// Spawn item
 		AItem* Item = GetWorld()->SpawnActorDeferred<AItem>(AItem::StaticClass(), GetOwner()->GetTransform());
 		Item->DAItem->DAItemInfo = DAItem->DAItemInfo;
 		Item->FinishSpawning(GetOwner()->GetTransform());
+		
+		// Empty inventory slot
+		InventoryItems.RemoveAt(Index);
+
+		return true;
 	}
+
+	return false;
 }

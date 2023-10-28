@@ -16,10 +16,8 @@ public:
 	UInventoryComponent();
 	virtual void BeginPlay() override;
 	bool InsertToInventory(AItem* Item);
-	void RemoveFromInventory(const UDAItem* DAItem);
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	int SSS = 23;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool  RemoveFromInventory(const UDAItem* DAItem);
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<const UDAItem*> InventoryItems;		
 private:
 	void OnComponentDestroyed(bool bDestroyingHierarchy) override;
