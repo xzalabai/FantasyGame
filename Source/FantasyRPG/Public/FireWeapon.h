@@ -32,7 +32,7 @@ public:
 	virtual void PerformActionOnNotify() override;
 private:
 	void ClearWeaponTimer();
-	FVector CreateShotDispersion(const FVector OriginalTarget, const bool bIsAiming);
+	FVector CreateShotDispersion(const FVector OriginalTarget, const int16 bIsAiming);
 	FTimerHandle WeaponTimerHandle;
 	FTimerHandle ClearTimerHandle;
 	UPROPERTY(EditDefaultsOnly)

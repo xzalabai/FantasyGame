@@ -30,7 +30,6 @@ protected:
 	USceneComponent* StartTrace;
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* EndTrace;
-	bool Picked = false;
 	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* OverlapArea;
 	UPROPERTY(EditDefaultsOnly)

@@ -29,17 +29,39 @@ void AFireWeapon::EnableOverlappingEvents(bool bEnable)
 
 void AFireWeapon::FireFromWeapon()
 {
-	AHeroCharacter* Character = GetOwnerCharacter();
+	// TODO refactor
+	const AHeroCharacter* Character = GetOwnerCharacter();
 	bool bIsAiming = Character->IsAiming();
+	bool bIsMoving = Character->CharacterIsMoving();
 
-	UCameraComponent* PlayerCamera = Character->GetCharacterCamera();
+	const UCameraComponent* PlayerCamera = Character->GetCharacterCamera();
 
-	const FVector& Start = PlayerCamera->GetComponentLocation();
-    const FVector& End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000); // Calculate the end point of the line trace
+	const FVector Start = PlayerCamera->GetComponentLocation();
+	
+	FVector End; int16 Dispersion = 0;
+	if (bIsAiming && bIsMoving)
+	{
+		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
+		Dispersion = 30;
+	}
+	else if (bIsAiming && !bIsMoving)
+	{
+		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
+		Dispersion = 20;
+	}
+	else if (!bIsAiming && bIsMoving)
+	{
+		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
+		Dispersion = 50;
+	}
+	else if (!bIsAiming && !bIsMoving)
+	{
+		End = Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000);
+		Dispersion = 40;
+	}
 
     FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
-	ECollisionChannel TraceChannel = ECC_WorldDynamic;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
@@ -47,17 +69,18 @@ void AFireWeapon::FireFromWeapon()
 
 	// Perform the line trace
 	FHitResult HitResult;
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, TraceChannel, CollisionParams);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldDynamic, CollisionParams);
 
 	// Debug sphere at impact point
 	FVector& SphereLocation = HitResult.ImpactPoint;
 	float SphereRadius = 20.0f; 
 	DrawDebugSphere(GetWorld(), SphereLocation, SphereRadius, 32, FColor::Red, true, -1.0f);
 
-	FVector FinalHitPoint = CreateShotDispersion(bHit ? HitResult.ImpactPoint : End, bIsAiming);
+	FVector FinalHitPoint = CreateShotDispersion(bHit ? HitResult.ImpactPoint : End, Dispersion);
 	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), FinalHitPoint);
 	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Muzzle->GetComponentLocation(), RotationTowardsTarget, SpawnParams);
 	Projectile->FireInDirection(Projectile->GetActorForwardVector());
+	Character->WeaponFired();
 	--AmmoInMagazine;
 }
 
@@ -71,7 +94,7 @@ void AFireWeapon::ReloadWeapon()
 	AmmoInMagazine = FMath::Max(0, AmmoCapacity - MaxAmmoInMagazine);
 	AmmoCapacity = FMath::Max(0, AmmoCapacity - MaxAmmoInMagazine);
 
-	AHeroCharacter* Character = GetOwnerCharacter();
+	const AHeroCharacter* Character = GetOwnerCharacter();
 	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
 	int8 RandomIndex = FMath::RandRange(0, ReloadAnimationSequenceName.Num() - 1);
 
@@ -112,7 +135,7 @@ void AFireWeapon::OnMouseRelease()
 
 void AFireWeapon::AttackMontageStarted()
 {
-	AHeroCharacter* Character = GetOwnerCharacter();
+	const AHeroCharacter* Character = GetOwnerCharacter();
 	if (!Character)
 		return;
 
@@ -124,7 +147,7 @@ void AFireWeapon::AttackMontageStarted()
 
 void AFireWeapon::AttackMontageEnded()
 {
-	AHeroCharacter* Character = GetOwnerCharacter();
+	const AHeroCharacter* Character = GetOwnerCharacter();
 	if (!Character)
 		return;
 	if (!(Character->CharacterIsMoving()))
@@ -144,12 +167,11 @@ void AFireWeapon::ClearWeaponTimer()
 	GetWorldTimerManager().ClearTimer(WeaponTimerHandle);
 }
 
-FVector AFireWeapon::CreateShotDispersion(const FVector OriginalTarget, const bool bIsAiming)
+FVector AFireWeapon::CreateShotDispersion(const FVector OriginalTarget, int16 Dispersion)
 {
-	int16 dispersion = bIsAiming ? 20 : 60;
-	float dispersionX = FMath::RandRange(-dispersion, dispersion);
-	float dispersionY = FMath::RandRange(-dispersion, dispersion);
-	float dispersionZ = FMath::RandRange(-dispersion, dispersion);
+	float dispersionX = FMath::RandRange(-Dispersion, Dispersion);
+	float dispersionY = FMath::RandRange(-Dispersion, Dispersion);
+	float dispersionZ = FMath::RandRange(-Dispersion, Dispersion);
 
 	return FVector(OriginalTarget.X + dispersionX, OriginalTarget.Y + dispersionY, OriginalTarget.Z + dispersionZ);
 }

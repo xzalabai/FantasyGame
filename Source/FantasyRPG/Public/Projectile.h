@@ -6,19 +6,22 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Projectile.generated.h"
 
+class UMaterialInterface;
+
 UCLASS()
 class FANTASYRPG_API AProjectile : public AActor
 {
 	GENERATED_BODY()
-
-protected:
-	virtual void BeginPlay() override;
 
 public:	
 	AProjectile();
 	UPROPERTY(EditAnywhere, Category = Projectile)
 	UStaticMeshComponent* ProjectileMeshComponent;
 	void FireInDirection(const FVector& ShootDirection);
+protected:
+	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaceDecal(UMaterialInterface* Material, UPrimitiveComponent* HitComponent, FVector HitLocation, FVector HitNormal);
 private:
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 	USphereComponent* CollisionComponent;
@@ -26,7 +29,8 @@ private:
 	UProjectileMovementComponent* ProjectileMovementComponent;
 	UFUNCTION()
     void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
-	
+	UPROPERTY(EditAnywhere, Category="Decals")
+	TArray<UMaterialInterface*> DecalMaterials;
 };
 
 

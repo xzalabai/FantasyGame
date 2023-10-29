@@ -29,6 +29,7 @@ void AItem::BeginPlay()
 	if (!(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetStaticMesh && DAItem->DAItemInfo.AssetThumbnail)
 	{
 		MeshComponent->SetStaticMesh(DAItem->DAItemInfo.AssetStaticMesh);
+		bAvailableToInventory = DAItem->DAItemInfo.bAvailableToInventory;
 	}	
 }
 
@@ -95,7 +96,7 @@ void AItem::Unequip()
 	}
 }
 
-AHeroCharacter* AItem::GetOwnerCharacter()
+const AHeroCharacter* AItem::GetOwnerCharacter() const
 {
 	AHeroCharacter* Character = Cast<AHeroCharacter>(GetAttachParentActor());
 	if (!Character)

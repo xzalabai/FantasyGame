@@ -298,7 +298,7 @@ void AHeroCharacter::InventoryItemsUpdated_Implementation()
 	return;
 }
 
-UCameraComponent* AHeroCharacter::GetCharacterCamera()
+const UCameraComponent* AHeroCharacter::GetCharacterCamera() const
 {
 	return CameraComponent;
 }

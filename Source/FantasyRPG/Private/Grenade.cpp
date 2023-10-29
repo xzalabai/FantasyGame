@@ -24,18 +24,17 @@ void AGrenade::Tick(float DeltaTime)
 
 void AGrenade::Throw(FVector& Direction)
 {
-		UE_LOG(LogTemp, Warning, TEXT("Throwing a grenade"));
-		
-		// detach from character
-		AHeroCharacter* Character = GetOwnerCharacter();
-		Character->EquippedItem = nullptr;
+	UE_LOG(LogTemp, Warning, TEXT("Throwing a grenade"));
+	// detach from character
+	const AHeroCharacter* Character = GetOwnerCharacter();
+	Character->EquippedItem = nullptr;
+	float ThrowForce = 1500.0f;
 
-		DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-		ItemState = EItemState::EIS_LayingOnGround;
+	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	ItemState = EItemState::EIS_LayingOnGround;
 		
-		float ThrowForce = 1500.0f;
-		TogglePhysics(true);
-        MeshComponent->AddImpulse(Direction * ThrowForce, "", true);
+	TogglePhysics(true);
+    MeshComponent->AddImpulse(Direction * ThrowForce, "", true);
 }
 
 void AGrenade::OnItemEquipped(AHeroCharacter &MainCharacter)
@@ -105,7 +104,7 @@ void AGrenade::AttackMontageStarted()
 
 void AGrenade::AttackMontageEnded()
 {
-	AHeroCharacter* Character = GetOwnerCharacter();
+	const AHeroCharacter* Character = GetOwnerCharacter();
 	FVector Direction = Character->GetActorForwardVector();
 	Throw(Direction);
 }

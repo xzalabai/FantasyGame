@@ -18,6 +18,9 @@ struct FDAItemInfo {
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     UStaticMesh* AssetStaticMesh; 
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bAvailableToInventory;
 };
 
 UCLASS(BlueprintType)

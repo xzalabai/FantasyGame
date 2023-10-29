@@ -44,9 +44,9 @@ public:
 	virtual void Equip();
 	virtual void Unequip();
 	void AttachToSocket(USkeletalMeshComponent* MeshComp, FName SocketName);
-	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip;}
-	FORCEINLINE bool IsAvailableToInventory() const { return bAvailableToInventory;}
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer &TagContainer) const override { TagContainer = ItemTag; return;}
+	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip; }
+	FORCEINLINE bool IsAvailableToInventory() const { return bAvailableToInventory; }
 	virtual void OnItemEquipped(AHeroCharacter &MainCharacter);
 protected:
 	UPROPERTY(EditInstanceOnly)	
@@ -58,7 +58,7 @@ protected:
 	UAnimMontage* Montage;
 	UPROPERTY(EditAnywhere, Category=AnimationProperties)
 	TArray<FName> AnimationSequenceName;
-	AHeroCharacter* GetOwnerCharacter();
+	const AHeroCharacter* GetOwnerCharacter() const;
 	UPROPERTY(EditAnywhere, Category = "Item Details");
 	bool bAutoEquip = false;
 	UPROPERTY(EditAnywhere, Category = "Item Details");

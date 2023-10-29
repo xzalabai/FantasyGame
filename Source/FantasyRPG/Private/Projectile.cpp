@@ -29,7 +29,7 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	CollisionComponent->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	CollisionComponent->OnComponentHit.AddUniqueDynamic(this, &AProjectile::OnHit);
 }
 
 void AProjectile::FireInDirection(const FVector& ShootDirection)
@@ -43,5 +43,8 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	{
 		Enemy->OnReceivedHit(Hit.ImpactPoint, 50);
 	}
+	int8 RandomIndex = FMath::RandRange(0, DecalMaterials.Num() - 1);
+
+	PlaceDecal(DecalMaterials[RandomIndex], OtherComponent, Hit.Location, Hit.Normal);
 	Destroy();
 }
