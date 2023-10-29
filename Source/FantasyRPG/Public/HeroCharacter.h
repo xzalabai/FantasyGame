@@ -7,6 +7,7 @@
 // TODO: HIGH! Change PrimitiveEnemy to RootBone enemy
 // TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
 // TODO: HIGH! Use const for functions and parameters
+// TODO: HIGH! Use const for GETTERS IN GETOWNERCHARACTER AND GETPLAYERCAMERA IN FireWeapon!!
 // TODO: MED add to enemy HP
 // TODO: MED create 2D blend space for Aim Offset 
 // TODO: MED change animation while carying a melee weapon
@@ -64,6 +65,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
+	FORCEINLINE bool IsAiming() const { return bIsAiming;}
 	UPROPERTY(BlueprintReadWrite, Category=Item)
 	AItem* EquippedItem = nullptr;
 	bool CharacterIsMoving() const;

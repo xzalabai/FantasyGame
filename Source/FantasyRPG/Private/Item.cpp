@@ -50,7 +50,7 @@ void AItem::Equip()
 	TriggerCollider->SetGenerateOverlapEvents(false);
 }
 
-void AItem::PerformMontage( AHeroCharacter *Character,  UAnimInstance *AnimInstance)
+void AItem::PerformMontage(UAnimInstance *AnimInstance)
 {
 	if (AnimationSequenceName.Num() == 0 || !Montage)
 	{
@@ -58,10 +58,10 @@ void AItem::PerformMontage( AHeroCharacter *Character,  UAnimInstance *AnimInsta
 		return;
 	}
     int8 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
-	PerformMontage(Character, AnimInstance, AnimationSequenceName[RandomIndex], Montage);
+	PerformMontage(AnimInstance, AnimationSequenceName[RandomIndex], Montage);
 }
 
-void AItem::PerformMontage( AHeroCharacter *Character, UAnimInstance *AnimInstance, FName& MontageName, UAnimMontage* AnimMontage)
+void AItem::PerformMontage(UAnimInstance *AnimInstance, FName& MontageName, UAnimMontage* AnimMontage)
 {
 	UE_LOG(LogTemp, Display, TEXT("[AItem] PerformMontage"));
 	AnimInstance->Montage_Play(AnimMontage);

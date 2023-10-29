@@ -69,9 +69,9 @@ void AGrenade::OnThrowableOverlap(UPrimitiveComponent* HitComponent, AActor* Oth
 	Destroy();
 }
 
-void AGrenade::PerformMontage(class AHeroCharacter *Character, class UAnimInstance *AnimInstance)
+void AGrenade::PerformMontage(class UAnimInstance *AnimInstance)
 {
-	AItem::PerformMontage(Character, AnimInstance);
+	AItem::PerformMontage(AnimInstance);
 }
 
 void AGrenade::EnableOverlappingEvents(bool Enable)

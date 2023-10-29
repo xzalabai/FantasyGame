@@ -178,7 +178,7 @@ void AHeroCharacter::InitiateAttack()
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
-	Item->PerformMontage(this, AnimInstance);
+	Item->PerformMontage(AnimInstance);
 }
 
 void AHeroCharacter::AttackStart()

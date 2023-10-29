@@ -26,12 +26,13 @@ public:
 	void FireFromWeapon();
 	void ReloadWeapon();
 	void OnMouseRelease();
-	virtual void PerformMontage(AHeroCharacter* Character, UAnimInstance* AnimInstance) override;
+	virtual void PerformMontage(UAnimInstance* AnimInstance) override;
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;
 private:
 	void ClearWeaponTimer();
+	FVector CreateShotDispersion(const FVector OriginalTarget, const bool bIsAiming);
 	FTimerHandle WeaponTimerHandle;
 	FTimerHandle ClearTimerHandle;
 	UPROPERTY(EditDefaultsOnly)

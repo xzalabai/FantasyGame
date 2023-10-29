@@ -47,7 +47,7 @@ void UFistsComponent::PerformBoxTrace()
 	RightHand->PerformBoxTrace();
 }
 
-void UFistsComponent::PerformMontage(class AHeroCharacter *Character, class UAnimInstance *AnimInstance)
+void UFistsComponent::PerformMontage(class UAnimInstance *AnimInstance)
 {
 	UE_LOG(LogTemp, Display, TEXT("[UFistsComponent] InitiateAttack"));
     AnimInstance->Montage_Play(Montage);
