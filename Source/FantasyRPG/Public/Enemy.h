@@ -6,6 +6,7 @@
 #include "Enemy.generated.h"
 
 class UAttributesComponent;
+class AItem;
 
 UCLASS()
 class FANTASYRPG_API AEnemy : public ACharacter, public ICharacterInterface
@@ -17,10 +18,14 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
+	AItem* GetEquippedItem();
 
 protected:
 	UPROPERTY(EditAnywhere, Category=Montages)
 	UAnimMontage* AnimMontage;
+	UPROPERTY(BlueprintReadWrite)
+	AItem* EquippedItem;
+
 	virtual void BeginPlay() override;
 	FVector CalculateVectorDirection(FVector PointA, FVector PointB);
 	bool IsHitFromFront(const FVector &ImpactPoint);

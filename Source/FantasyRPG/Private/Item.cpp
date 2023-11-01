@@ -26,7 +26,7 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 	// Replace item's mesh and characteristics
-	if (!(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetStaticMesh && DAItem->DAItemInfo.AssetThumbnail)
+	if (IsAvailableToInventory() && !(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetStaticMesh && DAItem->DAItemInfo.AssetThumbnail)
 	{
 		MeshComponent->SetStaticMesh(DAItem->DAItemInfo.AssetStaticMesh);
 		bAvailableToInventory = DAItem->DAItemInfo.bAvailableToInventory;

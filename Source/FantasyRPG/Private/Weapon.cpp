@@ -51,6 +51,7 @@ void AWeapon::PerformBoxTrace()
     FHitResult OutHit;
     TArray<AActor*> ActorsToIgnore;
     ActorsToIgnore.Add(this);
+    ActorsToIgnore.Add(GetAttachParentActor());
     bool bHit = UKismetSystemLibrary::BoxTraceSingle(
         this,
         StartTrace->GetComponentLocation(),
@@ -62,7 +63,9 @@ void AWeapon::PerformBoxTrace()
         ActorsToIgnore, EDrawDebugTrace::Persistent,
         OutHit,
         true);
-    UE_LOG(LogTemp, Display, TEXT("[AWeapon] Performed trace, hit: %d"), bHit ? 1 :0);
+    
+    UE_LOG(LogTemp, Display, TEXT("[AWeapon] Performed trace, hit: %d"), bHit ? 1 : 0);
+
     if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     {
         if (AffectedActors.Contains(OutHit.GetActor()))

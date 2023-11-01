@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "PhysicsEngine/ConstraintInstance.h"
 #include "AttributesComponent.h"
+#include "Item.h"
 #include "Components/CapsuleComponent.h"
 
 AEnemy::AEnemy()
@@ -61,3 +62,8 @@ bool AEnemy::IsHitFromFront(const FVector &ImpactPoint)
 	return (DotProduct >= 0) ?  true : false;
 }
 
+
+AItem* AEnemy::GetEquippedItem()
+{
+    return EquippedItem;
+}

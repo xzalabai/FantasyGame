@@ -4,11 +4,11 @@
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! Change PrimitiveEnemy to RootBone enemy
-// TODO: HIGH! Fix Firing from weapon while running (there is no animation so there is no triggered AttackStart and AttackEnd)
 // TODO: HIGH! Use const for functions and parameters
-// TODO: HIGH! Use const for GETTERS IN GETOWNERCHARACTER AND GETPLAYERCAMERA IN FireWeapon!!
+// TODO: HIGH! Use correct Add to Inventory (in InventoryComponent), create DAItem in method.
 // TODO: MED add to enemy HP
 // TODO: MED change animation while carying a melee weapon
+// TODO: MED remove Ragdoll_enemy (because we use ragdoll enemy 2) !
 // TODO: MED unify naming for input handlers (Reload, Release...)
 // TODO: MED add PerformOnRelease to IEquipable
 // TODO: MED unify naming (PerformOn, InitiateAttack,...)
@@ -27,6 +27,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "CharacterInterface.h"
 #include "PublicEnums.h"
 #include "HeroCharacter.generated.h"
 
@@ -45,7 +46,7 @@ class UInventoryComponent;
 class UDAItem;
 
 UCLASS()
-class FANTASYRPG_API AHeroCharacter : public ACharacter
+class FANTASYRPG_API AHeroCharacter : public ACharacter, public ICharacterInterface
 {
 	GENERATED_BODY()
 
@@ -61,6 +62,7 @@ public:
 	void PerformActionOnNotify();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	FORCEINLINE bool IsAiming() const { return bIsAiming;}
 	UPROPERTY(BlueprintReadWrite, Category=Item)

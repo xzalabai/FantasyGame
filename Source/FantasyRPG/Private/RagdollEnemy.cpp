@@ -5,7 +5,23 @@
 #include "DrawDebugHelpers.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "AttributesComponent.h"
+#include "Item.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "EquipableInterface.h"
+
+
+void ARagdollEnemy::PerformActionOnNotify()
+{
+	// Called from ABP
+	UE_LOG(LogTemp, Display, TEXT("[ARagdollEnemy] PerformActionOnNotify"));
+	IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
+	if (Item)
+	{
+		Item->PerformActionOnNotify();
+	}
+	
+}
+
 
 void ARagdollEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
 {
@@ -60,5 +76,3 @@ void ARagdollEnemy::ProcessDeath(bool bForwardHit)
 	// }
 	AEnemy::ProcessDeath();
 }
-
-
