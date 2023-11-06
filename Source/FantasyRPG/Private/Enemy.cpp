@@ -31,9 +31,15 @@ void AEnemy::OnReceivedHit(const FVector& ImpactDirection, int Damage)
 	Attributes->DecreaseHealth(Damage);
 }
 
+void AEnemy::BlockAttack(const FVector& ImpactDirection, int Damage)
+{
+    // TODO: Implement Enemy blocking attack
+    UE_LOG(LogTemp, Display, TEXT("[AEnemy] Enemy blocking missing"));
+}
+
 void AEnemy::ProcessHit()
 {
-
+    
 }
 
 void AEnemy::ProcessDeath()

@@ -18,6 +18,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
+	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
 	AItem* GetEquippedItem();
 
 protected:

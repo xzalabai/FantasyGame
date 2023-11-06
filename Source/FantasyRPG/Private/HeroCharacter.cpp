@@ -65,12 +65,23 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(ReleaseAction, ETriggerEvent::Triggered, this, &AHeroCharacter::MouseRelease);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateAttack);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AHeroCharacter::ToggleEquip);
+		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateBlock);
+		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Completed, this, &AHeroCharacter::BlockEnd);
 	}
 }
 
 void AHeroCharacter::OnReceivedHit(const FVector& ImpactDirection, int Damage)
 {
 	UE_LOG(LogTemp, Warning, TEXT("[HeroCharacter] RECEIVED HIT!!!!"));
+
+	if (IsBlocking())
+	{
+
+	}
+	else
+	{
+
+	}
 }
 
 void AHeroCharacter::Move(const FInputActionValue& Value)
@@ -98,11 +109,34 @@ void AHeroCharacter::Jump()
 
 void AHeroCharacter::Reload()
 {
-	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
+	/*if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
 	{
 		FireWeapon->ReloadWeapon();
 		AnimationState = EAnimationState::EAS_AnimationInProgress;
-	}
+	}*/
+}
+
+void AHeroCharacter::InitiateBlock()
+{
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateBlock"));
+	BlockStart();
+}
+
+void AHeroCharacter::BlockStart()
+{
+	bIsBlocking = true;
+}
+
+void AHeroCharacter::BlockEnd()
+{
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] BlockEnd"));
+
+	bIsBlocking = false;
+}
+
+void AHeroCharacter::BlockAttack(const FVector& ImpactDirection, int Damage)
+{
+	
 }
 
 void AHeroCharacter::RemoveFromInventory(UDAItem* DAItem)

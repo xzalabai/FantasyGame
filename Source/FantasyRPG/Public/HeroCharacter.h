@@ -4,6 +4,7 @@
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! Change PrimitiveEnemy to RootBone enemy
+// TODO: HIGH! USE OLD RELOAD BUTTON FOR RELOAD !!!!!!!!!!
 // TODO: HIGH! Use const for functions and parameters
 // TODO: HIGH! Use correct Add to Inventory (in InventoryComponent), create DAItem in method.
 // TODO: MED add to enemy HP
@@ -57,14 +58,21 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackStart();
 	UFUNCTION(BlueprintCallable)
+	void BlockEnd();
+	UFUNCTION(BlueprintCallable)
+	void BlockStart();
+	UFUNCTION(BlueprintCallable)
 	void ReloadEnd();
 	UFUNCTION(BlueprintCallable)
 	void PerformActionOnNotify();
+	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
+	void InitiateBlock();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	FORCEINLINE bool IsAiming() const { return bIsAiming;}
+	FORCEINLINE bool IsBlocking() const { return bIsBlocking;}
 	UPROPERTY(BlueprintReadWrite, Category=Item)
 	mutable AItem* EquippedItem = nullptr;
 	bool CharacterIsMoving() const;
@@ -89,6 +97,8 @@ protected:
 	UInputAction* EquipAction;
 	UPROPERTY(EditAnywhere, Category=Input)
 	UInputAction* ReleaseAction;
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* BlockAction;
 	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -115,9 +125,8 @@ protected:
 	UFistsComponent* Fists;
 	
 	// Montages
-	UPROPERTY(EditAnywhere, Category=Montages)
-	UAnimMontage* MontageAttack;
-
+	UPROPERTY(EditAnywhere, Category = AnimationProperties)
+	UAnimMontage* Montage;
 	// Enums
 	UPROPERTY(BlueprintReadOnly)	
 	ECharacterState CharacterState = ECharacterState::ECS_WithoutWeapon;
@@ -137,6 +146,8 @@ protected:
 	TSubclassOf<AProjectile> ProjectileClass;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsAiming = false;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bIsBlocking = false;
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
 	UPROPERTY(BlueprintReadOnly, Category = "Components")
