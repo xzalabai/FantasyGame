@@ -4,6 +4,7 @@
 #include "AttributesComponent.h"
 #include "Item.h"
 #include "Components/CapsuleComponent.h"
+#include "EquipableInterface.h"
 
 AEnemy::AEnemy()
 {
@@ -26,7 +27,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-void AEnemy::OnReceivedHit(const FVector& ImpactDirection, int Damage)
+void AEnemy::OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage)
 {
 	Attributes->DecreaseHealth(Damage);
 }
@@ -46,6 +47,35 @@ void AEnemy::ProcessDeath()
 {
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetGenerateOverlapEvents(false);
+}
+
+void AEnemy::PerformActionOnNotify()
+{
+    IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
+    Item->PerformActionOnNotify();
+}
+
+void AEnemy::AttackStart()
+{
+    IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
+    Item->AttackMontageStarted();
+}
+
+void AEnemy::AttackEnd()
+{
+    IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
+    Item->AttackMontageEnded();
+}
+
+void AEnemy::ReloadEnd()
+{
+    return;
+}
+
+void AEnemy::OnPerfectBlockReceived()
+{
+    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+    PlayAnimMontage(AnimMontage, 1.0f, FName(TEXT("HitForwardSmall")));
 }
 
 FVector AEnemy::CalculateVectorDirection(FVector PointA, FVector PointB)

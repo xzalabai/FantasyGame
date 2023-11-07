@@ -14,7 +14,7 @@ class FANTASYRPG_API APrimitiveEnemy : public AEnemy
 	GENERATED_BODY()
 
 private:
-	virtual void OnReceivedHit(const FVector& ImpactPoint, int Damage) override;
+	virtual void OnReceivedHit(const FVector& ImpactPoint, AActor* Attacker, int Damage) override;
 
 private:
 	UFUNCTION(BlueprintCallable)

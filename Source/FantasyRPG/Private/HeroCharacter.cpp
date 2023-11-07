@@ -21,6 +21,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameplayTagsManager.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 AHeroCharacter::AHeroCharacter()
 {
@@ -70,17 +71,38 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
-void AHeroCharacter::OnReceivedHit(const FVector& ImpactDirection, int Damage)
+void AHeroCharacter::OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage)
 {
-	UE_LOG(LogTemp, Warning, TEXT("[HeroCharacter] RECEIVED HIT!!!!"));
-
+	UE_LOG(LogTemp, Warning, TEXT("[HeroCharacter] OnReceivedHit"));
+	bool bIsPerfectBlock = true;
 	if (IsBlocking())
 	{
+		if (bIsPerfectBlock)
+		{
+			FName Name = FName(TEXT("PerfectBlock1"));
+			FRotator RotationTowardsAttacker = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Attacker->GetActorLocation());
+			SetActorRotation(RotationTowardsAttacker, ETeleportType::None);
+			PerfectAttackBlocked();
+			PlayAnimMontage(HitReactionMontage, 1.0f, Name);
+			if (ICharacterInterface* AttackerInterface = Cast<ICharacterInterface>(Attacker))
+			{
+				AttackerInterface->OnPerfectBlockReceived();
+			}
+		}
+		else
+		{
+			// If he stands in front of us (dot product)
+			// Block effect reaction
+			AttackBlocked();
+			PlayAnimMontage(HitReactionMontage, 1.0f, HitReactionAnimationSequence[FMath::RandRange(0, HitReactionAnimationSequence.Num() - 1)]);
+		}
+		
 
 	}
 	else
 	{
-
+		Attributes->DecreaseHealth(Damage);
+		PlayAnimMontage(HitReactionMontage, 1.0f, HitReactionAnimationSequence[FMath::RandRange(0, HitReactionAnimationSequence.Num() - 1)]);
 	}
 }
 
@@ -109,11 +131,11 @@ void AHeroCharacter::Jump()
 
 void AHeroCharacter::Reload()
 {
-	/*if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
+	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
 	{
 		FireWeapon->ReloadWeapon();
 		AnimationState = EAnimationState::EAS_AnimationInProgress;
-	}*/
+	}
 }
 
 void AHeroCharacter::InitiateBlock()
@@ -130,7 +152,6 @@ void AHeroCharacter::BlockStart()
 void AHeroCharacter::BlockEnd()
 {
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] BlockEnd"));
-
 	bIsBlocking = false;
 }
 
@@ -216,7 +237,7 @@ void AHeroCharacter::InitiateAttack()
 
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->PerformMontage(AnimInstance);
 }
 
@@ -225,7 +246,7 @@ void AHeroCharacter::AttackStart()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackStart"));
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
-	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->AttackMontageStarted();
 }
 
@@ -234,7 +255,7 @@ void AHeroCharacter::AttackEnd()
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
 	AnimationState = EAnimationState::EAS_NoAnimation;
-	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->AttackMontageEnded();
 }
 
@@ -249,8 +270,13 @@ void AHeroCharacter::PerformActionOnNotify()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] PerformActionOnNotify"));
-	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippeddItem());
+	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->PerformActionOnNotify();
+}
+
+void AHeroCharacter::OnPerfectBlockReceived()
+{
+
 }
 
 void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
@@ -334,15 +360,24 @@ bool AHeroCharacter::HasItemTag(const AItem *Item, const FName TagName) const
 void AHeroCharacter::InventoryItemsUpdated_Implementation()
 {
 	UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] InventoryItemsUpdated should be overriden in class blueprint!"));
-	return;
 }
 
+void AHeroCharacter::AttackBlocked_Implementation()
+{
+	UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] AttackBlocked should be overriden in class blueprint!"));
+}
+
+void AHeroCharacter::PerfectAttackBlocked_Implementation()
+{
+	UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] PerfectAttackBlocked should be overriden in class blueprint!"));
+}
+	
 const UCameraComponent* AHeroCharacter::GetCharacterCamera() const
 {
 	return CameraComponent;
 }
 
-UObject* AHeroCharacter::GetEquippeddItem()
+UObject* AHeroCharacter::GetEquippedItem()
 {
 	// returns Fists or Currently equipped weapon
 	if (!EquippedItem)

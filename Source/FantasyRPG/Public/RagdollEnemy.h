@@ -12,7 +12,7 @@ class FANTASYRPG_API ARagdollEnemy : public AEnemy
 	GENERATED_BODY()
 
 public:
-	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
+	virtual void OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage) override;
 	virtual void ProcessDeath(bool bForwardHit);
 	virtual void ProcessHit(bool bForwardHit);
 	UFUNCTION(BlueprintCallable)	

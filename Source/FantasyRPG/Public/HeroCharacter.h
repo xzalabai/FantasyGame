@@ -4,10 +4,13 @@
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! Change PrimitiveEnemy to RootBone enemy
+// TODO: HIGH! Change the inventory inserting because it's not safe
+// TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
 // TODO: HIGH! USE OLD RELOAD BUTTON FOR RELOAD !!!!!!!!!!
 // TODO: HIGH! Use const for functions and parameters
 // TODO: HIGH! Use correct Add to Inventory (in InventoryComponent), create DAItem in method.
 // TODO: MED add to enemy HP
+// TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
 // TODO: MED remove Ragdoll_enemy (because we use ragdoll enemy 2) !
 // TODO: MED unify naming for input handlers (Reload, Release...)
@@ -65,11 +68,12 @@ public:
 	void ReloadEnd();
 	UFUNCTION(BlueprintCallable)
 	void PerformActionOnNotify();
+	void OnPerfectBlockReceived() override;
 	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
 	void InitiateBlock();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
+	virtual void OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	FORCEINLINE bool IsAiming() const { return bIsAiming;}
 	FORCEINLINE bool IsBlocking() const { return bIsBlocking;}
@@ -125,8 +129,8 @@ protected:
 	UFistsComponent* Fists;
 	
 	// Montages
-	UPROPERTY(EditAnywhere, Category = AnimationProperties)
-	UAnimMontage* Montage;
+	UPROPERTY(EditAnywhere, Category = "Animation properties")
+	UAnimMontage* HitReactionMontage;
 	// Enums
 	UPROPERTY(BlueprintReadOnly)	
 	ECharacterState CharacterState = ECharacterState::ECS_WithoutWeapon;
@@ -154,14 +158,19 @@ protected:
 	TObjectPtr<UInventoryComponent>  ItemInventory;
 	UFUNCTION(BlueprintNativeEvent)
 	void InventoryItemsUpdated();
+	UFUNCTION(BlueprintNativeEvent)
+	void AttackBlocked();
+	UFUNCTION(BlueprintNativeEvent)
+	void PerfectAttackBlocked();
 private:		
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
-	FORCEINLINE UObject* GetEquippeddItem();
+	FORCEINLINE UObject* GetEquippedItem();
 	void InsertToInventory(AItem* Item);
 	UFUNCTION(BlueprintCallable)
 	void RemoveFromInventory(UDAItem* DAItem);
-
+	UPROPERTY(EditAnywhere, Category = "AnimationProperties")
+	TArray<FName> HitReactionAnimationSequence;
 };
 
 

@@ -92,7 +92,7 @@ void AGrenade::PerformSphereTrace()
 	{
 		if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     	{
-        	ITarget->OnReceivedHit(GetActorLocation(), 50);
+        	ITarget->OnReceivedHit(GetActorLocation(), nullptr, 50);
     	}
 	}
 }

@@ -17,7 +17,7 @@ public:
 	AEnemy();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void OnReceivedHit(const FVector& ImpactDirection, int Damage) override;
+	virtual void OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage) override;
 	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
 	AItem* GetEquippedItem();
 
@@ -34,6 +34,12 @@ protected:
 	UAttributesComponent* Attributes;	
 	void ProcessHit();
 	void ProcessDeath();
+	virtual void PerformActionOnNotify() override;
+	virtual void AttackStart() override;
+	virtual void AttackEnd() override;
+	virtual void ReloadEnd() override;
+	virtual void OnPerfectBlockReceived() override;
+
 };
 
 

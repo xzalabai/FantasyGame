@@ -41,7 +41,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 {
 	if (AEnemy* Enemy = Cast<AEnemy>(OtherActor))
 	{
-		Enemy->OnReceivedHit(Hit.ImpactPoint, 50);
+		Enemy->OnReceivedHit(Hit.ImpactPoint, nullptr, 50);
 	}
 	int8 RandomIndex = FMath::RandRange(0, DecalMaterials.Num() - 1);
 

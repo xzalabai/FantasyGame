@@ -19,9 +19,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	int MaxHealth;
 
-	UPROPERTY()
-	TArray<int> X;
-
 	FORCEINLINE int GetHealth() const { return Health; }
 	FORCEINLINE bool IsAlive() const { return Health > 0; }
 	FORCEINLINE void AddHealth(int NewHealth) { UE_LOG(LogTemp, Display, TEXT("HP added %d"), NewHealth); Health += NewHealth; }

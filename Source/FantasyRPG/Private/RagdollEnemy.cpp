@@ -13,19 +13,17 @@
 void ARagdollEnemy::PerformActionOnNotify()
 {
 	// Called from ABP
-	UE_LOG(LogTemp, Display, TEXT("[ARagdollEnemy] PerformActionOnNotify"));
 	IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
 	if (Item)
 	{
 		Item->PerformActionOnNotify();
 	}
-	
 }
 
 
-void ARagdollEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
+void ARagdollEnemy::OnReceivedHit(const FVector& ImpactPoint, AActor* Attacker, int Damage)
 {
-	AEnemy::OnReceivedHit(ImpactPoint, Damage);
+	AEnemy::OnReceivedHit(ImpactPoint, Attacker, Damage);
 	
 	UE_LOG(LogTemp, Display, TEXT("[ARagdollEnemy] Received a hit with %d damage. He is left with %d HP"), Damage, Attributes->GetHealth());
 

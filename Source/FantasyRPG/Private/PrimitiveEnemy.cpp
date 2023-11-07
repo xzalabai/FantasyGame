@@ -3,9 +3,9 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 
-void APrimitiveEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
+void APrimitiveEnemy::OnReceivedHit(const FVector& ImpactPoint, AActor* Attacker, int Damage)
 {
-	AEnemy::OnReceivedHit(ImpactPoint, Damage);
+	AEnemy::OnReceivedHit(ImpactPoint, Attacker, Damage);
 	
 	UE_LOG(LogTemp, Display, TEXT("Primitive Enemy received a hit with %d damage. He is left with %d HP"), Damage, Attributes->GetHealth());
 
@@ -23,7 +23,7 @@ void APrimitiveEnemy::OnReceivedHit(const FVector& ImpactPoint, int Damage)
 void APrimitiveEnemy::LayingDead()
 {   
 	UE_LOG(LogTemp, Warning, TEXT("Laying Dead"));
-	//GetMesh()->SetCollisionProfileName("Ragdoll");
+		//GetMesh()->SetCollisionProfileName("Ragdoll");
 }
 
 void APrimitiveEnemy::ProcessHit(bool bForwardHit)

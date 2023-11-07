@@ -63,8 +63,6 @@ void AWeapon::PerformBoxTrace()
         ActorsToIgnore, EDrawDebugTrace::Persistent,
         OutHit,
         true);
-    
-    UE_LOG(LogTemp, Display, TEXT("[AWeapon] Performed trace, hit: %d"), bHit ? 1 : 0);
 
     if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     {
@@ -73,7 +71,7 @@ void AWeapon::PerformBoxTrace()
             // Actor is already in the list of affected
             return;
         }
-        ITarget->OnReceivedHit(OutHit.ImpactPoint, 50);
+        ITarget->OnReceivedHit(OutHit.ImpactPoint, GetAttachParentActor(), 50);
         AffectedActors.Add(OutHit.GetActor());
     }
 }
@@ -96,6 +94,7 @@ void AWeapon::AttackMontageStarted()
 
 void AWeapon::AttackMontageEnded()
 {
+    UE_LOG(LogTemp, Display, TEXT("[AWeapon]AttackMontageEnded"));
 	AffectedActors.Empty();
 }
 
