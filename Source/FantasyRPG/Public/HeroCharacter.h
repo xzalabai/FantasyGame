@@ -77,6 +77,7 @@ public:
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	FORCEINLINE bool IsAiming() const { return bIsAiming;}
 	FORCEINLINE bool IsBlocking() const { return bIsBlocking;}
+	FORCEINLINE bool IsPerfectBlocking() const { return (!bIsBlockingBeforeAttack && bIsBlocking);}
 	UPROPERTY(BlueprintReadWrite, Category=Item)
 	mutable AItem* EquippedItem = nullptr;
 	bool CharacterIsMoving() const;
@@ -148,10 +149,12 @@ protected:
 	FVector MuzzleOffset;
 	UPROPERTY(EditDefaultsOnly, Category = Projectile)
 	TSubclassOf<AProjectile> ProjectileClass;	
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsAiming = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsBlocking = false;
+	bool bIsBlockingBeforeAttack = false;
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
 	UPROPERTY(BlueprintReadOnly, Category = "Components")
@@ -171,6 +174,8 @@ private:
 	void RemoveFromInventory(UDAItem* DAItem);
 	UPROPERTY(EditAnywhere, Category = "AnimationProperties")
 	TArray<FName> HitReactionAnimationSequence;
+	void PerformPerfectBlockReaction(AActor* Attacker);
+	void EnemyAttackStarted();
 };
 
 

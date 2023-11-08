@@ -47,10 +47,9 @@ void ARagdollEnemy::ProcessHit(bool bForwardHit)
     
     if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-        UE_LOG(LogTemp, Display, TEXT("Play "));
 		int8 RandomSequence = FMath::RandRange(1, 2);
 		AnimInstance->Montage_Play(AnimMontage);
-		FName SequenceName = "HitForwardSmall";
+		FName SequenceName = "HitForwardSmall1";
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
 	}
 }

@@ -8,23 +8,8 @@
 
 AEnemy::AEnemy()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
     Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attributes"));
-}
-
-void AEnemy::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AEnemy::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 void AEnemy::OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage)
@@ -57,12 +42,15 @@ void AEnemy::PerformActionOnNotify()
 
 void AEnemy::AttackStart()
 {
+    UE_LOG(LogTemp, Display, TEXT("[AEnemy] AttackStart"));
     IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
     Item->AttackMontageStarted();
+    OnEnemyAttackStarted.Broadcast();
 }
 
 void AEnemy::AttackEnd()
 {
+    UE_LOG(LogTemp, Display, TEXT("[AEnemy] AttackEnd"));
     IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
     Item->AttackMontageEnded();
 }
@@ -74,8 +62,8 @@ void AEnemy::ReloadEnd()
 
 void AEnemy::OnPerfectBlockReceived()
 {
-    UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-    PlayAnimMontage(AnimMontage, 1.0f, FName(TEXT("HitForwardSmall")));
+    int8 RandomIndex = FMath::RandRange(0, PerfectBlockReceivedMontageName.Num() - 1);
+    PlayAnimMontage(AnimMontage, 1.0f, PerfectBlockReceivedMontageName[RandomIndex]);
 }
 
 FVector AEnemy::CalculateVectorDirection(FVector PointA, FVector PointB)

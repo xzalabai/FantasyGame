@@ -24,7 +24,7 @@ void AGrenade::Tick(float DeltaTime)
 
 void AGrenade::Throw(FVector& Direction)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Throwing a grenade"));
+	UE_LOG(LogTemp, Display, TEXT("Throwing a grenade"));
 	// detach from character
 	const AHeroCharacter* Character = GetOwnerCharacter();
 	Character->EquippedItem = nullptr;

@@ -22,13 +22,13 @@ void APrimitiveEnemy::OnReceivedHit(const FVector& ImpactPoint, AActor* Attacker
 
 void APrimitiveEnemy::LayingDead()
 {   
-	UE_LOG(LogTemp, Warning, TEXT("Laying Dead"));
+	UE_LOG(LogTemp, Display, TEXT("Laying Dead"));
 		//GetMesh()->SetCollisionProfileName("Ragdoll");
 }
 
 void APrimitiveEnemy::ProcessHit(bool bForwardHit)
 {   
-	UE_LOG(LogTemp, Warning, TEXT("[APrimitiveEnemy] ProcessHit"));
+	UE_LOG(LogTemp, Display, TEXT("[APrimitiveEnemy] ProcessHit"));
 	USkeletalMeshComponent *EnemyMesh = GetMesh();
     //Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
@@ -42,7 +42,7 @@ void APrimitiveEnemy::ProcessHit(bool bForwardHit)
 
 void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 {   
-	UE_LOG(LogTemp, Warning, TEXT("[APrimitiveEnemy] ProcessDeath"));
+	UE_LOG(LogTemp, Display, TEXT("[APrimitiveEnemy] ProcessDeath"));
     //Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
@@ -52,7 +52,6 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
 		SetDeathAnimationPose(SequenceName);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Death"));
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	AEnemy::ProcessDeath();
 }

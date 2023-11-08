@@ -8,6 +8,8 @@
 class UAttributesComponent;
 class AItem;
 
+DECLARE_MULTICAST_DELEGATE(FOnEnemyAttackStartedDelegate);
+
 UCLASS()
 class FANTASYRPG_API AEnemy : public ACharacter, public ICharacterInterface
 {
@@ -15,11 +17,11 @@ class FANTASYRPG_API AEnemy : public ACharacter, public ICharacterInterface
 
 public:
 	AEnemy();
-	virtual void Tick(float DeltaTime) override;
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage) override;
 	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
 	AItem* GetEquippedItem();
+
+	FOnEnemyAttackStartedDelegate OnEnemyAttackStarted;
 
 protected:
 	UPROPERTY(EditAnywhere, Category=Montages)
@@ -27,7 +29,6 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	AItem* EquippedItem;
 
-	virtual void BeginPlay() override;
 	FVector CalculateVectorDirection(FVector PointA, FVector PointB);
 	bool IsHitFromFront(const FVector &ImpactPoint);
 	UPROPERTY(EditAnywhere, Category = "Components")
@@ -40,6 +41,9 @@ protected:
 	virtual void ReloadEnd() override;
 	virtual void OnPerfectBlockReceived() override;
 
+private:
+	UPROPERTY(EditAnywhere)
+	TArray<FName> PerfectBlockReceivedMontageName;
 };
 
 
