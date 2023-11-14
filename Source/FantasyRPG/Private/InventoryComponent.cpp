@@ -8,13 +8,8 @@ UInventoryComponent::UInventoryComponent()
 	bWantsInitializeComponent = true;
 }
 
-void UInventoryComponent::BeginPlay()
-{
-	Super::BeginPlay();
-}
 
-
-bool UInventoryComponent::InsertToInventory(AItem* Item)
+bool UInventoryComponent::InsertToInventory(const AItem* Item)
 {
 	// if (MaxSize == InventoryItems.Num())
 	// {
@@ -22,9 +17,10 @@ bool UInventoryComponent::InsertToInventory(AItem* Item)
 	// 	return false;
 	// }
 
-	UDAItem* DAItem = Item->DAItem;
-	UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] Adding to inventory %s"), *(DAItem->DAItemInfo.AssetName));
-	InventoryItems.Add(DAItem);
+	//UDAItem* DAItem = Item->DAItem;
+	UDAItem* NewItem = DuplicateObject<UDAItem>(Item->DAItem, this);
+	UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] Adding to inventory %s"), *(NewItem->DAItemInfo.AssetName));
+	InventoryItems.Add(NewItem);
 	return true;
 }
 
@@ -37,6 +33,7 @@ void UInventoryComponent::OnComponentDestroyed(bool B)
 bool UInventoryComponent::RemoveFromInventory(const UDAItem* DAItem)
 {
 	UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] RemoveFromInventory %s"), *(DAItem->DAItemInfo.AssetName));
+	
 	if (InventoryItems.Num() == 0)
 	{
 		UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] Unable to pop from inventory."));

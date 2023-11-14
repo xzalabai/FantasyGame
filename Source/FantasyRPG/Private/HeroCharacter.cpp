@@ -100,6 +100,7 @@ void AHeroCharacter::OnReceivedHit(const FVector& ImpactDirection, AActor* Attac
 	{
 		Attributes->DecreaseHealth(Damage);
 		PlayAnimMontage(HitReactionMontage, 1.0f, HitReactionAnimationSequence[FMath::RandRange(0, HitReactionAnimationSequence.Num() - 1)]);
+		AnimationState = EAnimationState::EAS_AnimationInProgress;
 	}
 }
 
@@ -191,7 +192,7 @@ void AHeroCharacter::MouseRelease()
 	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
 	{
 		FireWeapon->OnMouseRelease();
-		AnimationState = EAnimationState::EAS_NoAnimation;
+		MontageEnd();
 	}
 }
 
@@ -268,11 +269,18 @@ void AHeroCharacter::AttackStart()
 	Item->AttackMontageStarted();
 }
 
+void AHeroCharacter::MontageEnd()
+{
+	// Called from ABP or script
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] MontageEnd"));
+	AnimationState = EAnimationState::EAS_NoAnimation;
+}
+
 void AHeroCharacter::AttackEnd()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] AttackEnd"));
-	AnimationState = EAnimationState::EAS_NoAnimation;
+	MontageEnd();
 	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->AttackMontageEnded();
 }
@@ -281,7 +289,7 @@ void AHeroCharacter::ReloadEnd()
 {
 	// Called from ABP
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] ReloadEnd"));
-	AnimationState = EAnimationState::EAS_NoAnimation;
+	MontageEnd();
 }
 
 void AHeroCharacter::PerformActionOnNotify()

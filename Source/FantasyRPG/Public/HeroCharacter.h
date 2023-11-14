@@ -59,6 +59,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AttackEnd();
 	UFUNCTION(BlueprintCallable)
+	void MontageEnd();
+	UFUNCTION(BlueprintCallable)
 	void AttackStart();
 	UFUNCTION(BlueprintCallable)
 	void BlockEnd();
