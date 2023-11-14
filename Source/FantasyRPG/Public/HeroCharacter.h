@@ -169,6 +169,7 @@ private:
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
 	FORCEINLINE UObject* GetEquippedItem();
+	FORCEINLINE bool HasMeeleWeapon();
 	void InsertToInventory(AItem* Item);
 	UFUNCTION(BlueprintCallable)
 	void RemoveFromInventory(UDAItem* DAItem);

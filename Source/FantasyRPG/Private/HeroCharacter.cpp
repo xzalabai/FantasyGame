@@ -83,7 +83,7 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 void AHeroCharacter::OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage)
 {
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] OnReceivedHit, IsBlocking() %d, IsPerfectBlocking() %d"), IsBlocking(), IsPerfectBlocking());
-	if (IsBlocking())
+	if (IsBlocking() && HasMeeleWeapon())
 	{
 		if (IsPerfectBlocking())
 		{
@@ -403,4 +403,9 @@ UObject* AHeroCharacter::GetEquippedItem()
 		return Fists;
 	}
 	return EquippedItem;
+}
+
+bool AHeroCharacter::HasMeeleWeapon()
+{
+	return HasItemTag(EquippedItem, FName("Weapon.MeeleWeapon"));
 }
