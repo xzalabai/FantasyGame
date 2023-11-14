@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Item.h"
 #include "Engine/DataAsset.h"
 #include "DAItem.generated.h"
 
@@ -21,6 +22,9 @@ struct FDAItemInfo {
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bAvailableToInventory;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TSubclassOf<AItem> ItemType;
 };
 
 UCLASS(BlueprintType)

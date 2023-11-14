@@ -17,7 +17,6 @@ bool UInventoryComponent::InsertToInventory(const AItem* Item)
 	// 	return false;
 	// }
 
-	//UDAItem* DAItem = Item->DAItem;
 	UDAItem* NewItem = DuplicateObject<UDAItem>(Item->DAItem, this);
 	UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] Adding to inventory %s"), *(NewItem->DAItemInfo.AssetName));
 	InventoryItems.Add(NewItem);
@@ -46,9 +45,20 @@ bool UInventoryComponent::RemoveFromInventory(const UDAItem* DAItem)
 		UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] RemoveFromInventory Item was found on: %d"), Index);
 		
 		// Spawn item
-		AItem* Item = GetWorld()->SpawnActorDeferred<AItem>(AItem::StaticClass(), GetOwner()->GetTransform());
-		Item->DAItem->DAItemInfo = DAItem->DAItemInfo;
-		Item->FinishSpawning(GetOwner()->GetTransform());
+		if (DAItem->DAItemInfo.ItemType != nullptr)
+		{
+			AItem* Item = GetWorld()->SpawnActorDeferred<AItem>(DAItem->DAItemInfo.ItemType, GetOwner()->GetTransform());
+			Item->DAItem->DAItemInfo = DAItem->DAItemInfo;
+			Item->FinishSpawning(GetOwner()->GetTransform());
+		}
+		else
+		{
+			AItem* Item = GetWorld()->SpawnActorDeferred<AItem>(AItem::StaticClass(), GetOwner()->GetTransform());
+			Item->DAItem->DAItemInfo = DAItem->DAItemInfo;
+			Item->FinishSpawning(GetOwner()->GetTransform());
+		}
+		
+		
 		
 		// Empty inventory slot
 		InventoryItems.RemoveAt(Index);

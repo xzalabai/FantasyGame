@@ -25,12 +25,20 @@ AItem::AItem()
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// A) Spawn item from inventory
 	// Replace item's mesh and characteristics
 	if (DAItem->IsValidLowLevel() && !(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetStaticMesh && DAItem->DAItemInfo.AssetThumbnail)
 	{
 		MeshComponent->SetStaticMesh(DAItem->DAItemInfo.AssetStaticMesh);
 		bAvailableToInventory = DAItem->DAItemInfo.bAvailableToInventory;
-	}	
+	}
+	// B) 
+	else
+	{
+		//DAItem = NewObject<UDAItem>();
+		//DAItem->DAItemInfo.AssetName = "RandomName";
+	}
 }
 
 void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)

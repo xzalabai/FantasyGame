@@ -163,7 +163,6 @@ void AFireWeapon::PerformActionOnNotify()
 
 void AFireWeapon::ClearWeaponTimer()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Clear Timer"));
 	GetWorldTimerManager().ClearTimer(WeaponTimerHandle);
 }
 
