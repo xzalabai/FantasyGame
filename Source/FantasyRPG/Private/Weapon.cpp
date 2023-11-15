@@ -22,6 +22,7 @@ AWeapon::AWeapon()
     
     EndTrace = CreateDefaultSubobject<USceneComponent>(TEXT("End Trace"));
     EndTrace->SetupAttachment(RootComponent);
+    UE_LOG(LogTemp, Warning, TEXT("CONSTRUCTING WEAPON"));
 }
 
 void AWeapon::BeginPlay()

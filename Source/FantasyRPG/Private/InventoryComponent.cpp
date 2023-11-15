@@ -8,6 +8,11 @@ UInventoryComponent::UInventoryComponent()
 	bWantsInitializeComponent = true;
 }
 
+UInventoryComponent::~UInventoryComponent()
+{
+	InventoryItems.Empty();
+}
+
 
 bool UInventoryComponent::InsertToInventory(const AItem* Item)
 {
@@ -17,9 +22,9 @@ bool UInventoryComponent::InsertToInventory(const AItem* Item)
 	// 	return false;
 	// }
 
-	UDAItem* NewItem = DuplicateObject<UDAItem>(Item->DAItem, this);
-	UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] Adding to inventory %s"), *(NewItem->DAItemInfo.AssetName));
-	InventoryItems.Add(NewItem);
+	TObjectPtr<UDAItem> NewUDAItem = BuildUDAItemData(Item);
+	UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] Adding to inventory %s"), *(NewUDAItem->DAItemInfo.AssetName));
+	InventoryItems.Add(NewUDAItem);
 	return true;
 }
 
@@ -43,22 +48,12 @@ bool UInventoryComponent::RemoveFromInventory(const UDAItem* DAItem)
 	if (InventoryItems.Find(DAItem, Index))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[UInventoryComponent] RemoveFromInventory Item was found on: %d"), Index);
-		
-		// Spawn item
-		if (DAItem->DAItemInfo.ItemType != nullptr)
-		{
-			AItem* Item = GetWorld()->SpawnActorDeferred<AItem>(DAItem->DAItemInfo.ItemType, GetOwner()->GetTransform());
-			Item->DAItem->DAItemInfo = DAItem->DAItemInfo;
-			Item->FinishSpawning(GetOwner()->GetTransform());
-		}
-		else
-		{
-			AItem* Item = GetWorld()->SpawnActorDeferred<AItem>(AItem::StaticClass(), GetOwner()->GetTransform());
-			Item->DAItem->DAItemInfo = DAItem->DAItemInfo;
-			Item->FinishSpawning(GetOwner()->GetTransform());
-		}
-		
-		
+
+		// Spawn item (either pick predefined subclass or default - AItem class)
+		UClass* ClassToBeSpawned = DAItem->DAItemInfo.ItemType != nullptr ? DAItem->DAItemInfo.ItemType : AItem::StaticClass();
+		AItem* Item = GetWorld()->SpawnActorDeferred<AItem>(ClassToBeSpawned, GetOwner()->GetTransform());
+		Item->DAItem = DuplicateObject<UDAItem>(DAItem, this);
+		Item->FinishSpawning(GetOwner()->GetTransform());
 		
 		// Empty inventory slot
 		InventoryItems.RemoveAt(Index);
@@ -67,4 +62,16 @@ bool UInventoryComponent::RemoveFromInventory(const UDAItem* DAItem)
 	}
 
 	return false;
+}
+
+TObjectPtr<UDAItem> UInventoryComponent::BuildUDAItemData(const AItem* Item) const
+{
+	TObjectPtr<UDAItem> DAItem = NewObject<UDAItem>();
+	DAItem->DAItemInfo.AssetName = Item->AssetName;
+	DAItem->DAItemInfo.AssetThumbnail = Item->AssetThumbnail;
+	DAItem->DAItemInfo.bAvailableToInventory = Item->IsAvailableToInventory();
+	DAItem->DAItemInfo.ItemType = Item->GetClass();
+	DAItem->DAItemInfo.bIsBuidFromItinerary = true;
+
+	return DAItem;
 }

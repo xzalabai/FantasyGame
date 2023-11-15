@@ -38,10 +38,6 @@ private:
 	AFist* LeftHand;
 	UPROPERTY()
 	AFist* RightHand;
-	UPROPERTY()
-	AFist* RightHandRef;
-	UPROPERTY()
-	AFist* LeftHandRef;
 	AHeroCharacter* GetHero();
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AFist> FistBPClass;

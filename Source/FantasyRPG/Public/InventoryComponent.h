@@ -14,10 +14,12 @@ class FANTASYRPG_API UInventoryComponent : public UActorComponent
 
 public:	
 	UInventoryComponent();
+	~UInventoryComponent();
 	bool InsertToInventory(const AItem* Item);
 	bool RemoveFromInventory(const UDAItem* DAItem);
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	TArray<const UDAItem*> InventoryItems;		
 private:
 	void OnComponentDestroyed(bool bDestroyingHierarchy) override;
+	TObjectPtr<UDAItem> BuildUDAItemData(const AItem* Item) const;
 };

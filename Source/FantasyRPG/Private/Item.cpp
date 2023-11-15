@@ -20,24 +20,23 @@ AItem::AItem()
 	SetRootComponent(MeshComponent);
 	TriggerCollider->SetupAttachment(MeshComponent);
 	ParticleSystem->SetupAttachment(RootComponent);
+
+	UE_LOG(LogTemp, Warning, TEXT("CONSTRUCTING ITEM"));
 }
 
 void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	// A) Spawn item from inventory
-	// Replace item's mesh and characteristics
-	if (DAItem->IsValidLowLevel() && !(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetStaticMesh && DAItem->DAItemInfo.AssetThumbnail)
+	if (IsValid(DAItem) && DAItem->DAItemInfo.bIsBuidFromItinerary && !(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetThumbnail)
 	{
-		MeshComponent->SetStaticMesh(DAItem->DAItemInfo.AssetStaticMesh);
+		AssetName = DAItem->DAItemInfo.AssetName;
+		AssetThumbnail = DAItem->DAItemInfo.AssetThumbnail;
 		bAvailableToInventory = DAItem->DAItemInfo.bAvailableToInventory;
 	}
-	// B) 
 	else
 	{
-		//DAItem = NewObject<UDAItem>();
-		//DAItem->DAItemInfo.AssetName = "RandomName";
+
 	}
 }
 

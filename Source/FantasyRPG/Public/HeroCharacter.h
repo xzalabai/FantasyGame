@@ -3,21 +3,16 @@
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
-// TODO: HIGH! Change PrimitiveEnemy to RootBone enemy
-// TODO: HIGH! Change the inventory inserting because it's not safe
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
-// TODO: HIGH! USE OLD RELOAD BUTTON FOR RELOAD !!!!!!!!!!
+// TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Use const for functions and parameters
-// TODO: HIGH! Use correct Add to Inventory (in InventoryComponent), create DAItem in method.
-// TODO: MED add to enemy HP
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
-// TODO: MED remove Ragdoll_enemy (because we use ragdoll enemy 2) !
 // TODO: MED unify naming for input handlers (Reload, Release...)
 // TODO: MED add PerformOnRelease to IEquipable
+// TODO: MED Change logic -> let enemies subscribe to HeroCharacter
 // TODO: MED unify naming (PerformOn, InitiateAttack,...)
 // TODO: MED fix error when you Equip and Enemy is near
-// TODO: MED remove ECharacterState and replace it in animation with gameplay tag (now it's used only for ABP)
 // TODO: LOW replace animation BP for rrunning with Item
 // TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
 // TODO: fix issue while shooting -> click (timer is active), then hold (we don't get any input to try to shoot again)
@@ -87,7 +82,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void WeaponFired() const;
 protected:
-	// Input context
+	// Input context -----------------------------------
 	UPROPERTY(EditAnywhere, Category=Input)
 	UInputMappingContext* InputContext;
 	UPROPERTY(EditAnywhere, Category=Input)
@@ -106,18 +101,22 @@ protected:
 	UInputAction* ReleaseAction;
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* BlockAction;
-	
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* InsertAction;
+
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	virtual void Jump() override;
 	void InitiateAttack();
 	void ToggleEquip();
+	void Insert();
 	void Reload();
 	void MouseRelease();
-	void AutoEquip(AItem *Item);
-	void Equip(AItem* Item);	
+	void AutoEquip(AItem* Item);
+	void Equip(AItem* Item);
 	void Unequip();
 	void SwapItem(AItem* ItemToBeEquipped);
+	// ---------------------------------------------------
 	
 	UPROPERTY()
 	AItem* OverlappedItem;
@@ -127,7 +126,6 @@ protected:
 	UBoxComponent* RightHandCollider;
 	UPROPERTY(BlueprintReadOnly)
 	UCameraComponent* CameraComponent;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UFistsComponent* Fists;
 	

@@ -52,6 +52,7 @@ void AHeroCharacter::BeginPlay()
 	Fists->RegisterHandColliders();
 
 	// Filter enemies and subscribe to them
+	// TODO: Change logic -> let enemies subscribe to HeroCharacter
 	TArray<AActor*> EnemiesFound;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemy::StaticClass(), EnemiesFound);
 	for (AActor* EnemyActor : EnemiesFound)
@@ -73,6 +74,7 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Jump);
 		EnhancedInputComponent->BindAction(ReloadAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Reload);
 		EnhancedInputComponent->BindAction(ReleaseAction, ETriggerEvent::Triggered, this, &AHeroCharacter::MouseRelease);
+		EnhancedInputComponent->BindAction(InsertAction, ETriggerEvent::Triggered, this, &AHeroCharacter::Insert);
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateAttack);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AHeroCharacter::ToggleEquip);
 		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateBlock);
@@ -149,6 +151,15 @@ void AHeroCharacter::Jump()
 	Super::Jump();
 }
 
+
+void AHeroCharacter::Insert()
+{
+	if (OverlappedItem && OverlappedItem->IsAvailableToInventory())
+	{
+		InsertToInventory(OverlappedItem);
+	}
+}
+
 void AHeroCharacter::Reload()
 {
 	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
@@ -198,11 +209,8 @@ void AHeroCharacter::MouseRelease()
 
 void AHeroCharacter::ToggleEquip()
 {
-	if (OverlappedItem && OverlappedItem->IsAvailableToInventory())
-	{
-		InsertToInventory(OverlappedItem);
-	}
-	else if (EquippedItem && !OverlappedItem)
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] ToggleEquip"));
+	if (EquippedItem && !OverlappedItem)
 	{
 		Unequip();
 	}

@@ -18,13 +18,12 @@ struct FDAItemInfo {
     UTexture2D* AssetThumbnail;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    UStaticMesh* AssetStaticMesh; 
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool bAvailableToInventory;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TSubclassOf<AItem> ItemType;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool bIsBuidFromItinerary;
 };
 
 UCLASS(BlueprintType)

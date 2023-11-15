@@ -31,8 +31,6 @@ public:
 	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, Category = "Item Details")
 	FGameplayTagContainer ItemTag;
-	UPROPERTY(EditAnywhere, Category = "Item Details")
-	UDAItem* DAItem;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* MeshComponent;
 	UPROPERTY(EditAnywhere);
@@ -48,6 +46,19 @@ public:
 	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip; }
 	FORCEINLINE bool IsAvailableToInventory() const { return bAvailableToInventory; }
 	virtual void OnItemEquipped(AHeroCharacter &MainCharacter);
+
+	// UDAItem Data ------------------------------
+	UPROPERTY(VisibleAnywhere, Category = "Item Properties for Inventory")
+	UDAItem* DAItem;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties for Inventory")
+	FString AssetName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties for Inventory")
+	UTexture2D* AssetThumbnail;
+	UPROPERTY(EditAnywhere, Category = "Item Properties for Inventory");
+	bool bAvailableToInventory = false;
+	UPROPERTY(EditAnywhere, Category = "Item Properties for Inventory");
+	bool bAutoEquip = false;
+	// --------------------------------------------
 protected:
 	UPROPERTY(EditInstanceOnly)	
 	EItemState ItemState = EItemState::EIS_LayingOnGround;
@@ -59,10 +70,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category=AnimationProperties)
 	TArray<FName> AnimationSequenceName;
 	const AHeroCharacter* GetOwnerCharacter() const;
-	UPROPERTY(EditAnywhere, Category = "Item Details");
-	bool bAutoEquip = false;
-	UPROPERTY(EditAnywhere, Category = "Item Details");
-	bool bAvailableToInventory = false;
 };
 
 
