@@ -20,8 +20,6 @@ AItem::AItem()
 	SetRootComponent(MeshComponent);
 	TriggerCollider->SetupAttachment(MeshComponent);
 	ParticleSystem->SetupAttachment(RootComponent);
-
-	UE_LOG(LogTemp, Warning, TEXT("CONSTRUCTING ITEM"));
 }
 
 void AItem::BeginPlay()
@@ -47,12 +45,7 @@ void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)
 	SetActorTransform(SocketTransform);
 }
 
-void AItem::OnItemEquipped(AHeroCharacter &MainCharacter)
-{
-	
-}
-
-void AItem::Equip()
+void AItem::OnItemEquipped(AHeroCharacter *MainCharacter)
 {
 	ItemState = EItemState::EIS_Equipped;
 	TriggerCollider->SetGenerateOverlapEvents(false);
@@ -77,22 +70,21 @@ void AItem::PerformMontage(UAnimInstance *AnimInstance, FName& MontageName, UAni
 }
 
 
-void AItem::Unequip()
+void AItem::OnItemUnequipped()
 {
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	ItemState = EItemState::EIS_LayingOnGround;
 	TriggerCollider->SetGenerateOverlapEvents(true);
 
 	// Find a suitabe position on ground
-	FVector StartLocation = FVector(0.f, 0.f, 100.f);  	// Starting location of the raycast
-	FVector EndLocation = FVector(0.f, 0.f, -1000.f);  	// Ending location of the raycast
-	FHitResult HitResult; 							 	// Variable to store the hit result
+	FVector EndLocation = FVector(0.f, 0.f, -1000.f);  	
+	FHitResult HitResult; 							 	
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,           		// Hit result will be stored here
 		GetActorLocation(),       	// Starting location of the raycast
 		EndLocation,         		// Ending location of the raycast
-		ECC_Visibility,      		// Collision channel (you can change it to suit your needs)
+		ECC_Camera,      		// Collision channel (you can change it to suit your needs)
 		FCollisionQueryParams::DefaultQueryParam,
 		FCollisionResponseParams::DefaultResponseParam
 	);

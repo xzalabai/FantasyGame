@@ -1,6 +1,7 @@
 #include "FireWeapon.h"
 #include "Components/SceneComponent.h"
 #include "HeroCharacter.h"
+#include "ProjectilePoolComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
@@ -15,12 +16,16 @@
 AFireWeapon::AFireWeapon()
 {	
 	Muzzle = CreateDefaultSubobject<USceneComponent>(TEXT("Muzzle"));
+	ProjectilePool = CreateDefaultSubobject<UProjectilePoolComponent>(TEXT("ProjectilePool"));
 }
  
 void AFireWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	Muzzle->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
+	ProjectilePool->CreatePool(ProjectileClass, MaxAmmoInMagazine);
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
 }
 void AFireWeapon::EnableOverlappingEvents(bool bEnable)
 {
@@ -29,60 +34,49 @@ void AFireWeapon::EnableOverlappingEvents(bool bEnable)
 
 void AFireWeapon::FireFromWeapon()
 {
-	// TODO refactor
 	const AHeroCharacter* Character = GetOwnerCharacter();
-	bool bIsAiming = Character->IsAiming();
-	bool bIsMoving = Character->CharacterIsMoving();
-
 	const UCameraComponent* PlayerCamera = Character->GetCharacterCamera();
-
-	const FVector Start = PlayerCamera->GetComponentLocation();
 	
-	FVector End; int16 Dispersion = 0;
-	if (bIsAiming && bIsMoving)
-	{
-		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
-		Dispersion = 30;
-	}
-	else if (bIsAiming && !bIsMoving)
-	{
-		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
-		Dispersion = 20;
-	}
-	else if (!bIsAiming && bIsMoving)
-	{
-		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
-		Dispersion = 50;
-	}
-	else if (!bIsAiming && !bIsMoving)
-	{
-		End = Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000);
-		Dispersion = 40;
-	}
+	float AimDispersion = UKismetMathLibrary::NormalizeToRange(Character->GetAimSpread(), 10, 40);
 
-    FCollisionQueryParams CollisionParams;
+	FVector End = (Character->IsAiming() && Character->CharacterIsMoving()) ?
+		Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000)
+		: PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);;
+	const FVector Start = PlayerCamera->GetComponentLocation();
+	FHitResult HitResult;
+
+	bool bHitActor = CalculateShotEndPosition(Start, End, HitResult);
+	
+	FVector FinalHitPoint = CreateShotDispersion(bHitActor ? HitResult.ImpactPoint : End, AimDispersion);
+	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), FinalHitPoint);
+	
+	TObjectPtr<AProjectile> Projectile = ProjectilePool->GetActorFromPool();
+	Projectile->SetActorLocation(Muzzle->GetComponentLocation());
+	Projectile->SetActorRotation(RotationTowardsTarget);
+	//AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Muzzle->GetComponentLocation(), RotationTowardsTarget, SpawnParams);
+	//SpawnedActor->SpawnCollisionHandlingMethod = SpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	Projectile->FireInDirection(Projectile->GetActorForwardVector());
+	Character->WeaponFired();
+	
+	--AmmoInMagazine;
+}
+
+bool AFireWeapon::CalculateShotEndPosition(const FVector& Start, const FVector& End, FHitResult& HitResult)
+{
+	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
-
 	// Perform the line trace
-	FHitResult HitResult;
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldDynamic, CollisionParams);
 
 	// Debug sphere at impact point
 	FVector& SphereLocation = HitResult.ImpactPoint;
-	float SphereRadius = 20.0f; 
+	float SphereRadius = 20.0f;
 	DrawDebugSphere(GetWorld(), SphereLocation, SphereRadius, 32, FColor::Red, true, -1.0f);
 
-	FVector FinalHitPoint = CreateShotDispersion(bHit ? HitResult.ImpactPoint : End, Dispersion);
-	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), FinalHitPoint);
-	AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Muzzle->GetComponentLocation(), RotationTowardsTarget, SpawnParams);
-	Projectile->FireInDirection(Projectile->GetActorForwardVector());
-	Character->WeaponFired();
-	--AmmoInMagazine;
+	return bHit;
 }
+
 
 void AFireWeapon::ReloadWeapon()
 {
@@ -173,4 +167,10 @@ FVector AFireWeapon::CreateShotDispersion(const FVector OriginalTarget, int16 Di
 	float dispersionZ = FMath::RandRange(-Dispersion, Dispersion);
 
 	return FVector(OriginalTarget.X + dispersionX, OriginalTarget.Y + dispersionY, OriginalTarget.Z + dispersionZ);
+}
+
+void AFireWeapon::ReturnToPool(TObjectPtr<AProjectile> Projectile)
+{
+	// TODO Change to callback
+	ProjectilePool->InsertToPool(Projectile);
 }

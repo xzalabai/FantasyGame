@@ -7,6 +7,7 @@
 class AProjectile;
 class UAnimInstance;
 class AHeroCharacter;
+class UProjectilePoolComponent;
 
 UCLASS()
 
@@ -20,6 +21,8 @@ protected:
 	UAnimMontage* ReloadMontage;
 	UPROPERTY(EditAnywhere, Category=AnimationProperties)
 	TArray<FName> ReloadAnimationSequenceName;
+	UPROPERTY()
+	TObjectPtr<UProjectilePoolComponent> ProjectilePool;
 public:
 	AFireWeapon();
 	virtual void EnableOverlappingEvents(bool Enable) override;
@@ -30,8 +33,10 @@ public:
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;
+	void ReturnToPool(TObjectPtr<AProjectile> Projectile);
 private:
 	void ClearWeaponTimer();
+	bool CalculateShotEndPosition(const FVector& Start, const FVector& End, FHitResult& HitResult);
 	FVector CreateShotDispersion(const FVector OriginalTarget, const int16 bIsAiming);
 	FTimerHandle WeaponTimerHandle;
 	FTimerHandle ClearTimerHandle;
@@ -49,6 +54,7 @@ private:
 	int32 AmmoCapacity = 0;
 	UPROPERTY(EditDefaultsOnly)
 	float FireRate = 0;
+	FActorSpawnParameters SpawnParams;
 	bool bMouseReleased = false;	
 };
 

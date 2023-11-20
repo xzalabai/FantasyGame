@@ -37,11 +37,11 @@ void AGrenade::Throw(FVector& Direction)
     MeshComponent->AddImpulse(Direction * ThrowForce, "", true);
 }
 
-void AGrenade::OnItemEquipped(AHeroCharacter &MainCharacter)
+void AGrenade::OnItemEquipped(AHeroCharacter *MainCharacter)
 {
 	UE_LOG(LogTemp, Display, TEXT("Equipped Grenade"));
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Equip();
+	Super::OnItemEquipped(MainCharacter);
 }
 
 void AGrenade::TogglePhysics(bool bEnable)
@@ -77,7 +77,6 @@ void AGrenade::EnableOverlappingEvents(bool Enable)
 {
 	return;
 }
-
 
 void AGrenade::PerformSphereTrace()
 {

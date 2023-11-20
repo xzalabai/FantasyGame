@@ -15,7 +15,7 @@ private:
 	int Health;
 
 	GENERATED_BODY()
-	virtual void OnItemEquipped(AHeroCharacter &MainCharacter) override;
+	virtual void OnItemEquipped(AHeroCharacter *MainCharacter) override;
 };
 
 

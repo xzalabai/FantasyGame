@@ -3,6 +3,7 @@
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
+// TODO: HIGH! return projectile to pool after they were destroyeed
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Use const for functions and parameters
@@ -60,8 +61,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void BlockEnd();
 	UFUNCTION(BlueprintCallable)
-	void BlockStart();
-	UFUNCTION(BlueprintCallable)
 	void ReloadEnd();
 	UFUNCTION(BlueprintCallable)
 	void PerformActionOnNotify();
@@ -81,6 +80,8 @@ public:
 	const UCameraComponent* GetCharacterCamera() const;
 	UFUNCTION(BlueprintImplementableEvent)
 	void WeaponFired() const;
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	float GetAimSpread() const;
 protected:
 	// Input context -----------------------------------
 	UPROPERTY(EditAnywhere, Category=Input)

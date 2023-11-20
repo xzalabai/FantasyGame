@@ -25,7 +25,7 @@ public:
 	virtual void Throw(FVector& Direction) override;
 	UFUNCTION()
 	virtual void OnThrowableOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-	virtual void OnItemEquipped(AHeroCharacter &MainCharacter) override;
+	virtual void OnItemEquipped(AHeroCharacter *MainCharacter) override;
 	void TogglePhysics(bool enable);
 	void PerformSphereTrace();
 	virtual void PerformMontage(class UAnimInstance *AnimInstance) override;

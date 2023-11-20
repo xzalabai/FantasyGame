@@ -1,5 +1,6 @@
 #include "Projectile.h"
 #include "Enemy.h"
+#include "FireWeapon.h"
 
 AProjectile::AProjectile()
 {
@@ -23,13 +24,14 @@ AProjectile::AProjectile()
 	ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMeshComponent"));
 	ProjectileMeshComponent->SetupAttachment(RootComponent);
 
-	InitialLifeSpan = 3.0f;
+	InitialLifeSpan = 1.0f;
 }
 
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	CollisionComponent->OnComponentHit.AddUniqueDynamic(this, &AProjectile::OnHit);
+	SetLifeSpan(InitialLifeSpan);
 }
 
 void AProjectile::FireInDirection(const FVector& ShootDirection)
@@ -39,12 +41,16 @@ void AProjectile::FireInDirection(const FVector& ShootDirection)
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
+	UE_LOG(LogTemp, Display, TEXT("[AProjectile] OnHit."));
 	if (AEnemy* Enemy = Cast<AEnemy>(OtherActor))
 	{
 		Enemy->OnReceivedHit(Hit.ImpactPoint, nullptr, 50);
 	}
 	int8 RandomIndex = FMath::RandRange(0, DecalMaterials.Num() - 1);
 
-	PlaceDecal(DecalMaterials[RandomIndex], OtherComponent, Hit.Location, Hit.Normal);
+	PlaceDecal(DecalMaterials[RandomIndex], OtherComponent, Hit.ImpactPoint, Hit.Normal);
+
+	//TObjectPtr<AFireWeapon> Weapon = Cast<AFireWeapon>(GetOwner());
+	//Weapon->ReturnToPool(this);
 	Destroy();
 }

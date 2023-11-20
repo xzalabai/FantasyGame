@@ -106,6 +106,12 @@ void AHeroCharacter::OnReceivedHit(const FVector& ImpactDirection, AActor* Attac
 	}
 }
 
+float AHeroCharacter::GetAimSpread() const
+{
+	float Velocity = UKismetMathLibrary::VSize(GetVelocity()) + (IsAiming() ? 0 : 50);
+	return Velocity;
+}
+
 void AHeroCharacter::EnemyAttackStarted()
 {
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] EnemyAttackStarted, HeroCharacter is blocking %d"), bIsBlocking ? 1 : 0);
@@ -171,11 +177,11 @@ void AHeroCharacter::Reload()
 
 void AHeroCharacter::InitiateBlock()
 {
-	BlockStart();
-}
+	if (CharacterIsMoving())
+	{
+		return;
+	}
 
-void AHeroCharacter::BlockStart()
-{
 	bIsBlocking = true;
 }
 
@@ -209,6 +215,11 @@ void AHeroCharacter::MouseRelease()
 
 void AHeroCharacter::ToggleEquip()
 {
+	if (AnimationState == EAnimationState::EAS_AnimationInProgress)
+	{
+		return;
+	}
+
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] ToggleEquip"));
 	if (EquippedItem && !OverlappedItem)
 	{
@@ -228,7 +239,7 @@ void AHeroCharacter::ToggleEquip()
 void AHeroCharacter::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
 	AItem* Item = Cast<AItem>(OtherActor);
-	if (!Item)
+	if (!Item || Item->IsCurrentlyEquipped())
 	{
 		return;
 	}
@@ -320,7 +331,7 @@ void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
 
 void AHeroCharacter::AutoEquip(AItem *Item)
 {
-	Item->OnItemEquipped(*this);
+	Item->OnItemEquipped(this);
 }
 
 void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)
@@ -334,7 +345,7 @@ void AHeroCharacter::Unequip()
 {
 	UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Unequip: %s"), *EquippedItem->GetName());
 	CharacterState = ECharacterState::ECS_WithoutWeapon;
-	EquippedItem->Unequip();
+	EquippedItem->OnItemUnequipped();
 	EquippedItem = nullptr;
 }
 
@@ -370,7 +381,7 @@ void AHeroCharacter::Equip(AItem* Item)
 		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Equip(): Picking unidentified object"));
 		return;
 	}
-	Item->OnItemEquipped(*this);	
+	Item->OnItemEquipped(this);	
 	EquippedItem = Item;
 }
 

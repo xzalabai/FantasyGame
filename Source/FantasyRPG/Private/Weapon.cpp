@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Weapon.h"
 #include "Components/BoxComponent.h"
 #include "Components/SceneComponent.h"
@@ -9,7 +6,6 @@
 #include "HeroCharacter.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
-
 
 AWeapon::AWeapon()
 {
@@ -22,7 +18,6 @@ AWeapon::AWeapon()
     
     EndTrace = CreateDefaultSubobject<USceneComponent>(TEXT("End Trace"));
     EndTrace->SetupAttachment(RootComponent);
-    UE_LOG(LogTemp, Warning, TEXT("CONSTRUCTING WEAPON"));
 }
 
 void AWeapon::BeginPlay()

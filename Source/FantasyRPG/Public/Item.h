@@ -39,13 +39,14 @@ public:
 	USphereComponent* TriggerCollider;
 	UPROPERTY(EditDefaultsOnly);
 	EItemType ItemType;
-	virtual void Equip();
-	virtual void Unequip();
+	virtual void OnItemUnequipped();
 	void AttachToSocket(USkeletalMeshComponent* MeshComp, FName SocketName);
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer &TagContainer) const override { TagContainer = ItemTag; return;}
 	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip; }
 	FORCEINLINE bool IsAvailableToInventory() const { return bAvailableToInventory; }
-	virtual void OnItemEquipped(AHeroCharacter &MainCharacter);
+	FORCEINLINE bool IsCurrentlyEquipped() const { return ItemState == EItemState::EIS_Equipped; }
+	UFUNCTION(BlueprintCallable)
+	virtual void OnItemEquipped(AHeroCharacter *MainCharacter);
 
 	// UDAItem Data ------------------------------
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties for Inventory")

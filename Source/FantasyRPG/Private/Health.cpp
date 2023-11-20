@@ -9,9 +9,9 @@ AHealth::AHealth()
     bAutoEquip = true;
 }
 
-void AHealth::OnItemEquipped(AHeroCharacter& MainCharacter)
+void AHealth::OnItemEquipped(AHeroCharacter *MainCharacter)
 {
-    MainCharacter.GetAttributes()->AddHealth(Health);
+    MainCharacter->GetAttributes()->AddHealth(Health);
     Destroy();
 }
 
