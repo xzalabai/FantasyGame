@@ -23,6 +23,7 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaceDecal(UMaterialInterface* Material, UPrimitiveComponent* HitComponent, FVector HitLocation, FVector HitNormal);
 private:
+	void ReturnToPool();
 	UPROPERTY(VisibleDefaultsOnly, Category = Projectile)
 	USphereComponent* CollisionComponent;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
@@ -31,6 +32,7 @@ private:
     void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 	UPROPERTY(EditAnywhere, Category="Decals")
 	TArray<UMaterialInterface*> DecalMaterials;
+	FTimerHandle TimerHandle;
 };
 
 

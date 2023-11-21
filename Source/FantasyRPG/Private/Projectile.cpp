@@ -14,8 +14,8 @@ AProjectile::AProjectile()
 	// TODO: set from BP
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
-	ProjectileMovementComponent->InitialSpeed = 4000.0f;
-	ProjectileMovementComponent->MaxSpeed = 8000.0f;
+	ProjectileMovementComponent->InitialSpeed = 6000.0f;
+	ProjectileMovementComponent->MaxSpeed = 10000.0f;
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 	ProjectileMovementComponent->bShouldBounce = true;
 	ProjectileMovementComponent->Bounciness = 0.3f;
@@ -31,17 +31,17 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	CollisionComponent->OnComponentHit.AddUniqueDynamic(this, &AProjectile::OnHit);
-	SetLifeSpan(InitialLifeSpan);
 }
 
 void AProjectile::FireInDirection(const FVector& ShootDirection)
 {
-    ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AProjectile::ReturnToPool, InitialLifeSpan, false, InitialLifeSpan);
+	ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
 }
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Display, TEXT("[AProjectile] OnHit."));
+	UE_LOG(LogTemp, Display, TEXT("[AProjectile] OnHit. %s"), *OtherActor->GetName());
 	if (AEnemy* Enemy = Cast<AEnemy>(OtherActor))
 	{
 		Enemy->OnReceivedHit(Hit.ImpactPoint, nullptr, 50);
@@ -49,8 +49,14 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	int8 RandomIndex = FMath::RandRange(0, DecalMaterials.Num() - 1);
 
 	PlaceDecal(DecalMaterials[RandomIndex], OtherComponent, Hit.ImpactPoint, Hit.Normal);
+	ReturnToPool();
 
-	//TObjectPtr<AFireWeapon> Weapon = Cast<AFireWeapon>(GetOwner());
-	//Weapon->ReturnToPool(this);
-	Destroy();
+	//Destroy();
+}
+
+void AProjectile::ReturnToPool()
+{
+	GetWorldTimerManager().ClearTimer(TimerHandle);
+	TObjectPtr<AFireWeapon> Weapon = Cast<AFireWeapon>(GetOwner());
+	Weapon->ReturnToPool(this);
 }

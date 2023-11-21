@@ -23,7 +23,7 @@ void AFireWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	Muzzle->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	ProjectilePool->CreatePool(ProjectileClass, MaxAmmoInMagazine);
+	ProjectilePool->CreatePool(ProjectileClass, 10);
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 }
@@ -51,10 +51,9 @@ void AFireWeapon::FireFromWeapon()
 	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), FinalHitPoint);
 	
 	TObjectPtr<AProjectile> Projectile = ProjectilePool->GetActorFromPool();
+	Projectile->SetOwner(this);
 	Projectile->SetActorLocation(Muzzle->GetComponentLocation());
 	Projectile->SetActorRotation(RotationTowardsTarget);
-	//AProjectile* Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Muzzle->GetComponentLocation(), RotationTowardsTarget, SpawnParams);
-	//SpawnedActor->SpawnCollisionHandlingMethod = SpawnActorCollisionHandlingMethod::AlwaysSpawn;
 	Projectile->FireInDirection(Projectile->GetActorForwardVector());
 	Character->WeaponFired();
 	
