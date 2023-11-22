@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Projectile.generated.h"
 
+class AFireWeapon;
 class UMaterialInterface;
 
 UCLASS()
@@ -17,6 +18,8 @@ public:
 	AProjectile();
 	UPROPERTY(EditAnywhere, Category = Projectile)
 	UStaticMeshComponent* ProjectileMeshComponent;
+	UPROPERTY()
+	AFireWeapon* OwnerWeapon;
 	void FireInDirection(const FVector& ShootDirection);
 protected:
 	virtual void BeginPlay() override;

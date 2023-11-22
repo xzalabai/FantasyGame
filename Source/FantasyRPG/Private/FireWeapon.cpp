@@ -36,12 +36,17 @@ void AFireWeapon::FireFromWeapon()
 {
 	const AHeroCharacter* Character = GetOwnerCharacter();
 	const UCameraComponent* PlayerCamera = Character->GetCharacterCamera();
-	
+	FVector End;
 	float AimDispersion = UKismetMathLibrary::NormalizeToRange(Character->GetAimSpread(), 10, 40);
 
-	FVector End = (Character->IsAiming() && Character->CharacterIsMoving()) ?
-		Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000)
-		: PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);;
+	if (!Character->IsAiming() && !Character->CharacterIsMoving())
+	{
+		End = Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000);
+	}
+	else
+	{
+		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
+	}
 	const FVector Start = PlayerCamera->GetComponentLocation();
 	FHitResult HitResult;
 
@@ -51,7 +56,7 @@ void AFireWeapon::FireFromWeapon()
 	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), FinalHitPoint);
 	
 	TObjectPtr<AProjectile> Projectile = ProjectilePool->GetActorFromPool();
-	Projectile->SetOwner(this);
+	Projectile->OwnerWeapon = this;
 	Projectile->SetActorLocation(Muzzle->GetComponentLocation());
 	Projectile->SetActorRotation(RotationTowardsTarget);
 	Projectile->FireInDirection(Projectile->GetActorForwardVector());
@@ -60,19 +65,18 @@ void AFireWeapon::FireFromWeapon()
 	--AmmoInMagazine;
 }
 
-bool AFireWeapon::CalculateShotEndPosition(const FVector& Start, const FVector& End, FHitResult& HitResult)
+bool AFireWeapon::CalculateShotEndPosition(const FVector& Start, const FVector& End, FHitResult& OutHitResult)
 {
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 
 	// Perform the line trace
-	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_WorldDynamic, CollisionParams);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECC_WorldDynamic, CollisionParams);
 
 	// Debug sphere at impact point
-	FVector& SphereLocation = HitResult.ImpactPoint;
 	float SphereRadius = 20.0f;
-	DrawDebugSphere(GetWorld(), SphereLocation, SphereRadius, 32, FColor::Red, true, -1.0f);
-
+	DrawDebugSphere(GetWorld(), OutHitResult.ImpactPoint, SphereRadius, 32, FColor::Red, true, -1.0f);
+	
 	return bHit;
 }
 

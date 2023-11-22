@@ -35,6 +35,7 @@ void AProjectile::BeginPlay()
 
 void AProjectile::FireInDirection(const FVector& ShootDirection)
 {
+	
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &AProjectile::ReturnToPool, InitialLifeSpan, false, InitialLifeSpan);
 	ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
 }
@@ -56,7 +57,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 
 void AProjectile::ReturnToPool()
 {
+	UE_LOG(LogTemp, Display, TEXT("[AProjectile] ReturnToPool"));
 	GetWorldTimerManager().ClearTimer(TimerHandle);
-	TObjectPtr<AFireWeapon> Weapon = Cast<AFireWeapon>(GetOwner());
-	Weapon->ReturnToPool(this);
+	OwnerWeapon->ReturnToPool(this);
 }

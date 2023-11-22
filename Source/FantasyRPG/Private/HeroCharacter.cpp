@@ -150,6 +150,8 @@ void AHeroCharacter::Look(const FInputActionValue& Value)
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 	AddControllerYawInput(LookAxisVector.X);
 	AddControllerPitchInput(LookAxisVector.Y);
+	const float CharacterPitch = GetCharacterPitch();
+	
 }
 
 void AHeroCharacter::Jump()
@@ -435,4 +437,12 @@ UObject* AHeroCharacter::GetEquippedItem()
 bool AHeroCharacter::HasMeeleWeapon()
 {
 	return HasItemTag(EquippedItem, FName("Weapon.MeeleWeapon"));
+}
+
+float AHeroCharacter::GetCharacterPitch() const
+{
+	float Pitch = Controller->GetControlRotation().Pitch;
+	Pitch = Pitch > 270 ? ((Pitch - 360)) : Pitch;
+	UE_LOG(LogTemp, Warning, TEXT("[AGrenade] AttackMontageEnded %f"), Pitch);
+	return Pitch;
 }

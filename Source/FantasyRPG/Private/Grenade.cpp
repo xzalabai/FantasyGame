@@ -4,6 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "CharacterInterface.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include <Kismet\KismetMathLibrary.h>
 
 AGrenade::AGrenade()
 {
@@ -104,7 +105,11 @@ void AGrenade::AttackMontageStarted()
 void AGrenade::AttackMontageEnded()
 {
 	const AHeroCharacter* Character = GetOwnerCharacter();
-	FVector Direction = Character->GetActorForwardVector();
+	const float CharacterPitch = Character->GetCharacterPitch() / 100;
+	FVector Direction = FVector(
+		Character->GetActorForwardVector().X,
+		Character->GetActorForwardVector().Y,
+		Character->GetActorForwardVector().Z + CharacterPitch);
 	Throw(Direction);
 }
 

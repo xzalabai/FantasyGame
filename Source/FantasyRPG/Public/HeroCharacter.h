@@ -82,6 +82,7 @@ public:
 	void WeaponFired() const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetAimSpread() const;
+	float GetCharacterPitch() const;
 protected:
 	// Input context -----------------------------------
 	UPROPERTY(EditAnywhere, Category=Input)
