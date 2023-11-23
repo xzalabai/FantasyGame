@@ -238,7 +238,7 @@ void AHeroCharacter::ToggleEquip()
 	{
 		Equip(OverlappedItem);			
 	}
-	else if (!bItemIsEquippable)
+	else if (!bItemIsEquippable && OverlappedItem)
 	{
 		AbsorbItem(OverlappedItem);
 	}

@@ -34,6 +34,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* MeshComponent;
 	UPROPERTY(EditAnywhere);
+	USceneComponent* RootSceneComponent;
+	UPROPERTY(EditAnywhere);
 	UNiagaraComponent* ParticleSystem;
 	UPROPERTY(VisibleAnywhere);
 	USphereComponent* TriggerCollider;
