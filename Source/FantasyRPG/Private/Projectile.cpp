@@ -5,26 +5,16 @@
 AProjectile::AProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	// TODO: WHY THIS IS IN TUT?
-	//RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ProjectileSceneComponent"));
-
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(CollisionComponent);
 	
 	// TODO: set from BP
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
-	ProjectileMovementComponent->InitialSpeed = 6000.0f;
-	ProjectileMovementComponent->MaxSpeed = 10000.0f;
-	ProjectileMovementComponent->bRotationFollowsVelocity = true;
-	ProjectileMovementComponent->bShouldBounce = true;
-	ProjectileMovementComponent->Bounciness = 0.3f;
-	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
-
 	ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMeshComponent"));
 	ProjectileMeshComponent->SetupAttachment(RootComponent);
 
-	InitialLifeSpan = 1.0f;
+	//InitialLifeSpan = 1.0f;
 }
 
 void AProjectile::BeginPlay()
@@ -35,8 +25,8 @@ void AProjectile::BeginPlay()
 
 void AProjectile::FireInDirection(const FVector& ShootDirection)
 {
-	
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &AProjectile::ReturnToPool, InitialLifeSpan, false, InitialLifeSpan);
+	ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AProjectile::ReturnToPool, LifeSpan, false, LifeSpan);
 	ProjectileMovementComponent->Velocity = ShootDirection * ProjectileMovementComponent->InitialSpeed;
 }
 
@@ -51,8 +41,6 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 
 	PlaceDecal(DecalMaterials[RandomIndex], OtherComponent, Hit.ImpactPoint, Hit.Normal);
 	ReturnToPool();
-
-	//Destroy();
 }
 
 void AProjectile::ReturnToPool()

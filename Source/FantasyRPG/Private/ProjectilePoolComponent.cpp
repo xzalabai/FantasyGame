@@ -1,5 +1,5 @@
-#include "Projectile.h"
 #include "ProjectilePoolComponent.h"
+#include "Projectile.h"
 
 UProjectilePoolComponent::UProjectilePoolComponent()
 {
@@ -28,7 +28,6 @@ void UProjectilePoolComponent::CreatePool(const TSubclassOf<AProjectile> ActorSp
 
 void UProjectilePoolComponent::InsertToPool(TObjectPtr<AProjectile> Actor)
 {
-	Actor->Reset();
 	Actor->SetActorEnableCollision(false);
 	Actor->SetActorHiddenInGame(true);
 	Pool.Add(Actor);

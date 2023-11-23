@@ -3,8 +3,9 @@
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
-// TODO: HIGH! return projectile to pool after they were destroyeed
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
+// TODO: HIGH! Replace all editable values (e.g. for Weapon -> Asset Name, Fire Rate, Magazine, etc) with DataTable
+// TODO: HIGH! Add DataTable for Event WeaponFired in Blueprint (so it picks up correct recoil).
 // TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Use const for functions and parameters
@@ -80,7 +81,7 @@ public:
 	bool CharacterIsMoving() const;
 	const UCameraComponent* GetCharacterCamera() const;
 	UFUNCTION(BlueprintImplementableEvent)
-	void WeaponFired() const;
+	void WeaponFired(const FString& AssetName) const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetAimSpread() const;
 	float GetCharacterPitch() const;

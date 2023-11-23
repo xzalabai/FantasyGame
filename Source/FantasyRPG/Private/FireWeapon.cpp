@@ -23,7 +23,7 @@ void AFireWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 	Muzzle->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
-	ProjectilePool->CreatePool(ProjectileClass, 10);
+	ProjectilePool->CreatePool(ProjectileClass, MaxAmmoInMagazine);
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 }
@@ -60,7 +60,7 @@ void AFireWeapon::FireFromWeapon()
 	Projectile->SetActorLocation(Muzzle->GetComponentLocation());
 	Projectile->SetActorRotation(RotationTowardsTarget);
 	Projectile->FireInDirection(Projectile->GetActorForwardVector());
-	Character->WeaponFired();
+	Character->WeaponFired(AssetName);
 	
 	--AmmoInMagazine;
 }

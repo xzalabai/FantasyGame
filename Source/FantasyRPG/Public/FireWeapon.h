@@ -44,15 +44,15 @@ private:
 	TSubclassOf<AProjectile> ProjectileClass;
 	UPROPERTY(EditAnywhere)
 	USceneComponent* Muzzle;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	int32 MaxAmmoCapacity = 0;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	int32 AmmoInMagazine = 0;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	int32 MaxAmmoInMagazine = 0;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	int32 AmmoCapacity = 0;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	float FireRate = 0;
 	FActorSpawnParameters SpawnParams;
 	bool bMouseReleased = false;	

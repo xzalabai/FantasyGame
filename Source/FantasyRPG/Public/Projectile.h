@@ -16,13 +16,17 @@ class FANTASYRPG_API AProjectile : public AActor
 
 public:	
 	AProjectile();
-	UPROPERTY(EditAnywhere, Category = Projectile)
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile Options")
 	UStaticMeshComponent* ProjectileMeshComponent;
 	UPROPERTY()
 	AFireWeapon* OwnerWeapon;
 	void FireInDirection(const FVector& ShootDirection);
 protected:
 	virtual void BeginPlay() override;
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile Options")
+	float LifeSpan = 3;
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile Options")
+	float Strength = 50;
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaceDecal(UMaterialInterface* Material, UPrimitiveComponent* HitComponent, FVector HitLocation, FVector HitNormal);
 private:

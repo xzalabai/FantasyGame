@@ -16,8 +16,9 @@ AItem::AItem()
 	TriggerCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Item Collider"));
 	ParticleSystem = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Particles"));
 	DAItem = CreateDefaultSubobject<UDAItem>(TEXT("DA Item"));
-	
-	SetRootComponent(MeshComponent);
+	RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root Scene Component"));
+	SetRootComponent(RootSceneComponent);
+	MeshComponent->SetupAttachment(RootSceneComponent);
 	TriggerCollider->SetupAttachment(MeshComponent);
 	ParticleSystem->SetupAttachment(RootComponent);
 }
