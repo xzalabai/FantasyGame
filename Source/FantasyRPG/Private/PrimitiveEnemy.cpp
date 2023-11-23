@@ -3,20 +3,20 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "DrawDebugHelpers.h"
 
-void APrimitiveEnemy::OnReceivedHit(const FVector& ImpactPoint, AActor* Attacker, int Damage)
+void APrimitiveEnemy::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage)
 {
-	AEnemy::OnReceivedHit(ImpactPoint, Attacker, Damage);
+	AEnemy::OnReceivedHit(HitImpactPoint, HitLocation, Attacker, Damage);
 	
 	UE_LOG(LogTemp, Display, TEXT("Primitive Enemy received a hit with %d damage. He is left with %d HP"), Damage, Attributes->GetHealth());
 
-	bool bForwardHit = IsHitFromFront(ImpactPoint);
+	bool bForwardHit = IsHitFromFront(HitImpactPoint);
 	if (Attributes->IsAlive())
 	{
-		ProcessHit(bForwardHit);
+		ProcessHit(bForwardHit, HitImpactPoint, HitLocation);
 	}
 	else
 	{
-		ProcessDeath(bForwardHit);
+		ProcessDeath(bForwardHit, HitImpactPoint, HitLocation);
 	}	
 }
 
@@ -26,7 +26,7 @@ void APrimitiveEnemy::LayingDead()
 		//GetMesh()->SetCollisionProfileName("Ragdoll");
 }
 
-void APrimitiveEnemy::ProcessHit(bool bForwardHit)
+void APrimitiveEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation)
 {   
 	UE_LOG(LogTemp, Display, TEXT("[APrimitiveEnemy] ProcessHit"));
 	USkeletalMeshComponent *EnemyMesh = GetMesh();
@@ -40,7 +40,7 @@ void APrimitiveEnemy::ProcessHit(bool bForwardHit)
 	}
 }
 
-void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
+void APrimitiveEnemy::ProcessDeath(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation)
 {   
 	UE_LOG(LogTemp, Display, TEXT("[APrimitiveEnemy] ProcessDeath"));
     //Play animation
@@ -53,7 +53,7 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit)
 		SetDeathAnimationPose(SequenceName);
 	}
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	AEnemy::ProcessDeath();
+	AEnemy::ProcessDeath(bForwardHit, HitImpactPoint, HitLocation);
 }
 
 FName APrimitiveEnemy::GetDeathAnimationName()

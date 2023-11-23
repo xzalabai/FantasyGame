@@ -16,7 +16,7 @@ class FANTASYRPG_API ICharacterInterface
 {
 	GENERATED_BODY()
 public:
-	virtual void OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage) = 0;
+	virtual void OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage) = 0;
 	virtual void OnPerfectBlockReceived() = 0;
 	virtual void BlockAttack(const FVector& ImpactDirection, int Damage) = 0;
 	UFUNCTION(BlueprintCallable)

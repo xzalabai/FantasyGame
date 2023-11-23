@@ -42,10 +42,10 @@ void AProjectile::FireInDirection(const FVector& ShootDirection)
 
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
-	UE_LOG(LogTemp, Display, TEXT("[AProjectile] OnHit. %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Display, TEXT("[AProjectile] OnHit. %s in bone: %s"), *OtherActor->GetName(), *Hit.BoneName.ToString());
 	if (AEnemy* Enemy = Cast<AEnemy>(OtherActor))
 	{
-		Enemy->OnReceivedHit(Hit.ImpactPoint, nullptr, 50);
+		Enemy->OnReceivedHit(Hit.ImpactPoint, Hit.Location, nullptr, 50);
 	}
 	int8 RandomIndex = FMath::RandRange(0, DecalMaterials.Num() - 1);
 

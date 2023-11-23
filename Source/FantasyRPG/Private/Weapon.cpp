@@ -67,7 +67,7 @@ void AWeapon::PerformBoxTrace()
             // Actor is already in the list of affected
             return;
         }
-        ITarget->OnReceivedHit(OutHit.ImpactPoint, GetAttachParentActor(), 50);
+        ITarget->OnReceivedHit(OutHit.ImpactPoint, OutHit.Location, GetAttachParentActor(), 50);
         AffectedActors.Add(OutHit.GetActor());
     }
 }

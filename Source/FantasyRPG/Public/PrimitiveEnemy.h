@@ -14,13 +14,13 @@ class FANTASYRPG_API APrimitiveEnemy : public AEnemy
 	GENERATED_BODY()
 
 private:
-	virtual void OnReceivedHit(const FVector& ImpactPoint, AActor* Attacker, int Damage) override;
+	virtual void OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage) override;
 
 private:
 	UFUNCTION(BlueprintCallable)
 	void LayingDead();
-	virtual void ProcessDeath(bool bForwardHit);
-	virtual void ProcessHit(bool bForwardHit);
+	virtual void ProcessDeath(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
+	virtual void ProcessHit( bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
 	UFUNCTION(BlueprintCallable)
 	FName GetDeathAnimationName();
 	UPROPERTY(VisibleAnywhere)

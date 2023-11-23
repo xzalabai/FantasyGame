@@ -12,7 +12,7 @@ AEnemy::AEnemy()
     Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attributes"));
 }
 
-void AEnemy::OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage)
+void AEnemy::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage)
 {
 	Attributes->DecreaseHealth(Damage);
 }
@@ -23,12 +23,12 @@ void AEnemy::BlockAttack(const FVector& ImpactDirection, int Damage)
     UE_LOG(LogTemp, Display, TEXT("[AEnemy] Enemy blocking missing"));
 }
 
-void AEnemy::ProcessHit()
+void AEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation)
 {
     
 }
 
-void AEnemy::ProcessDeath()
+void AEnemy::ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, const FVector& HitLocation)
 {
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetGenerateOverlapEvents(false);

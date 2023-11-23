@@ -5,6 +5,7 @@
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! return projectile to pool after they were destroyeed
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
+// TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Use const for functions and parameters
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
@@ -69,7 +70,7 @@ public:
 	void InitiateBlock();
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	virtual void OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage) override;
+	virtual void OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage) override;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	FORCEINLINE bool IsAiming() const { return bIsAiming;}
 	FORCEINLINE bool IsBlocking() const { return bIsBlocking;}
@@ -114,7 +115,7 @@ protected:
 	void Insert();
 	void Reload();
 	void MouseRelease();
-	void AutoEquip(AItem* Item);
+	void AbsorbItem(AItem* Item);
 	void Equip(AItem* Item);
 	void Unequip();
 	void SwapItem(AItem* ItemToBeEquipped);

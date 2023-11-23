@@ -82,7 +82,7 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	}
 }
 
-void AHeroCharacter::OnReceivedHit(const FVector& ImpactDirection, AActor* Attacker, int Damage)
+void AHeroCharacter::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage)
 {
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] OnReceivedHit, IsBlocking() %d, IsPerfectBlocking() %d"), IsBlocking(), IsPerfectBlocking());
 	if (IsBlocking() && HasMeeleWeapon())
@@ -222,18 +222,25 @@ void AHeroCharacter::ToggleEquip()
 		return;
 	}
 
+	bool bItemIsEquippable = Cast<IEquipableInterface>(OverlappedItem) != nullptr;
+
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] ToggleEquip"));
+
 	if (EquippedItem && !OverlappedItem)
 	{
 		Unequip();
 	}
-	else if (EquippedItem && OverlappedItem)
+	else if (bItemIsEquippable && EquippedItem && OverlappedItem)
 	{
 		SwapItem(OverlappedItem);
 	}
-	else if (OverlappedItem && !EquippedItem)
+	else if (bItemIsEquippable && OverlappedItem && !EquippedItem)
 	{
 		Equip(OverlappedItem);			
+	}
+	else if (!bItemIsEquippable)
+	{
+		AbsorbItem(OverlappedItem);
 	}
 }
 
@@ -249,7 +256,7 @@ void AHeroCharacter::OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedCompon
 
 	if (Item->IsAutoEquip())
 	{
-		AutoEquip(OverlappedItem);
+		AbsorbItem(OverlappedItem);
 	}
 
 	// TODO: show UI
@@ -331,7 +338,7 @@ void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
 	Item->AttachToSocket(GetMesh(), SocketName);
 }
 
-void AHeroCharacter::AutoEquip(AItem *Item)
+void AHeroCharacter::AbsorbItem(AItem *Item)
 {
 	Item->OnItemEquipped(this);
 }
@@ -442,7 +449,5 @@ bool AHeroCharacter::HasMeeleWeapon()
 float AHeroCharacter::GetCharacterPitch() const
 {
 	float Pitch = Controller->GetControlRotation().Pitch;
-	Pitch = Pitch > 270 ? ((Pitch - 360)) : Pitch;
-	UE_LOG(LogTemp, Warning, TEXT("[AGrenade] AttackMontageEnded %f"), Pitch);
-	return Pitch;
+	return Pitch > 270 ? ((Pitch - 360)) : Pitch;
 }
