@@ -9,7 +9,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "PublicEnums.h"
 #include "TimerManager.h"
-#include "DrawDebugHelpers.h" // Include the debug drawing helpe
+#include "DrawDebugHelpers.h" 
 
 #include "Projectile.h"
 
@@ -36,25 +36,20 @@ void AFireWeapon::FireFromWeapon()
 {
 	const AHeroCharacter* Character = GetOwnerCharacter();
 	const UCameraComponent* PlayerCamera = Character->GetCharacterCamera();
-	FVector End;
 	float AimDispersion = UKismetMathLibrary::NormalizeToRange(Character->GetAimSpread(), 10, 40);
 
-	if (!Character->IsAiming() && !Character->CharacterIsMoving())
-	{
-		End = Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000);
-	}
-	else
-	{
-		End = PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
-	}
-	const FVector Start = PlayerCamera->GetComponentLocation();
-	FHitResult HitResult;
+	// Calculate end destination and shot dispersion
+	FVector End = (!Character->IsAiming() && !Character->CharacterIsMoving())
+		? Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000)
+		: PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
 
-	bool bHitActor = CalculateShotEndPosition(Start, End, HitResult);
+	FHitResult HitResult;
+	bool bHitActor = CalculateShotEndPosition(PlayerCamera->GetComponentLocation(), End, HitResult);
 	
 	FVector FinalHitPoint = CreateShotDispersion(bHitActor ? HitResult.ImpactPoint : End, AimDispersion);
 	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), FinalHitPoint);
 	
+	// Set new projectile
 	TObjectPtr<AProjectile> Projectile = ProjectilePool->GetActorFromPool();
 	Projectile->OwnerWeapon = this;
 	Projectile->SetActorLocation(Muzzle->GetComponentLocation());

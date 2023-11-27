@@ -21,7 +21,9 @@
 // TODO: fix issue while shooting -> click (timer is active), then hold (we don't get any input to try to shoot again)
 // --------------------------------------------------------------
 // Features:
-// - dynamic crosshair based on aim / move
+// - Stealth
+// - Inventory with Data tables (for weapons)
+// - cover behind wall
 // - AI
 // - correct animations
 #pragma once
@@ -72,6 +74,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage) override;
+	bool IsRotatedTowardsAttacker(const TObjectPtr<AActor> Attacker) const;
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	FORCEINLINE bool IsAiming() const { return bIsAiming;}
 	FORCEINLINE bool IsBlocking() const { return bIsBlocking;}

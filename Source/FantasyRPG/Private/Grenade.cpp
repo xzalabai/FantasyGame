@@ -3,6 +3,7 @@
 #include "Grenade.h"
 #include "Components/SphereComponent.h"
 #include "CharacterInterface.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include <Kismet\KismetMathLibrary.h>
 
@@ -33,7 +34,7 @@ void AGrenade::Throw(FVector& Direction)
 
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	ItemState = EItemState::EIS_LayingOnGround;
-		
+
 	TogglePhysics(true);
     MeshComponent->AddImpulse(Direction * ThrowForce, "", true);
 }
@@ -110,6 +111,7 @@ void AGrenade::AttackMontageEnded()
 		Character->GetActorForwardVector().X,
 		Character->GetActorForwardVector().Y,
 		Character->GetActorForwardVector().Z + CharacterPitch);
+
 	Throw(Direction);
 }
 

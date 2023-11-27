@@ -85,7 +85,7 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 void AHeroCharacter::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage)
 {
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] OnReceivedHit, IsBlocking() %d, IsPerfectBlocking() %d"), IsBlocking(), IsPerfectBlocking());
-	if (IsBlocking() && HasMeeleWeapon())
+	if (IsBlocking() && HasMeeleWeapon() && IsRotatedTowardsAttacker(Attacker))
 	{
 		if (IsPerfectBlocking())
 		{
@@ -93,7 +93,6 @@ void AHeroCharacter::OnReceivedHit(const FVector& HitImpactPoint, const FVector&
 		}
 		else
 		{
-			// If he stands in front of us (dot product)
 			// Block effect reaction
 			AttackBlocked();
 		}
@@ -136,6 +135,10 @@ void AHeroCharacter::PerformPerfectBlockReaction(AActor* Attacker)
 
 void AHeroCharacter::Move(const FInputActionValue& Value)
 {
+	if (IsBlocking())
+	{
+		return;
+	}
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -450,4 +453,10 @@ float AHeroCharacter::GetCharacterPitch() const
 {
 	float Pitch = Controller->GetControlRotation().Pitch;
 	return Pitch > 270 ? ((Pitch - 360)) : Pitch;
+}
+
+bool AHeroCharacter::IsRotatedTowardsAttacker(const TObjectPtr<AActor> Attacker) const
+{
+	float DotProduct = FVector::DotProduct(Attacker->GetActorForwardVector(), GetActorForwardVector());
+	return DotProduct <= 0;
 }
