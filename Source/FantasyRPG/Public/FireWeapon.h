@@ -15,14 +15,6 @@ class FANTASYRPG_API AFireWeapon : public AWeapon
 {
 
 	GENERATED_BODY()
-protected:
-	virtual void BeginPlay() override;
-	UPROPERTY(EditAnywhere, Category=AnimationProperties)
-	UAnimMontage* ReloadMontage;
-	UPROPERTY(EditAnywhere, Category=AnimationProperties)
-	TArray<FName> ReloadAnimationSequenceName;
-	UPROPERTY()
-	TObjectPtr<UProjectilePoolComponent> ProjectilePool;
 public:
 	AFireWeapon();
 	virtual void EnableOverlappingEvents(bool Enable) override;
@@ -34,6 +26,17 @@ public:
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;
 	void ReturnToPool(TObjectPtr<AProjectile> Projectile);
+
+protected:
+	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere, Category = AnimationProperties)
+	UAnimMontage* ReloadMontage;
+	UPROPERTY(EditAnywhere, Category = AnimationProperties)
+	TArray<FName> ReloadAnimationSequenceName;
+	UPROPERTY()
+	TObjectPtr<UProjectilePoolComponent> ProjectilePool;
+	virtual void OnItemEquipped(AHeroCharacter* MainCharacter) override;
+
 private:
 	void ClearWeaponTimer();
 	bool CalculateShotEndPosition(const FVector& Start, const FVector& End, FHitResult& HitResult);
@@ -45,13 +48,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	USceneComponent* Muzzle;
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
-	int32 MaxAmmoCapacity = 0;
+	int32 AmmoInMagazine = 0;		// Current ammo in magazine
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
-	int32 AmmoInMagazine = 0;
+	int32 MaxAmmoInMagazine = 0;	// Maximum size of ammo in magazine
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
-	int32 MaxAmmoInMagazine = 0;
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
-	int32 AmmoCapacity = 0;
+	int32 AmmoCapacity = 0;			// Maximum total ammo
 	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	float FireRate = 0;
 	FActorSpawnParameters SpawnParams;

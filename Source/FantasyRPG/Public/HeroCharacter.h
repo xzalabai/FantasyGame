@@ -9,6 +9,7 @@
 // TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Use const for functions and parameters
+// TODO: HIGH! change TMAP<int,int> to TMAP<EWeaponType, int> in AttributeComponent
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
 // TODO: MED unify naming for input handlers (Reload, Release...)
@@ -88,6 +89,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetAimSpread() const;
 	float GetCharacterPitch() const;
+	UObject* GetEquippedItem();
 protected:
 	// Input context -----------------------------------
 	UPROPERTY(EditAnywhere, Category=Input)
@@ -175,7 +177,6 @@ protected:
 private:		
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
-	FORCEINLINE UObject* GetEquippedItem();
 	FORCEINLINE bool HasMeeleWeapon();
 	void InsertToInventory(AItem* Item);
 	UFUNCTION(BlueprintCallable)

@@ -8,13 +8,10 @@ AProjectile::AProjectile()
 	CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SetRootComponent(CollisionComponent);
 	
-	// TODO: set from BP
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
 	ProjectileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ProjectileMeshComponent"));
 	ProjectileMeshComponent->SetupAttachment(RootComponent);
-
-	//InitialLifeSpan = 1.0f;
 }
 
 void AProjectile::BeginPlay()

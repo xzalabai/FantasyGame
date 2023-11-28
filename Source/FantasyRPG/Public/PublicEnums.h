@@ -40,3 +40,11 @@ enum class EPrimitiveEnemyDeathAnimation : uint8
 	EPEDA_DeathBack UMETA(DisplayName = "Death Back"),
 	EPEDA_DeathForward UMETA(DisplayName = "Death Forward"),
 };
+
+UENUM(BlueprintType)
+enum class EWeaponType : uint8
+{
+	EWT_Pistol UMETA(DisplayName = "Pistol Magazine"),
+	EWT_Smg UMETA(DisplayName = "SMG Magazine"),
+	EWT_Rifle UMETA(DisplayName = "Rifle Magazine"),
+};

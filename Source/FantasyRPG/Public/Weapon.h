@@ -23,7 +23,7 @@ public:
 	virtual void PerformMontage(class UAnimInstance *AnimInstance) override;
 	virtual void AttackMontageStarted();
 	virtual void AttackMontageEnded();
-
+	EWeaponType GetWeaponType() { return WeaponType; }
 protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere)
@@ -35,8 +35,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	int Damage;
 	virtual void PerformActionOnNotify() override;
-
+	UPROPERTY(EditDefaultsOnly)
+	EWeaponType WeaponType = EWeaponType::EWT_Rifle;
 private:
+
 	UPROPERTY()
 	TArray<AActor*> AffectedActors;
 	UFUNCTION()

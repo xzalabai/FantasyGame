@@ -1,6 +1,7 @@
 #include "FireWeapon.h"
 #include "Components/SceneComponent.h"
 #include "HeroCharacter.h"
+#include "AttributesComponent.h"
 #include "ProjectilePoolComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Animation/AnimInstance.h"
@@ -10,7 +11,6 @@
 #include "PublicEnums.h"
 #include "TimerManager.h"
 #include "DrawDebugHelpers.h" 
-
 #include "Projectile.h"
 
 AFireWeapon::AFireWeapon()
@@ -27,6 +27,15 @@ void AFireWeapon::BeginPlay()
 	SpawnParams.Owner = this;
 	SpawnParams.Instigator = GetInstigator();
 }
+
+void AFireWeapon::OnItemEquipped(AHeroCharacter* MainCharacter)
+{
+	int AmmoFromInventory = MainCharacter->GetAttributes()->GetAmmoFromInventory(WeaponType);
+	UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] OnItemEquipped. %d"), AmmoFromInventory);
+	AmmoCapacity = AmmoFromInventory;
+	Super::OnItemEquipped(MainCharacter);
+}
+
 void AFireWeapon::EnableOverlappingEvents(bool bEnable)
 {
     return;    
@@ -34,6 +43,12 @@ void AFireWeapon::EnableOverlappingEvents(bool bEnable)
 
 void AFireWeapon::FireFromWeapon()
 {
+	if (AmmoInMagazine <= 0)
+	{
+		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] No ammo in magazine."));
+		return;
+	}
+
 	const AHeroCharacter* Character = GetOwnerCharacter();
 	const UCameraComponent* PlayerCamera = Character->GetCharacterCamera();
 	float AimDispersion = UKismetMathLibrary::NormalizeToRange(Character->GetAimSpread(), 10, 40);
@@ -55,7 +70,10 @@ void AFireWeapon::FireFromWeapon()
 	Projectile->SetActorLocation(Muzzle->GetComponentLocation());
 	Projectile->SetActorRotation(RotationTowardsTarget);
 	Projectile->FireInDirection(Projectile->GetActorForwardVector());
+	
+	// Get CB to Character
 	Character->WeaponFired(AssetName);
+	Character->GetAttributes()->DecreaseAmmo(WeaponType, 1);
 	
 	--AmmoInMagazine;
 }
@@ -82,24 +100,20 @@ void AFireWeapon::ReloadWeapon()
 	{
 		return;
 	}
+
+	// Ammo calculations
 	AmmoCapacity += AmmoInMagazine;
-	AmmoInMagazine = FMath::Max(0, AmmoCapacity - MaxAmmoInMagazine);
+	AmmoInMagazine = FMath::Max(0, AmmoCapacity - MaxAmmoInMagazine > 0 ? AmmoCapacity - MaxAmmoInMagazine : AmmoCapacity);
 	AmmoCapacity = FMath::Max(0, AmmoCapacity - MaxAmmoInMagazine);
 
-	const AHeroCharacter* Character = GetOwnerCharacter();
-	UAnimInstance* AnimInstance = Character->GetMesh()->GetAnimInstance();
+	// Perform Montage
+	UAnimInstance* AnimInstance = GetOwnerCharacter()->GetMesh()->GetAnimInstance();
 	int8 RandomIndex = FMath::RandRange(0, ReloadAnimationSequenceName.Num() - 1);
-
 	AItem::PerformMontage(AnimInstance, ReloadAnimationSequenceName[RandomIndex], ReloadMontage);
 }
 
 void AFireWeapon::PerformMontage(UAnimInstance *AnimInstance)
 {
-	if (AmmoInMagazine <= 0)
-	{
-		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] No ammo in magazine."));
-		return;
-	}
 	if (GetWorldTimerManager().IsTimerActive(ClearTimerHandle))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] Timer is active."));
