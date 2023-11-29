@@ -12,26 +12,10 @@ enum class EItemState : uint8
 };
 
 UENUM(BlueprintType)
-enum class ECharacterState : uint8
-{
-	ECS_WithoutWeapon UMETA(DisplayName = "Without Weapon"),
-	ECS_WithMeeleWeapon UMETA(DisplayName = "With Meele Weapon"),
-	ECS_WithFireWeapon UMETA(DisplayName = "With Fire Weapon"),
-	ECS_WithItem UMETA(DisplayName = "With Item")
-};
-
-UENUM(BlueprintType)
 enum class EAnimationState : uint8
 {
 	EAS_AnimationInProgress UMETA(DisplayName = "Animation in progress"),
 	EAS_NoAnimation UMETA(DisplayName = "No animation in progress")
-};
-
-UENUM(BlueprintType)
-enum class EItemType : uint8
-{
-	EIT_Health UMETA(DisplayName = "Health Item"),
-	EIT_Weapon UMETA(DisplayName = "Weapon Item"),
 };
 
 UENUM(BlueprintType)
@@ -42,9 +26,13 @@ enum class EPrimitiveEnemyDeathAnimation : uint8
 };
 
 UENUM(BlueprintType)
-enum class EWeaponType : uint8
+enum class EItemType : uint8
 {
-	EWT_Pistol UMETA(DisplayName = "Pistol Magazine"),
-	EWT_Smg UMETA(DisplayName = "SMG Magazine"),
-	EWT_Rifle UMETA(DisplayName = "Rifle Magazine"),
+	EIT_NoItem UMETA(DisplayName = "No Item"),
+	EIT_Item UMETA(DisplayName = "Item"),
+	EIT_Melee UMETA(DisplayName = "Melee"),
+	EIT_Pistol UMETA(DisplayName = "Pistol"),
+	EIT_Smg UMETA(DisplayName = "SMG"),
+	EIT_Rifle UMETA(DisplayName = "Rifle"),
+	EIT_NotSpecified UMETA(DisplayName = "Not Specified"),
 };

@@ -12,9 +12,5 @@ class FANTASYRPG_API AMagazine : public AItem
 	GENERATED_BODY()
 	UPROPERTY(EditAnywhere)
 	int Size = 10;
-
-	UPROPERTY(EditAnywhere)
-	EWeaponType WeaponTypeMagazine = EWeaponType::EWT_Rifle;
-	
 	virtual void OnItemEquipped(AHeroCharacter* MainCharacter) override;
 };

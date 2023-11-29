@@ -9,7 +9,7 @@
 // TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Use const for functions and parameters
-// TODO: HIGH! change TMAP<int,int> to TMAP<EWeaponType, int> in AttributeComponent
+// TODO: HIGH! change TMAP<int,int> to TMAP<EItemType, int> in AttributeComponent
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
 // TODO: MED unify naming for input handlers (Reload, Release...)
@@ -142,8 +142,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Animation properties")
 	UAnimMontage* HitReactionMontage;
 	// Enums
-	UPROPERTY(BlueprintReadOnly)	
-	ECharacterState CharacterState = ECharacterState::ECS_WithoutWeapon;
+	UPROPERTY(BlueprintReadOnly)
+	EItemType ItemType = EItemType::EIT_NoItem;
 	UPROPERTY(BlueprintReadOnly)		
 	EAnimationState AnimationState = EAnimationState::EAS_NoAnimation;
 	virtual void BeginPlay() override;

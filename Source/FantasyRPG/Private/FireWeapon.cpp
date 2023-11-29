@@ -30,15 +30,10 @@ void AFireWeapon::BeginPlay()
 
 void AFireWeapon::OnItemEquipped(AHeroCharacter* MainCharacter)
 {
-	int AmmoFromInventory = MainCharacter->GetAttributes()->GetAmmoFromInventory(WeaponType);
+	int AmmoFromInventory = MainCharacter->GetAttributes()->GetAmmoFromInventory(ItemType);
 	UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] OnItemEquipped. %d"), AmmoFromInventory);
 	AmmoCapacity = AmmoFromInventory;
 	Super::OnItemEquipped(MainCharacter);
-}
-
-void AFireWeapon::EnableOverlappingEvents(bool bEnable)
-{
-    return;    
 }
 
 void AFireWeapon::FireFromWeapon()
@@ -73,7 +68,7 @@ void AFireWeapon::FireFromWeapon()
 	
 	// Get CB to Character
 	Character->WeaponFired(AssetName);
-	Character->GetAttributes()->DecreaseAmmo(WeaponType, 1);
+	Character->GetAttributes()->DecreaseAmmo(ItemType, 1);
 	
 	--AmmoInMagazine;
 }

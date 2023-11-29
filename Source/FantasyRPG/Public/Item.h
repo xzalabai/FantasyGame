@@ -39,9 +39,6 @@ public:
 	UNiagaraComponent* ParticleSystem;
 	UPROPERTY(VisibleAnywhere);
 	USphereComponent* TriggerCollider;
-	UPROPERTY(EditDefaultsOnly);
-	EItemType ItemType;
-	virtual void OnItemUnequipped();
 	void AttachToSocket(USkeletalMeshComponent* MeshComp, FName SocketName);
 	virtual void GetOwnedGameplayTags(FGameplayTagContainer &TagContainer) const override { TagContainer = ItemTag; return;}
 	FORCEINLINE bool IsAutoEquip() const { return bAutoEquip; }
@@ -49,7 +46,8 @@ public:
 	FORCEINLINE bool IsCurrentlyEquipped() const { return ItemState == EItemState::EIS_Equipped; }
 	UFUNCTION(BlueprintCallable)
 	virtual void OnItemEquipped(AHeroCharacter *MainCharacter);
-
+	virtual void OnItemUnequipped();
+	FORCEINLINE EItemType GetItemType() { return ItemType; }
 	// UDAItem Data ------------------------------
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties for Inventory")
 	UDAItem* DAItem;
@@ -61,6 +59,8 @@ public:
 	bool bAvailableToInventory = false;
 	UPROPERTY(EditAnywhere, Category = "Item Properties for Inventory");
 	bool bAutoEquip = false;
+	UPROPERTY(EditDefaultsOnly, Category = "Item Properties for Inventory")
+	EItemType ItemType = EItemType::EIT_Rifle;
 	// --------------------------------------------
 protected:
 	UPROPERTY(EditInstanceOnly)	
@@ -73,6 +73,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category=AnimationProperties)
 	TArray<FName> AnimationSequenceName;
 	const AHeroCharacter* GetOwnerCharacter() const;
+	
 };
 
 

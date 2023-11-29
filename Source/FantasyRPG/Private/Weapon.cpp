@@ -10,8 +10,6 @@
 AWeapon::AWeapon()
 {
     PrimaryActorTick.bCanEverTick = true;
-    OverlapArea = CreateDefaultSubobject<UBoxComponent>(TEXT("Box Component"));
-    OverlapArea->SetupAttachment(RootComponent);
     
     StartTrace = CreateDefaultSubobject<USceneComponent>(TEXT("Start Trace"));
     StartTrace ->SetupAttachment(RootComponent);
@@ -23,23 +21,16 @@ AWeapon::AWeapon()
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-    OverlapArea->OnComponentBeginOverlap.AddUniqueDynamic(this, &AWeapon::OnBoxOverlap);
 }
 
-void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void AWeapon::OnItemEquipped(AHeroCharacter* MainCharacter)
 {
-    if (ItemState != EItemState::EIS_Equipped)
-        return;
-    return; // TODO
-    // Perform hit
-    FHitResult OutHit;
-    PerformBoxTrace();
+    Super::OnItemEquipped(MainCharacter);
+}
 
-    // Inform Target about hit
-    // done in performBoxTrace
-
-    
-    // Inform Owner about hit
+void AWeapon::OnItemUnequipped()
+{
+    Super::OnItemUnequipped();
 }
 
 void AWeapon::PerformBoxTrace()
@@ -72,12 +63,6 @@ void AWeapon::PerformBoxTrace()
     }
 }
 
-void AWeapon::EnableOverlappingEvents(bool bEnable)
-{
-    // Overlapping events on the sword razor    
-    OverlapArea->SetGenerateOverlapEvents(bEnable);
-}
-
 void AWeapon::PerformMontage(UAnimInstance *AnimInstance)
 {
     AItem::PerformMontage(AnimInstance);
@@ -85,7 +70,7 @@ void AWeapon::PerformMontage(UAnimInstance *AnimInstance)
 
 void AWeapon::AttackMontageStarted()
 {
-	EnableOverlappingEvents(true);
+	
 }
 
 void AWeapon::AttackMontageEnded()

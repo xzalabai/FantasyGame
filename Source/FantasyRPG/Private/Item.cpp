@@ -41,6 +41,7 @@ void AItem::BeginPlay()
 
 void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)
 {
+	UE_LOG(LogTemp, Error, TEXT("[AItem] AttachToSocket Item -> %s"), *this->GetName());
 	AttachToComponent(PlayerMesh, FAttachmentTransformRules::KeepWorldTransform, "RightHandSocket");
 	FTransform SocketTransform = PlayerMesh->GetSocketTransform(SocketName);
 	SetActorTransform(SocketTransform);
@@ -85,13 +86,12 @@ void AItem::OnItemUnequipped()
 		HitResult,           		// Hit result will be stored here
 		GetActorLocation(),       	// Starting location of the raycast
 		EndLocation,         		// Ending location of the raycast
-		ECC_Camera,      		// Collision channel (you can change it to suit your needs)
+		ECC_Camera,      			// Collision channel (you can change it to suit your needs)
 		FCollisionQueryParams::DefaultQueryParam,
 		FCollisionResponseParams::DefaultResponseParam
 	);
 	if (bHit)
 	{
-		//SetActorRotation(FRotator(0,0,0));
 		SetActorLocation(FVector(HitResult.ImpactPoint.X, HitResult.ImpactPoint.Y, HitResult.ImpactPoint.Z + 20.0f));
 	}
 }
@@ -101,7 +101,7 @@ const AHeroCharacter* AItem::GetOwnerCharacter() const
 	AHeroCharacter* Character = Cast<AHeroCharacter>(GetAttachParentActor());
 	if (!Character)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Character not found"));
+		UE_LOG(LogTemp, Error, TEXT("Character not found"));
 		return nullptr;
 	}
 	return Character;

@@ -16,14 +16,15 @@ class FANTASYRPG_API AWeapon : public AItem, public IEquipableInterface
 	GENERATED_BODY()
 public:
 	AWeapon();
-	virtual void EnableOverlappingEvents(bool bEnable) override;
+	virtual void EnableOverlappingEvents(bool bEnable) {};
 	FORCEINLINE UBoxComponent* GetOverlapArea() const { return OverlapArea; }
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTrace();
 	virtual void PerformMontage(class UAnimInstance *AnimInstance) override;
 	virtual void AttackMontageStarted();
 	virtual void AttackMontageEnded();
-	EWeaponType GetWeaponType() { return WeaponType; }
+	virtual void OnItemEquipped(AHeroCharacter* MainCharacter) override;
+	virtual void OnItemUnequipped() override;
 protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere)
@@ -35,14 +36,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	int Damage;
 	virtual void PerformActionOnNotify() override;
-	UPROPERTY(EditDefaultsOnly)
-	EWeaponType WeaponType = EWeaponType::EWT_Rifle;
 private:
-
 	UPROPERTY()
 	TArray<AActor*> AffectedActors;
-	UFUNCTION()
-	virtual void OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 };
 
 

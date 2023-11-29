@@ -4,6 +4,6 @@
 
 void AMagazine::OnItemEquipped(AHeroCharacter* MainCharacter)
 {
-	MainCharacter->GetAttributes()->AddToAmmoInventory(WeaponTypeMagazine, Size);
+	MainCharacter->GetAttributes()->AddToAmmoInventory(ItemType, Size);
 	Destroy();
 }

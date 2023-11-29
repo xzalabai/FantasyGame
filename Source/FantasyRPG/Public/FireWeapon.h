@@ -17,7 +17,6 @@ class FANTASYRPG_API AFireWeapon : public AWeapon
 	GENERATED_BODY()
 public:
 	AFireWeapon();
-	virtual void EnableOverlappingEvents(bool Enable) override;
 	void FireFromWeapon();
 	void ReloadWeapon();
 	void OnMouseRelease();

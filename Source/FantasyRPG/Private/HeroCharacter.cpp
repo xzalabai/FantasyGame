@@ -356,7 +356,7 @@ void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)
 void AHeroCharacter::Unequip()
 {
 	UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Unequip: %s"), *EquippedItem->GetName());
-	CharacterState = ECharacterState::ECS_WithoutWeapon;
+	ItemType = EItemType::EIT_NoItem;
 	EquippedItem->OnItemUnequipped();
 	EquippedItem = nullptr;
 }
@@ -371,28 +371,26 @@ void AHeroCharacter::InsertToInventory(AItem* Item)
 
 void AHeroCharacter::Equip(AItem* Item)
 {
-	AttachItemToSocket(Item, "RightHandSocket");
-	OverlappedItem = nullptr;
 	if (HasItemTag(Item, FName("Weapon.MeeleWeapon")))
 	{
 		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a meele weapon: %s"), *Item->GetName());
-		CharacterState = ECharacterState::ECS_WithMeeleWeapon;
 	}
 	else if (HasItemTag(Item, FName("Weapon.FireWeapon")))
 	{
 		UE_LOG(LogClass, Log, TEXT("[HeroCharacter] Equip(): Equipping a fire weapon: %s"), *Item->GetName());
-		CharacterState = ECharacterState::ECS_WithFireWeapon;
 	}
 	else if (HasItemTag(Item, FName("Item.Throwable")))
 	{
 		UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] Equip(): Equipping an item"));
-		CharacterState = ECharacterState::ECS_WithItem;
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] Equip(): Picking unidentified object"));
 		return;
 	}
+	AttachItemToSocket(Item, "RightHandSocket");
+	OverlappedItem = nullptr;
+	ItemType = Item->GetItemType();
 	Item->OnItemEquipped(this);	
 	EquippedItem = Item;
 }
