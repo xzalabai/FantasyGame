@@ -23,10 +23,7 @@ public:
 	virtual void PerformMontage(class UAnimInstance *AnimInstance) override;
 	virtual void AttackMontageStarted();
 	virtual void AttackMontageEnded();
-	virtual void OnItemEquipped(AHeroCharacter* MainCharacter) override;
-	virtual void OnItemUnequipped() override;
 protected:
-	virtual void BeginPlay() override;
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* StartTrace;
 	UPROPERTY(VisibleAnywhere)

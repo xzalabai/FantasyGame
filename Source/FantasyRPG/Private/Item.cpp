@@ -33,15 +33,10 @@ void AItem::BeginPlay()
 		AssetThumbnail = DAItem->DAItemInfo.AssetThumbnail;
 		bAvailableToInventory = DAItem->DAItemInfo.bAvailableToInventory;
 	}
-	else
-	{
-
-	}
 }
 
 void AItem::AttachToSocket(USkeletalMeshComponent* PlayerMesh, FName SocketName)
 {
-	UE_LOG(LogTemp, Error, TEXT("[AItem] AttachToSocket Item -> %s"), *this->GetName());
 	AttachToComponent(PlayerMesh, FAttachmentTransformRules::KeepWorldTransform, "RightHandSocket");
 	FTransform SocketTransform = PlayerMesh->GetSocketTransform(SocketName);
 	SetActorTransform(SocketTransform);

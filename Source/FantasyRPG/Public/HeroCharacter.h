@@ -1,7 +1,6 @@
 // TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
 
 // TODO: HIGH! create UActorComponent for weapon equiping
-// TODO: HIGH! add rotation (rotate 3rd person character with mouse unreal)
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
 // TODO: HIGH! Replace all editable values (e.g. for Weapon -> Asset Name, Fire Rate, Magazine, etc) with DataTable
@@ -9,11 +8,9 @@
 // TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Use const for functions and parameters
-// TODO: HIGH! change TMAP<int,int> to TMAP<EItemType, int> in AttributeComponent
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
 // TODO: MED unify naming for input handlers (Reload, Release...)
-// TODO: MED add PerformOnRelease to IEquipable
 // TODO: MED Change logic -> let enemies subscribe to HeroCharacter
 // TODO: MED unify naming (PerformOn, InitiateAttack,...)
 // TODO: MED fix error when you Equip and Enemy is near

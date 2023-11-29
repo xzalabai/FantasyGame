@@ -18,21 +18,6 @@ AWeapon::AWeapon()
     EndTrace->SetupAttachment(RootComponent);
 }
 
-void AWeapon::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void AWeapon::OnItemEquipped(AHeroCharacter* MainCharacter)
-{
-    Super::OnItemEquipped(MainCharacter);
-}
-
-void AWeapon::OnItemUnequipped()
-{
-    Super::OnItemUnequipped();
-}
-
 void AWeapon::PerformBoxTrace()
 {
     FHitResult OutHit;
