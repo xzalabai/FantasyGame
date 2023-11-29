@@ -25,7 +25,7 @@ public:
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;
 	void ReturnToPool(TObjectPtr<AProjectile> Projectile);
-
+	virtual void UpdateItemWithAttributes() override;
 protected:
 	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, Category = AnimationProperties)
@@ -35,7 +35,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UProjectilePoolComponent> ProjectilePool;
 	virtual void OnItemEquipped(AHeroCharacter* MainCharacter) override;
-
 private:
 	void ClearWeaponTimer();
 	bool CalculateShotEndPosition(const FVector& Start, const FVector& End, FHitResult& HitResult);

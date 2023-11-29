@@ -30,10 +30,16 @@ void AFireWeapon::BeginPlay()
 
 void AFireWeapon::OnItemEquipped(AHeroCharacter* MainCharacter)
 {
-	int AmmoFromInventory = MainCharacter->GetAttributes()->GetAmmoFromInventory(ItemType);
-	UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] OnItemEquipped. %d"), AmmoFromInventory);
-	AmmoCapacity = AmmoFromInventory;
+	UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] OnItemEquipped"));	
 	Super::OnItemEquipped(MainCharacter);
+	UpdateItemWithAttributes();
+}
+
+void AFireWeapon::UpdateItemWithAttributes()
+{
+	const AHeroCharacter* Character = GetOwnerCharacter();
+	int AmmoFromInventory = Character->GetAttributes()->GetAmmoFromInventory(ItemType);
+	AmmoCapacity = AmmoFromInventory;
 }
 
 void AFireWeapon::FireFromWeapon()

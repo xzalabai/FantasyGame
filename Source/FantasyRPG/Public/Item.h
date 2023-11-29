@@ -47,19 +47,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void OnItemEquipped(AHeroCharacter *MainCharacter);
 	virtual void OnItemUnequipped();
+	virtual void UpdateItemWithAttributes();
 	FORCEINLINE EItemType GetItemType() { return ItemType; }
 	// UDAItem Data ------------------------------
-	UPROPERTY(VisibleAnywhere, Category = "Item Properties for Inventory")
+	UPROPERTY(VisibleAnywhere, Category = "Item Properties")
 	UDAItem* DAItem;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties for Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties")
 	FString AssetName;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties for Inventory")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties")
 	UTexture2D* AssetThumbnail;
-	UPROPERTY(EditAnywhere, Category = "Item Properties for Inventory");
+	UPROPERTY(EditAnywhere, Category = "Item Properties");
 	bool bAvailableToInventory = false;
-	UPROPERTY(EditAnywhere, Category = "Item Properties for Inventory");
+	UPROPERTY(EditAnywhere, Category = "Item Properties");
 	bool bAutoEquip = false;
-	UPROPERTY(EditDefaultsOnly, Category = "Item Properties for Inventory")
+	UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
 	EItemType ItemType = EItemType::EIT_Rifle;
 	// --------------------------------------------
 protected:
@@ -68,11 +69,12 @@ protected:
 	void PerformMontage(UAnimInstance *AnimInstance);
 	void PerformMontage(UAnimInstance *AnimInstance,  FName& MontageName,  UAnimMontage* AnimMontage);
 	// Animations properties -----------------------------
-	UPROPERTY(EditAnywhere, Category=AnimationProperties)
+	UPROPERTY(EditAnywhere, Category = "Item Properties")
 	UAnimMontage* Montage;
-	UPROPERTY(EditAnywhere, Category=AnimationProperties)
+	UPROPERTY(EditAnywhere, Category= "Item Properties")
 	TArray<FName> AnimationSequenceName;
 	const AHeroCharacter* GetOwnerCharacter() const;
+	;
 	
 };
 

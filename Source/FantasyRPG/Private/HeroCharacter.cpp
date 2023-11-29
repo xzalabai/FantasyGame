@@ -135,10 +135,6 @@ void AHeroCharacter::PerformPerfectBlockReaction(AActor* Attacker)
 
 void AHeroCharacter::Move(const FInputActionValue& Value)
 {
-	if (IsBlocking())
-	{
-		return;
-	}
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -344,6 +340,11 @@ void AHeroCharacter::AttachItemToSocket(AItem* Item, FName SocketName)
 void AHeroCharacter::AbsorbItem(AItem *Item)
 {
 	Item->OnItemEquipped(this);
+	if (EquippedItem)
+	{
+		EquippedItem->UpdateItemWithAttributes();
+	}
+	
 }
 
 void AHeroCharacter::SwapItem(AItem* ItemToBeEquipped)

@@ -66,6 +66,11 @@ void AItem::PerformMontage(UAnimInstance *AnimInstance, FName& MontageName, UAni
 	AnimInstance->Montage_JumpToSection(MontageName, AnimMontage);
 }
 
+void AItem::UpdateItemWithAttributes()
+{
+	return;
+}
+
 
 void AItem::OnItemUnequipped()
 {

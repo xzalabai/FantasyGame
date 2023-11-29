@@ -7,6 +7,10 @@
 // TODO: HIGH! Add DataTable for Event WeaponFired in Blueprint (so it picks up correct recoil).
 // TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
+// TODO: HIGH! Cache Character and replace GetOwnerCharacter 
+// TODO: HIGH! use some Interface instead of casting to class
+// TODO: HIGH! FIX BROKEN GRENADE
+// TODO: HIGH! Fix Reloading (running during reload) - edge case - reload interrupted
 // TODO: HIGH! Use const for functions and parameters
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
