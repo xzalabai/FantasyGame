@@ -8,6 +8,7 @@
 // TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Cache Character and replace GetOwnerCharacter 
+// TODO: HIGH! Figure out better way of grenade -> USceneComponent is not moving during Mesh->AddImpulse, so we have to get Mesh location for SPhere trace
 // TODO: HIGH! use some Interface instead of casting to class
 // TODO: HIGH! FIX BROKEN GRENADE
 // TODO: HIGH! Fix Reloading (running during reload) - edge case - reload interrupted

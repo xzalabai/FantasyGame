@@ -31,7 +31,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* OverlapArea;
 	UPROPERTY(EditDefaultsOnly)
-	int Damage;
+	int Damage = 50;
 	virtual void PerformActionOnNotify() override;
 private:
 	UPROPERTY()

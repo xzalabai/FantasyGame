@@ -4,6 +4,7 @@
 #include "Components/SphereComponent.h"
 #include "CharacterInterface.h"
 #include "Camera/CameraComponent.h"
+#include "Engine/StaticMeshActor.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include <Kismet\KismetMathLibrary.h>
 
@@ -19,29 +20,28 @@ void AGrenade::BeginPlay()
 	MeshComponent->OnComponentHit.AddDynamic(this, &AGrenade::OnThrowableOverlap);
 }
 
-void AGrenade::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void AGrenade::Throw(FVector& Direction)
 {
 	UE_LOG(LogTemp, Display, TEXT("Throwing a grenade"));
-	// detach from character
+	
+	// Detach from character
 	const AHeroCharacter* Character = GetOwnerCharacter();
 	Character->EquippedItem = nullptr;
-	float ThrowForce = 1500.0f;
 
+	// Use a small cheat for caching the owner
+	PreviousOwner = const_cast<AHeroCharacter*>(Character);
+	
+	// Throw
 	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	ItemState = EItemState::EIS_LayingOnGround;
-
 	TogglePhysics(true);
-    MeshComponent->AddImpulse(Direction * ThrowForce, "", true);
+	MeshComponent->AddImpulse(Direction * ThrowForce, "", true);
+	//AStaticMeshActor* MeshA = Cast<AStaticMeshActor>(this);
+	ItemState = EItemState::EIS_LayingOnGround;
 }
 
 void AGrenade::OnItemEquipped(AHeroCharacter *MainCharacter)
 {
-	UE_LOG(LogTemp, Display, TEXT("Equipped Grenade"));
+	UE_LOG(LogTemp, Display, TEXT("[AGrenade] Equipped Grenade"));
 	MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Super::OnItemEquipped(MainCharacter);
 }
@@ -84,16 +84,24 @@ void AGrenade::PerformSphereTrace()
 {
 	FCollisionObjectQueryParams CollisionObjectTypes;
 	CollisionObjectTypes.AddObjectTypesToQuery(ECollisionChannel::ECC_Pawn);
-
-   	FCollisionShape MySphere = FCollisionShape::MakeSphere(200.0f);
+	//CollisionObjectTypes.bIgnoreBlocks = false;
+   	FCollisionShape MySphere = FCollisionShape::MakeSphere(ImpactArea);
 	TArray<FHitResult> OutResults;
-	GetWorld()->SweepMultiByObjectType(OutResults, GetActorLocation(), GetActorLocation(), FQuat::Identity, CollisionObjectTypes, MySphere);
-
+	DrawDebugSphere(GetWorld(), MeshComponent->GetComponentLocation(), ImpactArea, 100, FColor::Black, false, 20);
+	GetWorld()->SweepMultiByObjectType(OutResults, MeshComponent->GetComponentLocation(), MeshComponent->GetComponentLocation(), FQuat::Identity, CollisionObjectTypes, MySphere);
+	TArray<AActor*> ActorsHit;
 	for (const FHitResult& OutHit : OutResults)
 	{
+		if (ActorsHit.Contains(OutHit.GetActor()))
+		{
+			continue;
+		}
+		ActorsHit.Add(OutHit.GetActor());
+
+		UE_LOG(LogTemp, Display, TEXT("Hit -> %s"), *OutHit.GetComponent()->GetName());
 		if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     	{
-        	ITarget->OnReceivedHit(GetActorLocation(), FVector(0,0,0), nullptr, 50);
+        	ITarget->OnReceivedHit(MeshComponent->GetComponentLocation(), OutHit.Location, PreviousOwner, 50);
     	}
 	}
 }

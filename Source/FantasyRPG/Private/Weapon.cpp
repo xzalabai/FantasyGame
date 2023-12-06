@@ -38,12 +38,14 @@ void AWeapon::PerformBoxTrace()
 
     if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     {
+        UE_LOG(LogTemp, Display, TEXT("[AWeapon] ITarget"));
         if (AffectedActors.Contains(OutHit.GetActor()))
         {
+            UE_LOG(LogTemp, Display, TEXT("[AWeapon] AffectedActors"));
             // Actor is already in the list of affected
             return;
         }
-        ITarget->OnReceivedHit(OutHit.ImpactPoint, OutHit.Location, GetAttachParentActor(), 50);
+        ITarget->OnReceivedHit(OutHit.ImpactPoint, OutHit.Location, GetAttachParentActor(), Damage);
         AffectedActors.Add(OutHit.GetActor());
     }
 }
