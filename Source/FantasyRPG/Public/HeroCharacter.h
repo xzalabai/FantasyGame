@@ -5,12 +5,10 @@
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
 // TODO: HIGH! Replace all editable values (e.g. for Weapon -> Asset Name, Fire Rate, Magazine, etc) with DataTable
 // TODO: HIGH! Add DataTable for Event WeaponFired in Blueprint (so it picks up correct recoil).
-// TODO: HIGH! fix grenade reaction
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Cache Character and replace GetOwnerCharacter 
 // TODO: HIGH! Figure out better way of grenade -> USceneComponent is not moving during Mesh->AddImpulse, so we have to get Mesh location for SPhere trace
 // TODO: HIGH! use some Interface instead of casting to class
-// TODO: HIGH! FIX BROKEN GRENADE
 // TODO: HIGH! Fix Reloading (running during reload) - edge case - reload interrupted
 // TODO: HIGH! Use const for functions and parameters
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
@@ -114,6 +112,9 @@ protected:
 	UInputAction* BlockAction;
 	UPROPERTY(EditAnywhere, Category = Input)
 	UInputAction* InsertAction;
+	UPROPERTY(EditAnywhere, Category = Input)
+	UInputAction* DodgeAction;
+	// ------------------------------------------------
 
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -126,6 +127,7 @@ protected:
 	void AbsorbItem(AItem* Item);
 	void Equip(AItem* Item);
 	void Unequip();
+	void InitiateDodge();
 	void SwapItem(AItem* ItemToBeEquipped);
 	// ---------------------------------------------------
 	
@@ -140,14 +142,19 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UFistsComponent* Fists;
 	
-	// Montages
+	// Montages----------------------------------------------
 	UPROPERTY(EditAnywhere, Category = "Animation properties")
 	UAnimMontage* HitReactionMontage;
-	// Enums
+	UPROPERTY(EditAnywhere, Category = "Animation properties")
+	UAnimMontage* DodgeMontage;
+	// -------------------------------------------------------
+	
+	// Enums--------------------------------------------------
 	UPROPERTY(BlueprintReadOnly)
 	EItemType ItemType = EItemType::EIT_NoItem;
 	UPROPERTY(BlueprintReadOnly)		
 	EAnimationState AnimationState = EAnimationState::EAS_NoAnimation;
+	// -------------------------------------------------------
 	virtual void BeginPlay() override;
 
 	UFUNCTION()

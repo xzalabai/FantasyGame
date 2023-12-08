@@ -78,6 +78,7 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateAttack);
 		EnhancedInputComponent->BindAction(EquipAction, ETriggerEvent::Triggered, this, &AHeroCharacter::ToggleEquip);
 		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateBlock);
+		EnhancedInputComponent->BindAction(DodgeAction, ETriggerEvent::Triggered, this, &AHeroCharacter::InitiateDodge);
 		EnhancedInputComponent->BindAction(BlockAction, ETriggerEvent::Completed, this, &AHeroCharacter::BlockEnd);
 	}
 }
@@ -285,6 +286,24 @@ void AHeroCharacter::InitiateAttack()
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->PerformMontage(AnimInstance);
+}
+
+void AHeroCharacter::InitiateDodge()
+{
+
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateDodge, Animation state: %d"), AnimationState);
+	if (AnimationState != EAnimationState::EAS_NoAnimation)
+	{
+		// Other animation in progress
+		return;
+	}
+
+	// Switch
+	TArray<FName> DodgeAnimations = { "DodgeLeft", "DodgeRight", "DodgeForward", "DodgeBackwards" };
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	PlayAnimMontage(DodgeMontage, 1.0f, DodgeAnimations[FMath::RandRange(0, DodgeAnimations.Num() - 1)]);
+
+	AnimationState = EAnimationState::EAS_AnimationInProgress;
 }
 
 void AHeroCharacter::AttackStart()
