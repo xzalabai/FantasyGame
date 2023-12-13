@@ -462,7 +462,7 @@ UObject* AHeroCharacter::GetEquippedItem()
 	return EquippedItem;
 }
 
-bool AHeroCharacter::HasMeeleWeapon()
+bool AHeroCharacter::HasMeeleWeapon() const
 {
 	return HasItemTag(EquippedItem, FName("Weapon.MeeleWeapon"));
 }

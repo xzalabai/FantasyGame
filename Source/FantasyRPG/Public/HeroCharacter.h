@@ -1,5 +1,4 @@
 // TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
-
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
@@ -186,7 +185,8 @@ protected:
 private:		
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
-	FORCEINLINE bool HasMeeleWeapon();
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	FORCEINLINE bool HasMeeleWeapon() const;
 	void InsertToInventory(AItem* Item);
 	UFUNCTION(BlueprintCallable)
 	void RemoveFromInventory(UDAItem* DAItem);
