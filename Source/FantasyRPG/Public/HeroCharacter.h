@@ -5,11 +5,13 @@
 // TODO: HIGH! Replace all editable values (e.g. for Weapon -> Asset Name, Fire Rate, Magazine, etc) with DataTable
 // TODO: HIGH! Add DataTable for Event WeaponFired in Blueprint (so it picks up correct recoil).
 // TODO: HIGH! Separate logic in HeroCharacter
+// TODO: HIGH! Change calling InitiateAttack_BP which calls BP (and plays montage) to C++ solution -> find good alternative to OnCompleted montage
 // TODO: HIGH! Cache Character and replace GetOwnerCharacter 
 // TODO: HIGH! Figure out better way of grenade -> USceneComponent is not moving during Mesh->AddImpulse, so we have to get Mesh location for SPhere trace
 // TODO: HIGH! use some Interface instead of casting to class
 // TODO: HIGH! Fix Reloading (running during reload) - edge case - reload interrupted
 // TODO: HIGH! Use const for functions and parameters
+// TODO: MED refactor animation play for enemies in method
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
 // TODO: MED unify naming for input handlers (Reload, Release...)
@@ -71,6 +73,7 @@ public:
 	void OnPerfectBlockReceived() override;
 	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
 	void InitiateBlock();
+	virtual void LayingDead() override {};
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage) override;
@@ -118,7 +121,7 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	virtual void Jump() override;
-	void InitiateAttack();
+	virtual void InitiateAttack() override;
 	void ToggleEquip();
 	void Insert();
 	void Reload();

@@ -22,8 +22,13 @@ void APrimitiveEnemy::OnReceivedHit(const FVector& HitImpactPoint, const FVector
 
 void APrimitiveEnemy::LayingDead()
 {   
-	UE_LOG(LogTemp, Display, TEXT("Laying Dead"));
-		//GetMesh()->SetCollisionProfileName("Ragdoll");
+	UE_LOG(LogTemp, Display, TEXT("[APrimitiveEnemy] Laying Dead"));
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		AnimInstance->StopAllMontages(false);
+	}
+	//GetMesh()->SetCollisionProfileName("Ragdoll");
+	GetMesh()->SetSimulatePhysics(true);
 }
 
 void APrimitiveEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation)
@@ -34,9 +39,9 @@ void APrimitiveEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
 		int8 RandomSequence = FMath::RandRange(1, 2);
-		AnimInstance->Montage_Play(AnimMontage);
+		AnimInstance->Montage_Play(AnimationMontage);
 		FName SequenceName = "HitForward";
-		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
+		AnimInstance->Montage_JumpToSection(SequenceName, AnimationMontage);
 	}
 }
 
@@ -47,9 +52,9 @@ void APrimitiveEnemy::ProcessDeath(bool bForwardHit, const FVector& HitImpactPoi
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
 		int8 RandomSequence = FMath::RandRange(1, 2);
-		AnimInstance->Montage_Play(AnimMontage);
+		AnimInstance->Montage_Play(AnimationMontage);
 		FName SequenceName = bForwardHit ? "DeathBackwards" : "DeathForward";
-		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
+		AnimInstance->Montage_JumpToSection(SequenceName, AnimationMontage);
 		SetDeathAnimationPose(SequenceName);
 	}
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -60,7 +65,7 @@ FName APrimitiveEnemy::GetDeathAnimationName()
 {
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		FName MontageName = AnimInstance->Montage_GetCurrentSection(AnimMontage);
+		FName MontageName = AnimInstance->Montage_GetCurrentSection(AnimationMontage);
 		return MontageName;
 	}
 	return "";

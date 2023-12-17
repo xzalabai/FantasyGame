@@ -8,19 +8,7 @@
 #include "Item.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "EquipableInterface.h"
-#include <Kismet\KismetMathLibrary.h>
-
-
-void ARagdollEnemy::PerformActionOnNotify()
-{
-	// Called from ABP
-	IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
-	if (Item)
-	{
-		Item->PerformActionOnNotify();
-	}
-}
-
+#include "Kismet\KismetMathLibrary.h"
 
 void ARagdollEnemy::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage)
 {
@@ -42,21 +30,22 @@ void ARagdollEnemy::OnReceivedHit(const FVector& HitImpactPoint, const FVector& 
 
 void ARagdollEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation)
 {   
-	UE_LOG(LogTemp, Warning, TEXT("[ARagdollEnemy] ProcessHit ---"));
+	UE_LOG(LogTemp, Display, TEXT("[ARagdollEnemy] ProcessHit"));
 	USkeletalMeshComponent *EnemyMesh = GetMesh();
     
     if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		int8 RandomSequence = FMath::RandRange(1, 2);
-		AnimInstance->Montage_Play(AnimMontage);
-		FName SequenceName = "HitForwardSmall1";
-		AnimInstance->Montage_JumpToSection(SequenceName, AnimMontage);
+		int8 RandomSequence = FMath::RandRange(0, HitReactionAnimationSequence.Num() - 1);
+		FName SequenceName = HitReactionAnimationSequence[RandomSequence];
+
+		AnimInstance->Montage_Play(AnimationMontage);
+		AnimInstance->Montage_JumpToSection(SequenceName, AnimationMontage);
 	}
 }
 
 void ARagdollEnemy::ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, const FVector& HitLocation)
 {   
-	UE_LOG(LogTemp, Warning, TEXT("[ARagdollEnemy] ProcessDeath"));
+	UE_LOG(LogTemp, Display, TEXT("[ARagdollEnemy] ProcessDeath"));
 
     USkeletalMeshComponent *EnemyMesh = GetMesh();
     EnemyMesh->SetCollisionProfileName("Ragdoll");

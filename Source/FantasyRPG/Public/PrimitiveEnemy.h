@@ -17,10 +17,9 @@ private:
 	virtual void OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage) override;
 
 private:
-	UFUNCTION(BlueprintCallable)
-	void LayingDead();
 	virtual void ProcessDeath(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
 	virtual void ProcessHit( bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
+	virtual void LayingDead() override;
 	UFUNCTION(BlueprintCallable)
 	FName GetDeathAnimationName();
 	UPROPERTY(VisibleAnywhere)

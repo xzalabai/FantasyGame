@@ -20,7 +20,7 @@ void AEnemy::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLoca
 void AEnemy::BlockAttack(const FVector& ImpactDirection, int Damage)
 {
     // TODO: Implement Enemy blocking attack
-    UE_LOG(LogTemp, Display, TEXT("[AEnemy] Enemy blocking missing"));
+    UE_LOG(LogTemp, Warning, TEXT("[AEnemy] Enemy blocking missing"));
 }
 
 void AEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation)
@@ -28,31 +28,53 @@ void AEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const F
     
 }
 
+void AEnemy::InitiateAttack()
+{
+    UE_LOG(LogTemp, Display, TEXT("[AEnemy] InitiateAttack"));
+    int8 RandomSequence = FMath::RandRange(0, AttackAnimationSequence.Num() - 1);
+    FName SequenceName = AttackAnimationSequence[RandomSequence];
+    InitiateAttack_BP(AnimationMontage, SequenceName);
+}
+
 void AEnemy::ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, const FVector& HitLocation)
 {
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     GetMesh()->SetGenerateOverlapEvents(false);
+    if (Controller)
+    {
+        Controller->UnPossess();
+    }
 }
 
 void AEnemy::PerformActionOnNotify()
 {
-    IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
-    Item->PerformActionOnNotify();
+    UE_LOG(LogTemp, Display, TEXT("[AEnemy] Try PerformActionOnNotify"));
+    if (IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem()))
+    {
+        UE_LOG(LogTemp, Display, TEXT("[AEnemy] PerformActionOnNotify"));
+        Item->PerformActionOnNotify();
+    }
+    
 }
 
 void AEnemy::AttackStart()
 {
     UE_LOG(LogTemp, Display, TEXT("[AEnemy] AttackStart"));
-    IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
-    Item->AttackMontageStarted();
+    if (IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem()))
+    {
+        Item->AttackMontageStarted();
+    }
     OnEnemyAttackStarted.Broadcast();
 }
 
 void AEnemy::AttackEnd()
 {
     UE_LOG(LogTemp, Display, TEXT("[AEnemy] AttackEnd"));
-    IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
-    Item->AttackMontageEnded();
+    if (IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem()))
+    {
+        Item->AttackMontageEnded();
+    }
+    
 }
 
 void AEnemy::ReloadEnd()
@@ -62,8 +84,8 @@ void AEnemy::ReloadEnd()
 
 void AEnemy::OnPerfectBlockReceived()
 {
-    int8 RandomIndex = FMath::RandRange(0, PerfectBlockReceivedMontageName.Num() - 1);
-    PlayAnimMontage(AnimMontage, 1.0f, PerfectBlockReceivedMontageName[RandomIndex]);
+    int8 RandomIndex = FMath::RandRange(0, PerfectBlockReceivedAnimationSequence.Num() - 1);
+    PlayAnimMontage(AnimationMontage, 1.0f, PerfectBlockReceivedAnimationSequence[RandomIndex]);
 }
 
 FVector AEnemy::CalculateVectorDirection(FVector PointA, FVector PointB)
