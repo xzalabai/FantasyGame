@@ -50,7 +50,6 @@ TObjectPtr<AProjectile> UProjectilePoolComponent::CreateActor()
 {
 	FVector Vector = FVector::ZeroVector;
 	FRotator Rotation = FRotator::ZeroRotator;
-	FActorSpawnParameters SpawnParams;
 	TObjectPtr<AProjectile> Actor = GetWorld()->SpawnActor<AProjectile>(ActorClass, Vector, Rotation);
 
 	return Actor;

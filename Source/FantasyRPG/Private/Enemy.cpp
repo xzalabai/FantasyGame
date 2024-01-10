@@ -5,11 +5,28 @@
 #include "Item.h"
 #include "Components/CapsuleComponent.h"
 #include "EquipableInterface.h"
+#include "Kismet\GameplayStatics.h"
 
 AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = false;
     Attributes = CreateDefaultSubobject<UAttributesComponent>(TEXT("Attributes"));
+}
+
+void AEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	if (AActor* HeroCharacterActor = UGameplayStatics::GetActorOfClass(GetWorld(), AEnemy::StaticClass()))
+	{
+		if (AHeroCharacter* HeroCharacter = Cast<AHeroCharacter>(HeroCharacterActor))
+		{
+			OnEnemyAttackStarted.AddUObject(HeroCharacter, &AHeroCharacter::EnemyAttackStarted);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AEnemy] Unable to fetch Hero Character for %s."), *GetClass()->GetName());
+	}
 }
 
 void AEnemy::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage)

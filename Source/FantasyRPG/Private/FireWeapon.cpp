@@ -26,7 +26,7 @@ void AFireWeapon::BeginPlay()
 
 	if (NameID == "" || !FireWeaponDataTable)
 	{
-		UE_LOG(LogTemp, Error, TEXT("[AFireWeapon] NameID for class %s not provided or FireWeaponDataTable is empty"), *GetClass()->GetName());
+		UE_LOG(LogTemp, Error, TEXT("[AFireWeapon] NameID for class %s not provided or "), *GetClass()->GetName());
 		return;
 	}
 	
@@ -48,8 +48,6 @@ void AFireWeapon::BeginPlay()
 
 	Muzzle->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	ProjectilePool->CreatePool(ProjectileClass, MaxAmmoInMagazine);
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
 }
 
 void AFireWeapon::OnItemEquipped(AHeroCharacter* MainCharacter)

@@ -50,18 +50,6 @@ void AHeroCharacter::BeginPlay()
 	}
 	CameraComponent = FindComponentByClass<UCameraComponent>();
 	Fists->RegisterHandColliders();
-
-	// Filter enemies and subscribe to them
-	// TODO: Change logic -> let enemies subscribe to HeroCharacter
-	TArray<AActor*> EnemiesFound;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemy::StaticClass(), EnemiesFound);
-	for (AActor* EnemyActor : EnemiesFound)
-	{
-		if (AEnemy* Enemy = Cast<AEnemy>(EnemyActor))
-		{
-			Enemy->OnEnemyAttackStarted.AddUObject(this, &AHeroCharacter::EnemyAttackStarted);
-		}
-	}
 }
 
 void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -120,7 +108,6 @@ void AHeroCharacter::EnemyAttackStarted()
 
 void AHeroCharacter::PerformPerfectBlockReaction(AActor* Attacker)
 {
-	const FName BlockReactionMontageName = FName(TEXT("PerfectBlock1"));
 	const FRotator RotationTowardsAttacker = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Attacker->GetActorLocation());
 	
 	SetActorRotation(RotationTowardsAttacker, ETeleportType::None);

@@ -19,13 +19,6 @@ enum class EAnimationState : uint8
 };
 
 UENUM(BlueprintType)
-enum class EPrimitiveEnemyDeathAnimation : uint8
-{
-	EPEDA_DeathBack UMETA(DisplayName = "Death Back"),
-	EPEDA_DeathForward UMETA(DisplayName = "Death Forward"),
-};
-
-UENUM(BlueprintType)
 enum class EItemType : uint8
 {
 	EIT_NoItem UMETA(DisplayName = "No Item"),

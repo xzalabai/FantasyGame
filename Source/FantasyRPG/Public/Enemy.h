@@ -27,6 +27,7 @@ public:
 	FOnAttackEndDelegate OnAttackEnd;
 
 protected:
+	virtual void BeginPlay() override;
 	UPROPERTY(EditAnywhere, Category=Montages)
 	TObjectPtr<UAnimMontage> AnimationMontage;
 	UPROPERTY(EditAnywhere, Category = "Montages")

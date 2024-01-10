@@ -35,7 +35,6 @@ protected:
 	USceneComponent* EndTrace;
 	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* OverlapArea;
-	UPROPERTY(EditDefaultsOnly)
 	int Damage = 50;
 	virtual void PerformActionOnNotify() override;
 private:

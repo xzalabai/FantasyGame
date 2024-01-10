@@ -13,20 +13,16 @@ class FANTASYRPG_API APrimitiveEnemy : public AEnemy
 {
 	GENERATED_BODY()
 
+protected:
+	UPROPERTY(EditAnywhere, Category = "Montages")
+	TObjectPtr<UAnimMontage> DeadAnimationMontage;
+	UPROPERTY(EditAnywhere, Category = "Montages")
+	TArray<FName> DeadAnimationSequence;
 private:
 	virtual void OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage) override;
-
-private:
 	virtual void ProcessDeath(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
 	virtual void ProcessHit( bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
 	virtual void LayingDead() override;
-	UFUNCTION(BlueprintCallable)
-	FName GetDeathAnimationName();
-	UPROPERTY(VisibleAnywhere)
-	EPrimitiveEnemyDeathAnimation DeathAnimationPose;
-	void SetDeathAnimationPose(const FName AnimMontage);
-	UFUNCTION(BlueprintPure)
-	const EPrimitiveEnemyDeathAnimation GetDeathAnimationPose();
 };
 
 

@@ -13,7 +13,6 @@ UCLASS()
 
 class FANTASYRPG_API AFireWeapon : public AWeapon
 {
-
 	GENERATED_BODY()
 public:
 	AFireWeapon();
@@ -47,15 +46,10 @@ private:
 	TSubclassOf<AProjectile> ProjectileClass;
 	UPROPERTY(EditAnywhere)
 	USceneComponent* Muzzle;
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	int32 AmmoInMagazine = 0;		// Current ammo in magazine
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	int32 MaxAmmoInMagazine = 0;	// Maximum size of ammo in magazine
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	int32 AmmoCapacity = 0;			// Maximum total ammo
-	UPROPERTY(EditDefaultsOnly, Category = "Weapon Specifics")
 	float FireRate = 0;
-	FActorSpawnParameters SpawnParams;
 	bool bMouseReleased = false;	
 };
 
