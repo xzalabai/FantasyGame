@@ -6,6 +6,7 @@
 #include "HeroCharacter.h"
 #include "Animation/AnimInstance.h"
 #include "Animation/AnimMontage.h"
+#include "DAItem.h"
 
 AWeapon::AWeapon()
 {
@@ -16,6 +17,27 @@ AWeapon::AWeapon()
     
     EndTrace = CreateDefaultSubobject<USceneComponent>(TEXT("End Trace"));
     EndTrace->SetupAttachment(RootComponent);
+}
+
+void AWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (NameID == "" || !WeaponDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AWeapon] NameID for class %s not provided or WeaponDataTable is empty."), *GetClass()->GetName());
+		return;
+	}
+
+	if (FWeaponData* WeaponData = WeaponDataTable->FindRow<FWeaponData>(NameID, ""))
+	{
+		WeaponData->Damage = Damage;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AWeapon] WeaponData with name %s not FOUND!"), *NameID.ToString());
+		return;
+	}
 }
 
 void AWeapon::PerformBoxTrace()

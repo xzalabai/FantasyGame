@@ -12,6 +12,7 @@
 #include "TimerManager.h"
 #include "DrawDebugHelpers.h" 
 #include "Projectile.h"
+#include "DAItem.h"
 
 AFireWeapon::AFireWeapon()
 {	
@@ -22,6 +23,29 @@ AFireWeapon::AFireWeapon()
 void AFireWeapon::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (NameID == "" || !FireWeaponDataTable)
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AFireWeapon] NameID for class %s not provided or FireWeaponDataTable is empty"), *GetClass()->GetName());
+		return;
+	}
+	
+	if (FFireWeaponData* FireWeaponData = FireWeaponDataTable->FindRow<FFireWeaponData>(NameID, ""))
+	{
+		ProjectileClass = FireWeaponData->ProjectileClass;
+		ReloadMontage = FireWeaponData->ReloadMontage;
+		ReloadAnimationSequenceName = FireWeaponData->ReloadAnimationSequenceName;
+		AmmoInMagazine = FireWeaponData->AmmoInMagazine;
+		MaxAmmoInMagazine = FireWeaponData->MaxAmmoInMagazine;
+		AmmoCapacity = FireWeaponData->AmmoCapacity;
+		FireRate = FireWeaponData->FireRate;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[AFireWeapon] FireWeaponData with name %s not FOUND!"), *NameID.ToString());
+		return;
+	}
+
 	Muzzle->AttachToComponent(RootComponent, FAttachmentTransformRules::KeepRelativeTransform);
 	ProjectilePool->CreatePool(ProjectileClass, MaxAmmoInMagazine);
 	SpawnParams.Owner = this;
@@ -51,16 +75,16 @@ void AFireWeapon::FireFromWeapon()
 	}
 
 	const AHeroCharacter* Character = GetOwnerCharacter();
-	const UCameraComponent* PlayerCamera = Character->GetCharacterCamera();
+	const UCameraComponent* Camera = Character->GetCharacterCamera();
 	float AimDispersion = UKismetMathLibrary::NormalizeToRange(Character->GetAimSpread(), 10, 40);
 
 	// Calculate end destination and shot dispersion
 	FVector End = (!Character->IsAiming() && !Character->CharacterIsMoving())
 		? Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000)
-		: PlayerCamera->GetComponentLocation() + (PlayerCamera->GetForwardVector() * 2000);
+		: Camera->GetComponentLocation() + (Camera->GetForwardVector() * 2000);
 
 	FHitResult HitResult;
-	bool bHitActor = CalculateShotEndPosition(PlayerCamera->GetComponentLocation(), End, HitResult);
+	bool bHitActor = CalculateShotEndPosition(Camera->GetComponentLocation(), End, HitResult);
 	
 	FVector FinalHitPoint = CreateShotDispersion(bHitActor ? HitResult.ImpactPoint : End, AimDispersion);
 	FRotator RotationTowardsTarget = UKismetMathLibrary::FindLookAtRotation(Muzzle->GetComponentLocation(), FinalHitPoint);

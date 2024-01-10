@@ -16,6 +16,7 @@ class FANTASYRPG_API AWeapon : public AItem, public IEquipableInterface
 	GENERATED_BODY()
 public:
 	AWeapon();
+	virtual void BeginPlay() override;
 	virtual void EnableOverlappingEvents(bool bEnable) {};
 	FORCEINLINE UBoxComponent* GetOverlapArea() const { return OverlapArea; }
 	UFUNCTION(BlueprintCallable)
@@ -24,6 +25,10 @@ public:
 	virtual void AttackMontageStarted();
 	virtual void AttackMontageEnded();
 protected:
+	UPROPERTY(EditDefaultsOnly)
+	FName NameID = "";
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* WeaponDataTable;
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* StartTrace;
 	UPROPERTY(VisibleAnywhere)

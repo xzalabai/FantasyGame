@@ -35,6 +35,8 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UProjectilePoolComponent> ProjectilePool;
 	virtual void OnItemEquipped(AHeroCharacter* MainCharacter) override;
+	UPROPERTY(EditDefaultsOnly)
+	UDataTable* FireWeaponDataTable;
 private:
 	void ClearWeaponTimer();
 	bool CalculateShotEndPosition(const FVector& Start, const FVector& End, FHitResult& HitResult);

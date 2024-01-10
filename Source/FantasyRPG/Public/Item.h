@@ -74,8 +74,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category= "Item Properties")
 	TArray<FName> AnimationSequenceName;
 	const AHeroCharacter* GetOwnerCharacter() const;
-	;
-	
 };
 
 

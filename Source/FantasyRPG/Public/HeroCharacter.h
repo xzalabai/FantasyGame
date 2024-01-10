@@ -23,11 +23,8 @@
 // TODO: fix issue while shooting -> click (timer is active), then hold (we don't get any input to try to shoot again)
 // --------------------------------------------------------------
 // Features:
-// - Stealth
 // - Inventory with Data tables (for weapons)
 // - cover behind wall
-// - AI
-// - correct animations
 #pragma once
 
 #include "CoreMinimal.h"
