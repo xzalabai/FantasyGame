@@ -47,9 +47,9 @@ void UFistsComponent::PerformBoxTrace()
 	RightHand->PerformBoxTrace();
 }
 
-void UFistsComponent::PerformMontage(class UAnimInstance *AnimInstance)
+void UFistsComponent::PerformMontage(UAnimInstance* AnimInstance, FName MontageName, UAnimMontage* AnimMontage)
 {
-	UE_LOG(LogTemp, Display, TEXT("[UFistsComponent] InitiateAttack"));
+	UE_LOG(LogTemp, Display, TEXT("[UFistsComponent] Perform Montage"));
     AnimInstance->Montage_Play(Montage);
 	int32 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
 	AnimInstance->Montage_JumpToSection(AnimationSequenceName[RandomIndex], Montage);

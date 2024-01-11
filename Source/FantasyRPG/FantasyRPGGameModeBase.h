@@ -13,5 +13,6 @@ UCLASS()
 class FANTASYRPG_API AFantasyRPGGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
+public:
+	void WarpTime(const float TimeDilation) const;
 };

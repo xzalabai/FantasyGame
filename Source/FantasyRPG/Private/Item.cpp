@@ -48,19 +48,25 @@ void AItem::OnItemEquipped(AHeroCharacter *MainCharacter)
 	TriggerCollider->SetGenerateOverlapEvents(false);
 }
 
-void AItem::PerformMontage(UAnimInstance *AnimInstance)
+void AItem::PerformMontage(UAnimInstance* AnimInstance, FName MontageName, UAnimMontage* AnimMontage)
 {
 	if (AnimationSequenceName.Num() == 0 || !Montage)
 	{
 		UE_LOG(LogTemp, Error, TEXT("[AItem] Item does not have a AnimMontage or MontageName set"));
 		return;
 	}
-    int8 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
-	PerformMontage(AnimInstance, AnimationSequenceName[RandomIndex], Montage);
-}
+	if (MontageName == "")
+	{
+		// MontageName not specified, pick random one.
+		int8 RandomIndex = FMath::RandRange(0, AnimationSequenceName.Num() - 1);
+		MontageName = AnimationSequenceName[RandomIndex];
+	}
+	if (!AnimMontage)
+	{
+		// AnimMontage not specified, pick defaut one.
+		AnimMontage = Montage; 
+	}
 
-void AItem::PerformMontage(UAnimInstance *AnimInstance, FName& MontageName, UAnimMontage* AnimMontage)
-{
 	UE_LOG(LogTemp, Display, TEXT("[AItem] PerformMontage"));
 	AnimInstance->Montage_Play(AnimMontage);
 	AnimInstance->Montage_JumpToSection(MontageName, AnimMontage);

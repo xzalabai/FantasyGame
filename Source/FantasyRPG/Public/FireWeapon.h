@@ -19,7 +19,7 @@ public:
 	void FireFromWeapon();
 	void ReloadWeapon();
 	void OnMouseRelease();
-	virtual void PerformMontage(UAnimInstance* AnimInstance) override;
+	virtual void PerformMontage(class UAnimInstance* AnimInstance, FName MontageName = "", class UAnimMontage* AnimMontage = nullptr) override;
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;

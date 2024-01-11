@@ -72,9 +72,9 @@ void AWeapon::PerformBoxTrace()
     }
 }
 
-void AWeapon::PerformMontage(UAnimInstance *AnimInstance)
+void AWeapon::PerformMontage(UAnimInstance* AnimInstance, FName MontageName, UAnimMontage* AnimMontage)
 {
-    AItem::PerformMontage(AnimInstance);
+	AItem::PerformMontage(AnimInstance, MontageName, AnimMontage);
 }
 
 void AWeapon::AttackMontageStarted()

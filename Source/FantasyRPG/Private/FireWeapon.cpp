@@ -135,7 +135,7 @@ void AFireWeapon::ReloadWeapon()
 	AItem::PerformMontage(AnimInstance, ReloadAnimationSequenceName[RandomIndex], ReloadMontage);
 }
 
-void AFireWeapon::PerformMontage(UAnimInstance *AnimInstance)
+void AFireWeapon::PerformMontage(UAnimInstance* AnimInstance, FName MontageName, UAnimMontage* AnimMontage)
 {
 	if (GetWorldTimerManager().IsTimerActive(ClearTimerHandle))
 	{

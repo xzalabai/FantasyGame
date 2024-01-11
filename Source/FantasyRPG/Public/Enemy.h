@@ -6,9 +6,11 @@
 #include "Enemy.generated.h"
 
 class UAttributesComponent;
+class AHeroCharacter;
 class AItem;
 
-DECLARE_MULTICAST_DELEGATE(FOnEnemyAttackStartedDelegate);
+
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEnemyAttackStartedDelegate, bool bStart, int8 enemyID);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAttackEndDelegate);
 
 UCLASS()
@@ -22,7 +24,7 @@ public:
 	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
 	AItem* GetEquippedItem();
 
-	FOnEnemyAttackStartedDelegate OnEnemyAttackStarted;
+	FOnEnemyAttackStartedDelegate OnEnemyAttack;
 	UPROPERTY(BlueprintAssignable, BlueprintCallable)
 	FOnAttackEndDelegate OnAttackEnd;
 
@@ -45,6 +47,7 @@ protected:
 
 	FVector CalculateVectorDirection(FVector PointA, FVector PointB);
 	bool IsHitFromFront(const FVector &ImpactPoint);
+	const TObjectPtr<AHeroCharacter> FetchHeroCharacter() const;
 	virtual void ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
 	virtual void ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, const FVector& HitLocation);
 	virtual void PerformActionOnNotify() override;

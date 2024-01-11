@@ -24,6 +24,7 @@
 #include "GameplayTagsManager.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
+#include <FantasyRPG\FantasyRPGGameModeBase.h>
 
 AHeroCharacter::AHeroCharacter()
 {
@@ -73,7 +74,13 @@ void AHeroCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 void AHeroCharacter::OnReceivedHit(const FVector& HitImpactPoint, const FVector& HitLocation, AActor* Attacker, int Damage)
 {
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] OnReceivedHit, IsBlocking() %d, IsPerfectBlocking() %d"), IsBlocking(), IsPerfectBlocking());
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] OnReceivedHit, IsBlocking() %d, IsPerfectBlocking() %d, IsImmortal() %d"), IsBlocking(), IsPerfectBlocking(), IsImmortal());
+	
+	if (IsImmortal())
+	{
+		return;
+	}
+
 	if (IsBlocking() && HasMeeleWeapon() && IsRotatedTowardsAttacker(Attacker))
 	{
 		if (IsPerfectBlocking())
@@ -100,29 +107,46 @@ float AHeroCharacter::GetAimSpread() const
 	return Velocity;
 }
 
-void AHeroCharacter::EnemyAttackStarted()
+void AHeroCharacter::OnEnemyAttack(bool bStart, int8 enemyID)
 {
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] EnemyAttackStarted, HeroCharacter is blocking %d"), bIsBlocking ? 1 : 0);
-	bIsBlockingBeforeAttack = IsBlocking() ? true : false;
+	if (!bIsBlocking)
+	{
+		bPerfectBlockTimePeriod = bStart;
+	}
+	
+	if (bStart)
+		UE_LOG(LogTemp, Warning, TEXT("[HeroCharacter] EnemyAttackStart"));
+	if (!bStart)
+		UE_LOG(LogTemp, Warning, TEXT("[HeroCharacter] EnemyAttackEnd"));
+
+	UE_LOG(LogTemp, Warning, TEXT("[HeroCharacter] EnemyAttack, HeroCharacter is blocking %d"), bIsBlocking ? 1 : 0);
 }
 
 void AHeroCharacter::PerformPerfectBlockReaction(AActor* Attacker)
 {
 	const FRotator RotationTowardsAttacker = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), Attacker->GetActorLocation());
-	
 	SetActorRotation(RotationTowardsAttacker, ETeleportType::None);
-	InitiateAttack();
+
+	InitiateAttack("Attack3");
+	
 	if (ICharacterInterface* AttackerInterface = Cast<ICharacterInterface>(Attacker))
 	{
 		AttackerInterface->OnPerfectBlockReceived();
 	}
-	// Give a chance to BP
-	PerfectAttackBlocked();
-	bIsBlockingBeforeAttack = false;
+
+	if (AFantasyRPGGameModeBase* GameMode = Cast<AFantasyRPGGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		GameMode->WarpTime(0.3f);
+	}
 }
 
 void AHeroCharacter::Move(const FInputActionValue& Value)
 {
+	if (IsBlocking())
+	{
+		return;
+	}
+
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -172,12 +196,14 @@ void AHeroCharacter::InitiateBlock()
 	}
 
 	bIsBlocking = true;
+	bIsPerfectBlocking = bPerfectBlockTimePeriod;
 }
 
 void AHeroCharacter::BlockEnd()
 {
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] BlockEnd"));
 	bIsBlocking = false;
+	bIsPerfectBlocking = false;
 }
 
 void AHeroCharacter::BlockAttack(const FVector& ImpactDirection, int Damage)
@@ -259,9 +285,8 @@ void AHeroCharacter::OnTriggerEndOverlap(UPrimitiveComponent* OverlappedComponen
 	}
 }
 
-void AHeroCharacter::InitiateAttack()
-{	
-
+void AHeroCharacter::InitiateAttack(const FName AttackName)
+{
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateAttack, Animation state: %d"), AnimationState);
 	if (AnimationState != EAnimationState::EAS_NoAnimation)
 	{
@@ -271,8 +296,13 @@ void AHeroCharacter::InitiateAttack()
 
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
-	Item->PerformMontage(AnimInstance);
+	IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
+	Item->PerformMontage(AnimInstance, AttackName);
+}
+
+void AHeroCharacter::InitiateAttack()
+{	
+	InitiateAttack("");
 }
 
 void AHeroCharacter::InitiateDodge()
@@ -316,6 +346,25 @@ void AHeroCharacter::AttackEnd()
 	MontageEnd();
 	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->AttackMontageEnded();
+}
+
+void AHeroCharacter::SpecialAttackStart()
+{
+	// Called from ABP
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] SpecialAttackStart"));
+	bIsImmortal = true;
+}
+
+void AHeroCharacter::SpecialAttackEnd()
+{
+	// Called from ABP
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] SpecialAttackEnd"));
+	if (AFantasyRPGGameModeBase* GameMode = Cast<AFantasyRPGGameModeBase>(UGameplayStatics::GetGameMode(this)))
+	{
+		GameMode->WarpTime(1.0f);
+	}
+	bIsImmortal = false;
+
 }
 
 void AHeroCharacter::ReloadEnd()
@@ -427,11 +476,6 @@ void AHeroCharacter::InventoryItemsUpdated_Implementation()
 void AHeroCharacter::AttackBlocked_Implementation()
 {
 	UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] AttackBlocked should be overriden in class blueprint!"));
-}
-
-void AHeroCharacter::PerfectAttackBlocked_Implementation()
-{
-	UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] PerfectAttackBlocked should be overriden in class blueprint!"));
 }
 	
 const UCameraComponent* AHeroCharacter::GetCharacterCamera() const

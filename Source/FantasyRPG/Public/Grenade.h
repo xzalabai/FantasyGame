@@ -27,7 +27,7 @@ public:
 	virtual void OnItemEquipped(AHeroCharacter *MainCharacter) override;
 	void TogglePhysics(bool enable);
 	void PerformSphereTrace();
-	virtual void PerformMontage(class UAnimInstance *AnimInstance) override;
+	virtual void PerformMontage(class UAnimInstance* AnimInstance, FName MontageName = "", class UAnimMontage* AnimMontage = nullptr) override;
 	virtual void EnableOverlappingEvents(bool Enable);
 	virtual void AttackMontageStarted() override;
 	virtual void AttackMontageEnded() override;

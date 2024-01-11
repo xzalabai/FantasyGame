@@ -16,16 +16,28 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	if (AActor* HeroCharacterActor = UGameplayStatics::GetActorOfClass(GetWorld(), AEnemy::StaticClass()))
+	const TObjectPtr<AHeroCharacter> HeroCharacter = FetchHeroCharacter();
+	OnEnemyAttack.AddUObject(HeroCharacter, &AHeroCharacter::OnEnemyAttack);
+}
+
+const TObjectPtr<AHeroCharacter> AEnemy::FetchHeroCharacter() const
+{
+	if (AActor* HeroCharacterActor = UGameplayStatics::GetActorOfClass(GetWorld(), AHeroCharacter::StaticClass()))
 	{
 		if (AHeroCharacter* HeroCharacter = Cast<AHeroCharacter>(HeroCharacterActor))
 		{
-			OnEnemyAttackStarted.AddUObject(HeroCharacter, &AHeroCharacter::EnemyAttackStarted);
+			return HeroCharacter;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("[AEnemy] Unable to fetch Hero Character for %s."), *GetClass()->GetName());
+			return nullptr;
 		}
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("[AEnemy] Unable to fetch Hero Character for %s."), *GetClass()->GetName());
+		return nullptr;
 	}
 }
 
@@ -65,10 +77,8 @@ void AEnemy::ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, const FV
 
 void AEnemy::PerformActionOnNotify()
 {
-    UE_LOG(LogTemp, Display, TEXT("[AEnemy] Try PerformActionOnNotify"));
     if (IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem()))
     {
-        UE_LOG(LogTemp, Display, TEXT("[AEnemy] PerformActionOnNotify"));
         Item->PerformActionOnNotify();
     }
     
@@ -81,7 +91,7 @@ void AEnemy::AttackStart()
     {
         Item->AttackMontageStarted();
     }
-    OnEnemyAttackStarted.Broadcast();
+    OnEnemyAttack.Broadcast(true, 0);
 }
 
 void AEnemy::AttackEnd()
@@ -91,7 +101,7 @@ void AEnemy::AttackEnd()
     {
         Item->AttackMontageEnded();
     }
-    
+	OnEnemyAttack.Broadcast(false, 0);    
 }
 
 void AEnemy::ReloadEnd()

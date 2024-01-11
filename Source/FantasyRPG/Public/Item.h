@@ -12,13 +12,13 @@
 #include "Animation/AnimMontage.h"
 #include "Item.generated.h"
 
-
 class UStaticMeshComponent;
 class UCapsuleComponent;
 class USphereComponent;
 class UNiagaraComponent;
 class AHeroCharacter;
 class UAnimInstance;
+class UAnimMontage;
 class UDAItem;
 
 UCLASS()
@@ -66,8 +66,8 @@ public:
 protected:
 	UPROPERTY(EditInstanceOnly)	
 	EItemState ItemState = EItemState::EIS_LayingOnGround;
-	void PerformMontage(UAnimInstance *AnimInstance);
-	void PerformMontage(UAnimInstance *AnimInstance,  FName& MontageName,  UAnimMontage* AnimMontage);
+	//void PerformMontage(UAnimInstance *AnimInstance);
+	void PerformMontage(UAnimInstance *AnimInstance, FName MontageName = "", UAnimMontage* AnimMontage = nullptr);
 	// Animations properties -----------------------------
 	UPROPERTY(EditAnywhere, Category = "Item Properties")
 	UAnimMontage* Montage;

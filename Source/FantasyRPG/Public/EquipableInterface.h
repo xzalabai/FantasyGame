@@ -16,7 +16,7 @@ class FANTASYRPG_API IEquipableInterface
 
 	public:
 	virtual void EnableOverlappingEvents(bool Enable) = 0;
-	virtual void PerformMontage(class UAnimInstance *AnimInstance) = 0;
+	virtual void PerformMontage(class UAnimInstance *AnimInstance, FName MontageName = "", class UAnimMontage* AnimMontage = nullptr) = 0;
 	//virtual void PerformOnRelease() = 0;
 	virtual void AttackMontageStarted() = 0;
 	virtual void AttackMontageEnded() = 0;

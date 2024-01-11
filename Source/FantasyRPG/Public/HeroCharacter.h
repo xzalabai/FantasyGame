@@ -3,7 +3,7 @@
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
 // TODO: HIGH! Perform Time Warp in GameModeBase
-// TODO: HIGH! Add DataTable for Event WeaponFired in Blueprint (so it picks up correct recoil).
+// TODO: low! Add DataTable for Event WeaponFired in Blueprint (so it picks up correct recoil).
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Change calling InitiateAttack_BP which calls BP (and plays montage) to C++ solution -> find good alternative to OnCompleted montage
 // TODO: HIGH! Cache Character and replace GetOwnerCharacter 
@@ -15,7 +15,6 @@
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
 // TODO: MED unify naming for input handlers (Reload, Release...)
-// TODO: MED Change logic -> let enemies subscribe to HeroCharacter
 // TODO: MED unify naming (PerformOn, InitiateAttack,...)
 // TODO: MED fix error when you Equip and Enemy is near
 // TODO: LOW replace animation BP for rrunning with Item
@@ -23,7 +22,6 @@
 // TODO: fix issue while shooting -> click (timer is active), then hold (we don't get any input to try to shoot again)
 // --------------------------------------------------------------
 // Features:
-// - Inventory with Data tables (for weapons)
 // - cover behind wall
 #pragma once
 
@@ -66,6 +64,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ReloadEnd();
 	UFUNCTION(BlueprintCallable)
+	void SpecialAttackStart();
+	UFUNCTION(BlueprintCallable)
+	void SpecialAttackEnd();
+	UFUNCTION(BlueprintCallable)
 	void PerformActionOnNotify();
 	void OnPerfectBlockReceived() override;
 	void BlockAttack(const FVector& ImpactDirection, int Damage) override;
@@ -78,7 +80,7 @@ public:
 	FORCEINLINE UAttributesComponent* GetAttributes() const { return Attributes;}
 	FORCEINLINE bool IsAiming() const { return bIsAiming;}
 	FORCEINLINE bool IsBlocking() const { return bIsBlocking;}
-	FORCEINLINE bool IsPerfectBlocking() const { return (!bIsBlockingBeforeAttack && bIsBlocking);}
+	FORCEINLINE bool IsPerfectBlocking() const { return bIsPerfectBlocking;}
 	UPROPERTY(BlueprintReadWrite, Category=Item)
 	mutable AItem* EquippedItem = nullptr;
 	bool CharacterIsMoving() const;
@@ -119,6 +121,7 @@ protected:
 	void Look(const FInputActionValue& Value);
 	virtual void Jump() override;
 	virtual void InitiateAttack() override;
+	virtual void InitiateAttack(const FName AttackName);
 	void ToggleEquip();
 	void Insert();
 	void Reload();
@@ -171,7 +174,9 @@ protected:
 	bool bIsAiming = false;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bIsBlocking = false;
-	bool bIsBlockingBeforeAttack = false;
+	bool bIsImmortal = false;
+	bool bPerfectBlockTimePeriod = false;
+	bool bIsPerfectBlocking = false;
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
 	UPROPERTY(BlueprintReadOnly, Category = "Components")
@@ -180,20 +185,19 @@ protected:
 	void InventoryItemsUpdated();
 	UFUNCTION(BlueprintNativeEvent)
 	void AttackBlocked();
-	UFUNCTION(BlueprintNativeEvent)
-	void PerfectAttackBlocked();
 private:		
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	FORCEINLINE bool HasMeeleWeapon() const;
+	FORCEINLINE bool IsImmortal() const { return bIsImmortal; };
 	void InsertToInventory(AItem* Item);
 	UFUNCTION(BlueprintCallable)
 	void RemoveFromInventory(UDAItem* DAItem);
 	UPROPERTY(EditAnywhere, Category = "AnimationProperties")
 	TArray<FName> HitReactionAnimationSequence;
 	void PerformPerfectBlockReaction(AActor* Attacker);
-	void EnemyAttackStarted();
+	void OnEnemyAttack(bool bStart, int8 enemyID);
 
 	friend class AEnemy;
 	

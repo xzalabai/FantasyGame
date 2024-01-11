@@ -21,7 +21,7 @@ public:
 	FORCEINLINE UBoxComponent* GetOverlapArea() const { return OverlapArea; }
 	UFUNCTION(BlueprintCallable)
 	void PerformBoxTrace();
-	virtual void PerformMontage(class UAnimInstance *AnimInstance) override;
+	virtual void PerformMontage(class UAnimInstance* AnimInstance, class FName MontageName = "", class UAnimMontage* AnimMontage = nullptr) override;
 	virtual void AttackMontageStarted();
 	virtual void AttackMontageEnded();
 protected:

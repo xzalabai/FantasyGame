@@ -70,14 +70,9 @@ void AGrenade::OnThrowableOverlap(UPrimitiveComponent* HitComponent, AActor* Oth
 	Destroy();
 }
 
-void AGrenade::PerformMontage(class UAnimInstance *AnimInstance)
+void AGrenade::PerformMontage(UAnimInstance* AnimInstance, FName MontageName, UAnimMontage* AnimMontage)
 {
-	AItem::PerformMontage(AnimInstance);
-}
-
-void AGrenade::EnableOverlappingEvents(bool Enable)
-{
-	return;
+	AItem::PerformMontage(AnimInstance, MontageName, AnimMontage);
 }
 
 void AGrenade::PerformSphereTrace()
@@ -106,11 +101,6 @@ void AGrenade::PerformSphereTrace()
 	}
 }
 
-void AGrenade::AttackMontageStarted()
-{
-	return;
-}
-
 void AGrenade::AttackMontageEnded()
 {
 	const AHeroCharacter* Character = GetOwnerCharacter();
@@ -124,6 +114,16 @@ void AGrenade::AttackMontageEnded()
 }
 
 void AGrenade::PerformActionOnNotify()
+{
+	return;
+}
+
+void AGrenade::AttackMontageStarted()
+{
+	return;
+}
+
+void AGrenade::EnableOverlappingEvents(bool Enable)
 {
 	return;
 }
