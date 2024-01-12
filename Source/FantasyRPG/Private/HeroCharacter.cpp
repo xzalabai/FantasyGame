@@ -146,7 +146,6 @@ void AHeroCharacter::Move(const FInputActionValue& Value)
 	{
 		return;
 	}
-
 	const FVector2D MovementVector = Value.Get<FVector2D>();
 	const FRotator Rotation = Controller->GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -305,21 +304,17 @@ void AHeroCharacter::InitiateAttack()
 	InitiateAttack("");
 }
 
-void AHeroCharacter::InitiateDodge()
+void AHeroCharacter::InitiateDodge(const FInputActionValue& Value)
 {
-
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] InitiateDodge, Animation state: %d"), AnimationState);
 	if (AnimationState != EAnimationState::EAS_NoAnimation)
 	{
 		// Other animation in progress
 		return;
 	}
 
-	// Switch
-	TArray<FName> DodgeAnimations = { "DodgeLeft", "DodgeRight", "DodgeForward", "DodgeBackwards" };
+	// Dodge
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
-	PlayAnimMontage(DodgeMontage, 1.0f, DodgeAnimations[FMath::RandRange(0, DodgeAnimations.Num() - 1)]);
-
+	PlayAnimMontage(DodgeMontage, 1.0f, ResolveDirection(Value.Get<FVector2D>()));
 	AnimationState = EAnimationState::EAS_AnimationInProgress;
 }
 
@@ -508,4 +503,25 @@ bool AHeroCharacter::IsRotatedTowardsAttacker(const TObjectPtr<AActor> Attacker)
 {
 	float DotProduct = FVector::DotProduct(Attacker->GetActorForwardVector(), GetActorForwardVector());
 	return DotProduct <= 0;
+}
+
+FName AHeroCharacter::ResolveDirection(const FVector2D& Input) {
+	if (Input.X == 0 && Input.Y == 1) {
+		return DodgeMontageSequenceNames["Forward"];
+	}
+	else if (Input.X == 0 && Input.Y == -1) {
+		return DodgeMontageSequenceNames["Backwards"];
+	}
+	else if (Input.X == 1 && Input.Y == 0) {
+		return DodgeMontageSequenceNames["Right"];
+	}
+	else if (Input.X == -1 && Input.Y == 0) {
+		return DodgeMontageSequenceNames["Left"];
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("[HeroCharacter] ResolveDirection has unresolved key mapping!"));
+		return "";
+	}
+	
 }

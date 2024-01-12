@@ -129,7 +129,7 @@ protected:
 	void AbsorbItem(AItem* Item);
 	void Equip(AItem* Item);
 	void Unequip();
-	void InitiateDodge();
+	void InitiateDodge(const FInputActionValue& Value);
 	void SwapItem(AItem* ItemToBeEquipped);
 	// ---------------------------------------------------
 	
@@ -149,6 +149,8 @@ protected:
 	UAnimMontage* HitReactionMontage;
 	UPROPERTY(EditAnywhere, Category = "Animation properties")
 	UAnimMontage* DodgeMontage;
+	UPROPERTY(EditAnywhere, Category = "Animation properties")
+	TMap<FName, FName> DodgeMontageSequenceNames;
 	// -------------------------------------------------------
 	
 	// Enums--------------------------------------------------
@@ -158,7 +160,6 @@ protected:
 	EAnimationState AnimationState = EAnimationState::EAS_NoAnimation;
 	// -------------------------------------------------------
 	virtual void BeginPlay() override;
-
 	UFUNCTION()
 	void OnTriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 	UFUNCTION()
@@ -198,7 +199,7 @@ private:
 	TArray<FName> HitReactionAnimationSequence;
 	void PerformPerfectBlockReaction(AActor* Attacker);
 	void OnEnemyAttack(bool bStart, int8 enemyID);
-
+	FName ResolveDirection(const FVector2D& Input);
 	friend class AEnemy;
 	
 };
