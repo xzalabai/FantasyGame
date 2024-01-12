@@ -53,8 +53,6 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Item Properties")
 	UDAItem* DAItem;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties")
-	FString AssetName;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Properties")
 	UTexture2D* AssetThumbnail;
 	UPROPERTY(EditAnywhere, Category = "Item Properties");
 	bool bAvailableToInventory = false;
@@ -62,6 +60,8 @@ public:
 	bool bAutoEquip = false;
 	UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
 	EItemType ItemType = EItemType::EIT_Rifle;
+	UPROPERTY(EditDefaultsOnly)
+	FName NameID = "";
 	// --------------------------------------------
 protected:
 	UPROPERTY(EditInstanceOnly)	

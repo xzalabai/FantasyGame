@@ -81,7 +81,7 @@ void AHeroCharacter::OnReceivedHit(const FVector& HitImpactPoint, const FVector&
 		return;
 	}
 
-	if (IsBlocking() && HasMeeleWeapon() && IsRotatedTowardsAttacker(Attacker))
+	if (IsBlocking() && HasWeapon("Weapon.MeleeWeapon") && IsRotatedTowardsAttacker(Attacker))
 	{
 		if (IsPerfectBlocking())
 		{
@@ -142,7 +142,7 @@ void AHeroCharacter::PerformPerfectBlockReaction(AActor* Attacker)
 
 void AHeroCharacter::Move(const FInputActionValue& Value)
 {
-	if (IsBlocking())
+	if (AnimationState == EAnimationState::EAS_AnimationInProgress)
 	{
 		return;
 	}
@@ -180,6 +180,7 @@ void AHeroCharacter::Insert()
 
 void AHeroCharacter::Reload()
 {
+	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] Reload"));
 	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
 	{
 		FireWeapon->ReloadWeapon();
@@ -488,10 +489,11 @@ UObject* AHeroCharacter::GetEquippedItem()
 	return EquippedItem;
 }
 
-bool AHeroCharacter::HasMeeleWeapon() const
+bool AHeroCharacter::HasWeapon(const FName WeaponTag) const
 {
-	return HasItemTag(EquippedItem, FName("Weapon.MeeleWeapon"));
+	return HasItemTag(EquippedItem, WeaponTag != "" ? WeaponTag : FName("Weapon"));
 }
+
 
 float AHeroCharacter::GetCharacterPitch() const
 {

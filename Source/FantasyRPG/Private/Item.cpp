@@ -29,7 +29,7 @@ void AItem::BeginPlay()
 	
 	if (IsValid(DAItem) && DAItem->DAItemInfo.bIsBuidFromItinerary && !(DAItem->DAItemInfo.AssetName.IsEmpty()) && DAItem->DAItemInfo.AssetThumbnail)
 	{
-		AssetName = DAItem->DAItemInfo.AssetName;
+		NameID = FName(*DAItem->DAItemInfo.AssetName);
 		AssetThumbnail = DAItem->DAItemInfo.AssetThumbnail;
 		bAvailableToInventory = DAItem->DAItemInfo.bAvailableToInventory;
 	}

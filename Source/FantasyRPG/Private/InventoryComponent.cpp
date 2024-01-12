@@ -67,7 +67,7 @@ bool UInventoryComponent::RemoveFromInventory(const UDAItem* DAItem)
 TObjectPtr<UDAItem> UInventoryComponent::BuildUDAItemData(const AItem* Item) const
 {
 	TObjectPtr<UDAItem> DAItem = NewObject<UDAItem>();
-	DAItem->DAItemInfo.AssetName = Item->AssetName;
+	DAItem->DAItemInfo.AssetName = Item->NameID.ToString();
 	DAItem->DAItemInfo.AssetThumbnail = Item->AssetThumbnail;
 	DAItem->DAItemInfo.bAvailableToInventory = Item->IsAvailableToInventory();
 	DAItem->DAItemInfo.ItemType = Item->GetClass();

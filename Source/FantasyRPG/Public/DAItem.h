@@ -36,42 +36,48 @@ public:
     FDAItemInfo DAItemInfo;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FWeaponData : public FTableRowBase
 {
 	GENERATED_USTRUCT_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	UDAItem* DAItemInfo;
 
-	UPROPERTY(EditAnywhere, Category = "Item Data")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	int Damage;
 
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FFireWeaponData : public FTableRowBase
 {
     GENERATED_USTRUCT_BODY()
 
-    UPROPERTY(EditAnywhere, Category = "Item Data")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     TSubclassOf<AProjectile> ProjectileClass;
 
-    UPROPERTY(EditAnywhere, Category = "Item Data")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     UAnimMontage* ReloadMontage;
 
-    UPROPERTY(EditAnywhere, Category = "Item Data")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     TArray<FName> ReloadAnimationSequenceName;
 
-    UPROPERTY(EditAnywhere, Category = "Item Data")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     int32 AmmoInMagazine;
 
-    UPROPERTY(EditAnywhere, Category = "Item Data")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     int32 MaxAmmoInMagazine;
 
-    UPROPERTY(EditAnywhere, Category = "Item Data")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     int32 AmmoCapacity;
 
-    UPROPERTY(EditAnywhere, Category = "Item Data")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
     float FireRate;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+	float RecoilMin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+	float RecoilMax;
 };

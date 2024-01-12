@@ -26,8 +26,6 @@ public:
 	virtual void AttackMontageEnded();
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	FName NameID = "";
-	UPROPERTY(EditDefaultsOnly)
 	UDataTable* WeaponDataTable;
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* StartTrace;

@@ -78,8 +78,8 @@ void AFireWeapon::FireFromWeapon()
 
 	// Calculate end destination and shot dispersion
 	FVector End = (!Character->IsAiming() && !Character->CharacterIsMoving())
-		? Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 2000)
-		: Camera->GetComponentLocation() + (Camera->GetForwardVector() * 2000);
+		? Muzzle->GetComponentLocation() + (Muzzle->GetForwardVector() * 8000)
+		: Camera->GetComponentLocation() + (Camera->GetForwardVector() * 8000);
 
 	FHitResult HitResult;
 	bool bHitActor = CalculateShotEndPosition(Camera->GetComponentLocation(), End, HitResult);
@@ -95,7 +95,7 @@ void AFireWeapon::FireFromWeapon()
 	Projectile->FireInDirection(Projectile->GetActorForwardVector());
 	
 	// Get CB to Character
-	Character->WeaponFired(AssetName);
+	Character->WeaponFired(NameID);
 	Character->GetAttributes()->DecreaseAmmo(ItemType, 1);
 	
 	--AmmoInMagazine;
@@ -105,15 +105,8 @@ bool AFireWeapon::CalculateShotEndPosition(const FVector& Start, const FVector& 
 {
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
-
 	// Perform the line trace
-	bool bHit = GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECC_WorldDynamic, CollisionParams);
-
-	// Debug sphere at impact point
-	float SphereRadius = 20.0f;
-	DrawDebugSphere(GetWorld(), OutHitResult.ImpactPoint, SphereRadius, 32, FColor::Red, true, -1.0f);
-	
-	return bHit;
+	return GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECC_WorldDynamic, CollisionParams);
 }
 
 

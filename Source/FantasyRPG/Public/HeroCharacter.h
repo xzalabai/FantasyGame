@@ -2,7 +2,6 @@
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
-// TODO: HIGH! Perform Time Warp in GameModeBase
 // TODO: low! Add DataTable for Event WeaponFired in Blueprint (so it picks up correct recoil).
 // TODO: HIGH! Separate logic in HeroCharacter
 // TODO: HIGH! Change calling InitiateAttack_BP which calls BP (and plays montage) to C++ solution -> find good alternative to OnCompleted montage
@@ -86,7 +85,7 @@ public:
 	bool CharacterIsMoving() const;
 	const UCameraComponent* GetCharacterCamera() const;
 	UFUNCTION(BlueprintImplementableEvent)
-	void WeaponFired(const FString& AssetName) const;
+	void WeaponFired(const FName& NameID) const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	float GetAimSpread() const;
 	float GetCharacterPitch() const;
@@ -184,13 +183,13 @@ protected:
 	TObjectPtr<UInventoryComponent>  ItemInventory;
 	UFUNCTION(BlueprintNativeEvent)
 	void InventoryItemsUpdated();
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent)	
 	void AttackBlocked();
 private:		
 	UFUNCTION()
 	bool HasItemTag(const AItem *Item, const FName TagName) const;
 	UFUNCTION(BlueprintCallable, BlueprintPure)
-	FORCEINLINE bool HasMeeleWeapon() const;
+	bool HasWeapon(const FName WeaponTag = "") const;
 	FORCEINLINE bool IsImmortal() const { return bIsImmortal; };
 	void InsertToInventory(AItem* Item);
 	UFUNCTION(BlueprintCallable)
