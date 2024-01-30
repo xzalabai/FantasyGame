@@ -183,8 +183,10 @@ void AHeroCharacter::Reload()
 	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] Reload"));
 	if (AFireWeapon* FireWeapon = Cast<AFireWeapon>(EquippedItem))
 	{
-		FireWeapon->ReloadWeapon();
-		AnimationState = EAnimationState::EAS_AnimationInProgress;
+		if (FireWeapon->ReloadWeapon())
+		{
+			AnimationState = EAnimationState::EAS_AnimationInProgress;
+		}
 	}
 }
 
@@ -293,8 +295,6 @@ void AHeroCharacter::InitiateAttack(const FName AttackName)
 		// Other animation in progress
 		return;
 	}
-
-	AnimationState = EAnimationState::EAS_AnimationInProgress;
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	IEquipableInterface* Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->PerformMontage(AnimInstance, AttackName);

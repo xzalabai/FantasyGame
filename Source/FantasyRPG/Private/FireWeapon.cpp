@@ -110,11 +110,12 @@ bool AFireWeapon::CalculateShotEndPosition(const FVector& Start, const FVector& 
 }
 
 
-void AFireWeapon::ReloadWeapon()
+bool AFireWeapon::ReloadWeapon()
 {
 	if (AmmoCapacity <= 0)
 	{
-		return;
+		UE_LOG(LogTemp, Display, TEXT("[AFireWeapon] Ammo capacity <= 0"));
+		return false;
 	}
 
 	// Ammo calculations
@@ -126,6 +127,7 @@ void AFireWeapon::ReloadWeapon()
 	UAnimInstance* AnimInstance = GetOwnerCharacter()->GetMesh()->GetAnimInstance();
 	int8 RandomIndex = FMath::RandRange(0, ReloadAnimationSequenceName.Num() - 1);
 	AItem::PerformMontage(AnimInstance, ReloadAnimationSequenceName[RandomIndex], ReloadMontage);
+	return true;
 }
 
 void AFireWeapon::PerformMontage(UAnimInstance* AnimInstance, FName MontageName, UAnimMontage* AnimMontage)

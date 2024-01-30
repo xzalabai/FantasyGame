@@ -17,7 +17,7 @@ class FANTASYRPG_API AFireWeapon : public AWeapon
 public:
 	AFireWeapon();
 	void FireFromWeapon();
-	void ReloadWeapon();
+	bool ReloadWeapon();
 	void OnMouseRelease();
 	virtual void PerformMontage(class UAnimInstance* AnimInstance, FName MontageName = "", class UAnimMontage* AnimMontage = nullptr) override;
 	virtual void AttackMontageStarted() override;
