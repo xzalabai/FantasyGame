@@ -6,7 +6,6 @@
 #include "Camera/CameraComponent.h"
 #include "Engine/StaticMeshActor.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include <Kismet\KismetMathLibrary.h>
 
 AGrenade::AGrenade()
 {
@@ -96,7 +95,8 @@ void AGrenade::PerformSphereTrace()
 		UE_LOG(LogTemp, Display, TEXT("Hit -> %s"), *OutHit.GetComponent()->GetName());
 		if (ICharacterInterface* ITarget = Cast<ICharacterInterface>(OutHit.GetActor()))
     	{
-        	ITarget->OnReceivedHit(MeshComponent->GetComponentLocation(), OutHit.Location, PreviousOwner, 50);
+			FVector PoweredNormal = OutHit.ImpactNormal.GetSafeNormal() * 10;
+        	ITarget->OnReceivedHit(PoweredNormal, OutHit.Location, PreviousOwner, 50);
     	}
 	}
 }

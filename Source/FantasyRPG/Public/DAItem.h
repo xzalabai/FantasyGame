@@ -80,4 +80,5 @@ struct FFireWeaponData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	float RecoilMax;
+
 };

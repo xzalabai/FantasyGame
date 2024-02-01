@@ -85,12 +85,13 @@ void AItem::OnItemUnequipped()
 	TriggerCollider->SetGenerateOverlapEvents(true);
 
 	// Find a suitabe position on ground
-	FVector EndLocation = FVector(0.f, 0.f, -1000.f);  	
+	FVector EndLocation = FVector(GetActorLocation().X + 20, GetActorLocation().Y + 20.f, GetActorLocation().Z - 500.f);
+	FVector StartLocation = FVector(GetActorLocation().X + 20, GetActorLocation().Y + 20.f, GetActorLocation().Z);
 	FHitResult HitResult; 							 	
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(
 		HitResult,           		// Hit result will be stored here
-		GetActorLocation(),       	// Starting location of the raycast
+		StartLocation,       	// Starting location of the raycast
 		EndLocation,         		// Ending location of the raycast
 		ECC_Camera,      			// Collision channel (you can change it to suit your needs)
 		FCollisionQueryParams::DefaultQueryParam,

@@ -30,9 +30,9 @@ void APrimitiveEnemy::ProcessHit(bool bForwardHit, const FVector& HitImpactPoint
     //Play animation
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		int8 RandomSequence = FMath::RandRange(1, 2);
 		AnimInstance->Montage_Play(AnimationMontage);
-		FName SequenceName = "HitForward";
+		int8 RandomSequence = FMath::RandRange(0, HitReactionAnimationSequence.Num() - 1);
+		FName SequenceName = HitReactionAnimationSequence[RandomSequence];
 		AnimInstance->Montage_JumpToSection(SequenceName, AnimationMontage);
 	}
 }

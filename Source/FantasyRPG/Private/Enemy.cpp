@@ -73,6 +73,7 @@ void AEnemy::ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, const FV
     {
         Controller->UnPossess();
     }
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &AEnemy::DestroyEnemy, 3.0f, false, 3.0f);
 }
 
 void AEnemy::PerformActionOnNotify()
@@ -81,7 +82,6 @@ void AEnemy::PerformActionOnNotify()
     {
         Item->PerformActionOnNotify();
     }
-    
 }
 
 void AEnemy::AttackStart()
@@ -139,4 +139,16 @@ bool AEnemy::IsHitFromFront(const FVector &ImpactPoint)
 AItem* AEnemy::GetEquippedItem()
 {
     return EquippedItem;
+}
+
+void AEnemy::DestroyEnemy()
+{
+	TArray<AActor*> AttachedActor;
+
+	GetAttachedActors(AttachedActor, false, false);
+	if (AttachedActor.Num() > 0)
+	{
+		AttachedActor[0]->Destroy();
+	}
+	AActor::Destroy();
 }

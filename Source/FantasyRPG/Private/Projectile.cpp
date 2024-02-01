@@ -32,7 +32,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, U
 	UE_LOG(LogTemp, Display, TEXT("[AProjectile] OnHit. %s in bone: %s"), *OtherActor->GetName(), *Hit.BoneName.ToString());
 	if (AEnemy* Enemy = Cast<AEnemy>(OtherActor))
 	{
-		Enemy->OnReceivedHit(Hit.ImpactPoint, Hit.Location, nullptr, Strength);
+		Enemy->OnReceivedHit(Hit.ImpactNormal, Hit.Location, nullptr, Strength);
 	}
 	int8 RandomIndex = FMath::RandRange(0, DecalMaterials.Num() - 1);
 

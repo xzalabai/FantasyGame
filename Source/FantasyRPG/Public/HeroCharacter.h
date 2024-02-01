@@ -1,4 +1,3 @@
-// TODO: refactor Fists and handling of Right/Left Hand colliders. reference should be assigned in the constructor of fistsComponent
 // TODO: HIGH! create UActorComponent for weapon equiping
 // TODO: HIGH! Fix Swap() weapons
 // TODO: HIGH! replace nullptr with Attacker in all OnReceivedHit
@@ -11,6 +10,7 @@
 // TODO: HIGH! Fix Reloading (running during reload) - edge case - reload interrupted
 // TODO: HIGH! Use const for functions and parameters
 // TODO: MED refactor animation play for enemies in method
+// TODO: move bAutomatic to FireWeaponData
 // TODO: MED find out if you can add CONST to Attacker in OnReceivedHit
 // TODO: MED change animation while carying a melee weapon
 // TODO: MED unify naming for input handlers (Reload, Release...)
@@ -20,8 +20,6 @@
 // TODO: LOW cache AHeroCharacter into the FireWeapon and reuse Unequip (set it to nullptr)
 // TODO: fix issue while shooting -> click (timer is active), then hold (we don't get any input to try to shoot again)
 // --------------------------------------------------------------
-// Features:
-// - cover behind wall
 #pragma once
 
 #include "CoreMinimal.h"

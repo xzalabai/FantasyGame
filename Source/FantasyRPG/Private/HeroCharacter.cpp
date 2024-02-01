@@ -81,7 +81,7 @@ void AHeroCharacter::OnReceivedHit(const FVector& HitImpactPoint, const FVector&
 		return;
 	}
 
-	if (IsBlocking() && HasWeapon("Weapon.MeleeWeapon") && IsRotatedTowardsAttacker(Attacker))
+	if (IsBlocking() && HasWeapon("Weapon.MeeleWeapon") && IsRotatedTowardsAttacker(Attacker))
 	{
 		if (IsPerfectBlocking())
 		{
@@ -142,7 +142,7 @@ void AHeroCharacter::PerformPerfectBlockReaction(AActor* Attacker)
 
 void AHeroCharacter::Move(const FInputActionValue& Value)
 {
-	if (AnimationState == EAnimationState::EAS_AnimationInProgress)
+	if (AnimationState == EAnimationState::EAS_AnimationInProgress || IsBlocking())
 	{
 		return;
 	}
@@ -192,11 +192,6 @@ void AHeroCharacter::Reload()
 
 void AHeroCharacter::InitiateBlock()
 {
-	if (CharacterIsMoving())
-	{
-		return;
-	}
-
 	bIsBlocking = true;
 	bIsPerfectBlocking = bPerfectBlockTimePeriod;
 }
@@ -373,7 +368,6 @@ void AHeroCharacter::ReloadEnd()
 void AHeroCharacter::PerformActionOnNotify()
 {
 	// Called from ABP
-	UE_LOG(LogTemp, Display, TEXT("[HeroCharacter] PerformActionOnNotify"));
 	IEquipableInterface *Item = Cast<IEquipableInterface>(GetEquippedItem());
 	Item->PerformActionOnNotify();
 }

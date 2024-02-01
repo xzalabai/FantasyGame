@@ -44,9 +44,10 @@ protected:
 	AItem* EquippedItem;
 	UPROPERTY(EditAnywhere, Category = "Components")
 	UAttributesComponent* Attributes;
-
+	FTimerHandle TimerHandle;
 	FVector CalculateVectorDirection(FVector PointA, FVector PointB);
 	bool IsHitFromFront(const FVector &ImpactPoint);
+	void DestroyEnemy();
 	const TObjectPtr<AHeroCharacter> FetchHeroCharacter() const;
 	virtual void ProcessHit(bool bForwardHit, const FVector& HitImpactPoint, const FVector& HitLocation);
 	virtual void ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, const FVector& HitLocation);

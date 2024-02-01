@@ -33,7 +33,7 @@ public:
 	virtual void AttackMontageEnded() override;
 	virtual void PerformActionOnNotify() override;
 	UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
-	float ImpactArea = 10;
+	float ImpactArea = 20;
 	UPROPERTY(EditDefaultsOnly, Category = "Item Properties")
 	int Damage = 50;
 	UPROPERTY(EditDefaultsOnly, Category = "Item Properties")

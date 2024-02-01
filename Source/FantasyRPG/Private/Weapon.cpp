@@ -52,7 +52,7 @@ void AWeapon::PerformBoxTrace()
         EndTrace->GetComponentLocation(),
         FVector(3.3f,3.3f,3.3f),
         StartTrace->GetComponentRotation(),
-        ETraceTypeQuery::TraceTypeQuery1,
+        UEngineTypes::ConvertToTraceType(ECC_WorldDynamic),
         false,
         ActorsToIgnore, EDrawDebugTrace::Persistent,
         OutHit,
@@ -67,7 +67,7 @@ void AWeapon::PerformBoxTrace()
             // Actor is already in the list of affected
             return;
         }
-        ITarget->OnReceivedHit(OutHit.ImpactPoint, OutHit.Location, GetAttachParentActor(), Damage);
+        ITarget->OnReceivedHit(OutHit.ImpactNormal, OutHit.Location, GetAttachParentActor(), Damage);
         AffectedActors.Add(OutHit.GetActor());
     }
 }

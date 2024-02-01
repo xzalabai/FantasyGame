@@ -50,6 +50,6 @@ void ARagdollEnemy::ProcessDeath(bool bForwardHit, const FVector& ImpactPoint, c
     USkeletalMeshComponent *EnemyMesh = GetMesh();
     EnemyMesh->SetCollisionProfileName("Ragdoll");
     EnemyMesh->SetSimulatePhysics(true);
-	EnemyMesh->AddImpulseAtLocation(UKismetMathLibrary::TransformDirection(GetActorTransform(), FVector(-ImpactPoint.X * 10, -ImpactPoint.Y * 10, -ImpactPoint.Z * 10)), HitLocation);
+	EnemyMesh->AddImpulseAtLocation(FVector(- ImpactPoint.X * 11000, - ImpactPoint.Y * 11000, - ImpactPoint.Z * 11000), HitLocation);
 	AEnemy::ProcessDeath(bForwardHit, ImpactPoint, HitLocation);
 }
