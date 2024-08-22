@@ -2,7 +2,7 @@
 ![Capture](https://github.com/user-attachments/assets/e53e4117-2e74-41f7-94a6-9e052a793228)
 
 Plugin includes flexible code & BP for
-- handling a pickup of a different melee/ranged weapons (with custom projectiles).
+- handling a pickup of a different melee/ranged weapons (with custom weapon projectiles, specs like recoils and projectiles).
 - inventory system (including inserting and removing based on Data Assets)
 - ragdoll / animation based reactions of hits (based on traces)
 - basic melee combat with preview of a different weapons (with reactions)
